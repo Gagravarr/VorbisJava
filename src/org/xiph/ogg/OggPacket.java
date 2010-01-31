@@ -15,8 +15,8 @@ public class OggPacket {
 	 * Creates a new Ogg Packet based on data read
 	 *  from within an Ogg Page.
 	 */
-	protected OggPacket(int sid, byte[] data, boolean bos, boolean eos) {
-		this.sid = sid;
+	protected OggPacket(OggPage parent, byte[] data, boolean bos, boolean eos) {
+		this.parent = parent;
 		this.data = data;
 		this.bos = bos;
 		this.eos = eos;
@@ -29,11 +29,10 @@ public class OggPacket {
 	 */
 	public OggPacket(byte[] data) {
 		this.data = data;
-		this.sid = -1;
 	}
 	
-	protected void setSid(int sid) {
-		this.sid = sid;
+	protected void setParent(OggPage parent) {
+		this.parent = parent;
 	}
 	protected void setIsBOS() {
 		this.bos = true;
@@ -47,8 +46,26 @@ public class OggPacket {
 	 *  this packet belongs to.
 	 */
 	public int getSid() {
-		return sid;
+		return parent.getSid();
 	}
+	/**
+	 * Returns the granule position of the page
+	 *  that this packet belongs to. The meaning
+	 *  of the granule depends on the codec.
+	 */
+	public int getGranulePosition() {
+		return parent.getGranulePosition();
+	}
+	/**
+	 * Returns the sequence number within the stream
+	 *  of the page that this packet belongs to.
+	 * You can use this to detect when pages have
+	 *  been lost.
+	 */
+	public int getSequenceNumber() {
+		return parent.getSequenceNumber();
+	}
+	
 	/**
 	 * Is this the first packet in the stream?
 	 * If so, the data should hold the magic

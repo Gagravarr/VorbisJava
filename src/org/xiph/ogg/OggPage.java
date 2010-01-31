@@ -1,5 +1,7 @@
 package org.xiph.ogg;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 
 public class OggPage {
@@ -10,6 +12,13 @@ public class OggPage {
 	protected OggPage(int sid, int seqNum) {
 		this.sid = sid;
 		this.seqNum = seqNum;
+	}
+	/**
+	 * InputStream should be positioned *just after*
+	 *  the OggS capture pattern.
+	 */
+	protected OggPage(InputStream inp) throws IOException {
+		// TODO
 	}
 	
 	/**
@@ -62,7 +71,9 @@ public class OggPage {
 		
 	}
 	
-	
+	public OggPacketIterator getPacketIterator() {
+		
+	}
 	protected class OggPacketIterator implements Iterator<OggPacket> {
 		
 	}
