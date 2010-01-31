@@ -7,15 +7,33 @@ public class OggPacketWriter {
 	private boolean closed = false;
 	private OggFile file;
 	private int sid;
+	private int sequenceNumber;
 	
-	private static final int MAX_PAGE_DATA_SIZE = 65275;
-	
-	private ArrayList<OggPacket> buffer =
-		new ArrayList<OggPacket>();
+	private ArrayList<OggPage> buffer =
+		new ArrayList<OggPage>();
 	
 	protected OggPacketWriter(OggFile parentFile, int sid) {
 		this.file = parentFile;
 		this.sid = sid;
+		
+		this.sequenceNumber = 0;
+	}
+	
+	/**
+	 * Sets the current granule position.
+	 */
+	public void setGranulePosition(int position) {
+		OggPage page = getCurrentPage(false);
+		page.setGranulePosition(position);
+	}
+	
+	private OggPage getCurrentPage(boolean forceNew) {
+		if(buffer.size() == 0 || forceNew) {
+			OggPage page = new OggPage(sid, sequenceNumber++); 
+			buffer.add( page );
+			return page;
+		}
+		return buffer.get( buffer.size()-1 );
 	}
 	
 	/**
@@ -27,10 +45,17 @@ public class OggPacketWriter {
 		if(closed) {
 			throw new IllegalStateException("Can't buffer packets on a closed stream!");
 		}
-		packet.setSid(sid);
-		buffer.add(packet);
 		
-		// TODO
+		OggPage page = getCurrentPage(false);
+		if(! page.hasSpaceFor(packet.getData().length)) {
+			page.setHasContinuation();
+			
+			page = getCurrentPage(true);
+			page.setIsContinuation();
+		}
+		
+		page.addPacket(packet);
+		packet.setParent(page);
 	}
 	
 	/**
@@ -56,8 +81,8 @@ public class OggPacketWriter {
 	 */
 	public int getSizePendingFlush() {
 		int size = 0;
-		for(OggPacket p : buffer) {
-			size += p.getData().length;
+		for(OggPage p : buffer) {
+			size += p.getDataSize();
 		}
 		return size;
 	}
@@ -71,14 +96,8 @@ public class OggPacketWriter {
 			throw new IllegalStateException("Can't flush packets on a closed stream!");
 		}
 		
-		int numPages = (int)Math.ceil(
-				((double)getSizePendingFlush()) /  MAX_PAGE_DATA_SIZE
-		);
-		OggPage[] pages = new OggPage[numPages]; 
-		
-		// TODO Make the packets into pages
-		
 		// Write in one go
+		OggPage[] pages = buffer.toArray(new OggPage[buffer.size()]); 
 		file.writePages(pages);
 			
 		// Get ready for next time!
@@ -96,7 +115,7 @@ public class OggPacketWriter {
 		} else {
 			OggPacket p = new OggPacket(new byte[0]);
 			p.setIsEOS();
-			buffer.add(p);
+			bufferPacket(p);
 		}
 		flush();
 		

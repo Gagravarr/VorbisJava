@@ -6,8 +6,8 @@ package org.xiph.ogg;
  *  around 50-200 bytes long.
  */
 public class OggPacket {
+	private OggPage parent;
 	private byte[] data;
-	private int sid;
 	private boolean bos;
 	private boolean eos;
 	
