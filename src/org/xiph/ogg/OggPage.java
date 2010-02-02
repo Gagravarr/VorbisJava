@@ -47,26 +47,26 @@ public class OggPage {
 			isEOS = true;
 		}
 
-		granulePosition = getInt(
+		granulePosition = IOUtils.getInt(
 				inp.read(), inp.read(), inp.read(), inp.read(),
 				inp.read(), inp.read(), inp.read(), inp.read()
 		);
-		sid = (int)getInt(
+		sid = (int)IOUtils.getInt(
 				inp.read(), inp.read(), inp.read(), inp.read()
 		);
-		seqNum = (int)getInt(
+		seqNum = (int)IOUtils.getInt(
 				inp.read(), inp.read(), inp.read(), inp.read()
 		);
-		checksum = getInt(
+		checksum = IOUtils.getInt(
 				inp.read(), inp.read(), inp.read(), inp.read()
 		);
 		
 		numLVs = inp.read();
 		lvs = new byte[numLVs];
-		readFully(inp, lvs);
+		IOUtils.readFully(inp, lvs);
 		
 		data = new byte[ getDataSize() ];
-		readFully(inp, data);
+		IOUtils.readFully(inp, data);
 	}
 	
 	/**
@@ -90,7 +90,7 @@ public class OggPage {
 			if(remains < 255) {
 				toAdd = remains;
 			}
-			lvs[i] = fromInt(toAdd);
+			lvs[i] = IOUtils.fromInt(toAdd);
 			tmpData.write(packet.getData(), offset, toAdd);
 			
 			numLVs++;
@@ -136,7 +136,7 @@ public class OggPage {
 		// Data size is given by lvs
 		int size = 0;
 		for(int i=0; i<numLVs; i++) {
-			size += toInt(lvs[i]);
+			size += IOUtils.toInt(lvs[i]);
 		}
 		return size;
 	}
@@ -175,7 +175,7 @@ public class OggPage {
 		if(numLVs < 255) {
 			return false;
 		}
-		if(toInt( lvs[255] ) == 255) {
+		if(IOUtils.toInt( lvs[255] ) == 255) {
 			return true;
 		}
 		return false;
@@ -199,34 +199,32 @@ public class OggPage {
 		isEOS = true;
 	}
 	
-	protected int toInt(byte b) {
-		if(b < 0)
-			return b+256;
-		return b;
-	}
-	protected byte fromInt(int i) {
-		if(i > 256) {
-			throw new IllegalArgumentException("Number " + i + " too big");
-		}
-		if(i > 127) {
-			return (byte)(i-256);
-		}
-		return (byte)i;
-	}
-	protected long getInt(int i1, int i2, int i3, int i4) {
-		// TODO
-	}
-	protected long getInt(int i1, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
-		// TODO
-	}
-	
 	public void writeHeader(OutputStream out) throws IOException {
 		out.write((int)'O');
 		out.write((int)'g');
 		out.write((int)'g');
 		out.write((int)'S');
 		
-		// TODO
+		out.write(0); // Version
+		
+		int flags = 0;
+		if(isContinue) {
+			flags += 1;
+		}
+		if(isBOS) {
+			flags += 2;
+		}
+		if(isEOS) {
+			flags += 4;
+		}
+		out.write(flags);
+		
+		IOUtils.writeInt8(out, granulePosition);
+		IOUtils.writeInt4(out, sid);
+		IOUtils.writeInt4(out, seqNum);
+		
+		// TODO - Update checksum
+		IOUtils.writeInt4(out, checksum);
 		
 		out.write(numLVs);
 		out.write(lvs, 0, numLVs);
@@ -266,7 +264,7 @@ public class OggPage {
 			
 			// How much data to we have?
 			for(int i=currentLV; i<= numLVs; i++) {
-				int size = toInt( lvs[i] );
+				int size = IOUtils.toInt( lvs[i] );
 				packetSize += size;
 				packetLVs++;
 				
@@ -281,7 +279,7 @@ public class OggPage {
 			// Get the data
 			byte[] pd = new byte[packetSize];
 			for(int i=currentLV; i<(currentLV + packetLVs); i++) {
-				int size = toInt( lvs[i] );
+				int size = IOUtils.toInt( lvs[i] );
 				int offset = i*255;
 				System.arraycopy(data, currentOffset+offset, pd, offset, size);
 			}
