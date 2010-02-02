@@ -1,7 +1,9 @@
 package org.xiph.ogg;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Iterator;
 
 public class OggPage {
@@ -16,16 +18,21 @@ public class OggPage {
 	private int numLVs = 0;
 	private byte[] lvs = new byte[255];
 	private byte[] data;
+	private ByteArrayOutputStream tmpData;
 	
 	protected OggPage(int sid, int seqNum) {
 		this.sid = sid;
 		this.seqNum = seqNum;
+		this.tmpData = new ByteArrayOutputStream();
 	}
 	/**
 	 * InputStream should be positioned *just after*
 	 *  the OggS capture pattern.
 	 */
 	protected OggPage(InputStream inp) throws IOException {
+		// TODO
+		
+		data = new byte[ getDataSize() ];
 		// TODO
 	}
 	
@@ -77,6 +84,14 @@ public class OggPage {
 	public int getSequenceNumber () {
 		return seqNum;
 	}
+	public byte[] getData() {
+		if(tmpData != null) {
+			if(data == null || tmpData.size() != data.length) {
+				data = tmpData.toByteArray();
+			}
+		}
+		return data;
+	}
 	
 	protected void setGranulePosition(int position) {
 		this.granulePosition = position;
@@ -105,6 +120,9 @@ public class OggPage {
 	public boolean isContinuation() {
 		return isContinue;
 	}
+	protected void setIsContinuation() {
+		isContinue = true;
+	}
 	
 	protected int toInt(byte b) {
 		if(b < 0)
@@ -119,6 +137,13 @@ public class OggPage {
 			return (byte)(i-256);
 		}
 		return (byte)i;
+	}
+	
+	public void writeHeader(OutputStream out) throws IOException {
+		// TODO
+		
+		out.write(numLVs);
+		out.write(lvs, 0, numLVs);
 	}
 	
 	public OggPacketIterator getPacketIterator() {

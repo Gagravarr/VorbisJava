@@ -6,7 +6,7 @@ import java.util.Iterator;
 
 public class OggPacketReader {
 	private InputStream inp;
-	private Iterator<OggPacket> it;
+	private Iterator<OggPacketData> it;
 	
 	public OggPacketReader(InputStream inp) {
 		this.inp = inp;
@@ -22,11 +22,19 @@ public class OggPacketReader {
 	 *  stream it belongs to.
 	 */
 	public OggPacket getNextPacket() throws IOException {
+		// If we have a whole packet ready to go,
+		//  just use that
+		OggPacketData leftOver = null;
 		if(it != null && it.hasNext()) {
-			return it.next();
+			OggPacketData packet = it.next();
+			if(packet instanceof OggPacket) {
+				return (OggPacket)packet;
+			}
+			leftOver = packet;
 		}
 
-		// Find the next packet
+		// Find the next page, from which
+		//  to get our next packet from
 		int searched = 0;
 		int pos = -1;
 		boolean found = false;
@@ -75,9 +83,9 @@ public class OggPacketReader {
 			System.err.println("Warning - had to skip " + searched + " bytes of junk data before finding the next packet header");
 		}
 		
-		// Create the page and return its first packet
+		// Create the page, and prime the iterator on it
 		OggPage page = new OggPage(inp);
-		it = page.getPacketIterator();
-		return it.next();
+		it = page.getPacketIterator(leftOver);
+		return getNextPacket();
 	}
 }

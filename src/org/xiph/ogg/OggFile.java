@@ -1,5 +1,6 @@
 package org.xiph.ogg;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashSet;
@@ -86,8 +87,12 @@ public class OggFile {
 	 * Writes a (possibly series) of pages to the
 	 *  stream in one go. 
 	 */
-	protected synchronized void writePages(OggPage[] page) {
-		// TODO
+	protected synchronized void writePages(OggPage[] pages) throws IOException {
+		for(OggPage page : pages) {
+			page.writeHeader( out );
+			out.write( page.getData() );
+		}
+		out.flush();
 	}
 	
 	
