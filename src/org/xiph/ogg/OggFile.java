@@ -2,6 +2,8 @@ package org.xiph.ogg;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This class takes care of reading and writing
@@ -11,6 +13,8 @@ public class OggFile {
 	private InputStream inp;
 	private OutputStream out;
 	private boolean writing = true;
+	
+	private Set<Integer> seenSIDs = new HashSet<Integer>();
 	
 	/**
 	 * Opens a file for writing.
@@ -74,6 +78,7 @@ public class OggFile {
 		if(!writing) {
 			throw new IllegalStateException("Can only write to a file opened with an OutputStream");
 		}
+		seenSIDs.add(sid);
 		return new OggPacketWriter(this, sid);
 	}
 	
@@ -89,9 +94,13 @@ public class OggFile {
 	/**
 	 * Returns a random, but previously un-used serial
 	 *  number for use by a new stream
-	 * @return
 	 */
 	protected int getUnusedSerialNumber() {
-		
+		while(true) {
+			int sid = (int)(Math.random() * Short.MAX_VALUE);
+			if(! seenSIDs.contains(sid)) {
+				return sid;
+			}
+		}
 	}
 }

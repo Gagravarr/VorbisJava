@@ -5,9 +5,8 @@ package org.xiph.ogg;
  * RFC3533 suggests that these should usually be
  *  around 50-200 bytes long.
  */
-public class OggPacket {
-	private OggPage parent;
-	private byte[] data;
+public class OggPacket extends OggPacketData {
+	private OggPage parent; // Last page if split
 	private boolean bos;
 	private boolean eos;
 	
@@ -16,8 +15,8 @@ public class OggPacket {
 	 *  from within an Ogg Page.
 	 */
 	protected OggPacket(OggPage parent, byte[] data, boolean bos, boolean eos) {
+		super(data);
 		this.parent = parent;
-		this.data = data;
 		this.bos = bos;
 		this.eos = eos;
 	}
@@ -28,7 +27,7 @@ public class OggPacket {
 	 *  after the packet has been flushed.
 	 */
 	public OggPacket(byte[] data) {
-		this.data = data;
+		super(data);
 	}
 	
 	protected void setParent(OggPage parent) {
@@ -80,11 +79,5 @@ public class OggPacket {
 	 */
 	public boolean isEndOfStream() {
 		return eos;
-	}
-	/**
-	 * Returns the data that makes up the packet.
-	 */
-	public byte[] getData() {
-		return data;
 	}
 }
