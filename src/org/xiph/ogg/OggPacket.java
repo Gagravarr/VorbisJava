@@ -52,7 +52,7 @@ public class OggPacket extends OggPacketData {
 	 *  that this packet belongs to. The meaning
 	 *  of the granule depends on the codec.
 	 */
-	public int getGranulePosition() {
+	public long getGranulePosition() {
 		return parent.getGranulePosition();
 	}
 	/**

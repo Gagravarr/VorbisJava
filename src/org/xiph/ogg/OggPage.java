@@ -9,7 +9,8 @@ import java.util.Iterator;
 public class OggPage {
 	private int sid;
 	private int seqNum;
-	private int granulePosition;
+	private long checksum;
+	private long granulePosition;
 	
 	private boolean isBOS;
 	private boolean isEOS;
@@ -30,10 +31,76 @@ public class OggPage {
 	 *  the OggS capture pattern.
 	 */
 	protected OggPage(InputStream inp) throws IOException {
-		// TODO
+		int version = inp.read();
+		if(version != 0) {
+			throw new IllegalArgumentException("Found Ogg page in format " + version + " but we only support version 0");
+		}
+		
+		int flags = inp.read();
+		if((flags & 0x01) == 0x01) {
+			isContinue = true;
+		}
+		if((flags & 0x02) == 0x02) {
+			isBOS = true;
+		}
+		if((flags & 0x04) == 0x04) {
+			isEOS = true;
+		}
+
+		granulePosition = getInt(
+				inp.read(), inp.read(), inp.read(), inp.read(),
+				inp.read(), inp.read(), inp.read(), inp.read()
+		);
+		sid = (int)getInt(
+				inp.read(), inp.read(), inp.read(), inp.read()
+		);
+		seqNum = (int)getInt(
+				inp.read(), inp.read(), inp.read(), inp.read()
+		);
+		checksum = getInt(
+				inp.read(), inp.read(), inp.read(), inp.read()
+		);
+		
+		numLVs = inp.read();
+		lvs = new byte[numLVs];
+		readFully(inp, lvs);
 		
 		data = new byte[ getDataSize() ];
-		// TODO
+		readFully(inp, data);
+	}
+	
+	/**
+	 * Adds as much of the packet's data as
+	 *  we can do.
+	 */
+	protected int addPacket(OggPacket packet, int offset) {
+		if(packet.isBeginningOfStream()) {
+			isBOS = true;
+		}
+		if(packet.isEndOfStream()) {
+			isEOS = true;
+		}
+		
+		// Add on in 255 byte chunks
+		int size = packet.getData().length;
+		for(int i = numLVs; i< 255; i++) {
+			int remains = size - offset;
+			
+			int toAdd = 255;
+			if(remains < 255) {
+				toAdd = remains;
+			}
+			lvs[i] = fromInt(toAdd);
+			tmpData.write(packet.getData(), offset, toAdd);
+			
+			numLVs++;
+			offset += toAdd;
+			if(toAdd < 255) {
+				break;
+			}
+		}
+		
+		return offset;
 	}
 	
 	/**
@@ -51,6 +118,7 @@ public class OggPage {
 		}
 		return true;
 	}
+	
 	/**
 	 * How big is the page, including headers?
 	 */
@@ -71,18 +139,17 @@ public class OggPage {
 			size += toInt(lvs[i]);
 		}
 		return size;
-		
 	}
 	
 	
 	public int getSid() {
 		return sid;
 	}
-	public int getGranulePosition() {
-		return granulePosition;
-	}
 	public int getSequenceNumber () {
 		return seqNum;
+	}
+	public long getGranulePosition() {
+		return granulePosition;
 	}
 	public byte[] getData() {
 		if(tmpData != null) {
@@ -124,6 +191,14 @@ public class OggPage {
 		isContinue = true;
 	}
 	
+	/**
+	 * This should only ever be called by
+	 *  {@link OggPacketWriter#close()} !
+	 */
+	protected void setIsEOS() {
+		isEOS = true;
+	}
+	
 	protected int toInt(byte b) {
 		if(b < 0)
 			return b+256;
@@ -138,8 +213,19 @@ public class OggPage {
 		}
 		return (byte)i;
 	}
+	protected long getInt(int i1, int i2, int i3, int i4) {
+		// TODO
+	}
+	protected long getInt(int i1, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
+		// TODO
+	}
 	
 	public void writeHeader(OutputStream out) throws IOException {
+		out.write((int)'O');
+		out.write((int)'g');
+		out.write((int)'g');
+		out.write((int)'S');
+		
 		// TODO
 		
 		out.write(numLVs);

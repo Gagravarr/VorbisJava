@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public class OggPacketWriter {
 	private boolean closed = false;
+	private boolean doneFirstPacket = false;
 	private OggFile file;
 	private int sid;
 	private int sequenceNumber;
@@ -45,16 +46,23 @@ public class OggPacketWriter {
 		if(closed) {
 			throw new IllegalStateException("Can't buffer packets on a closed stream!");
 		}
-		
-		OggPage page = getCurrentPage(false);
-		if(! page.hasSpaceFor(packet.getData().length)) {
-			page.setHasContinuation();
-			
-			page = getCurrentPage(true);
-			page.setIsContinuation();
+		if(! doneFirstPacket) {
+			packet.setIsBOS();
+			doneFirstPacket = true;
 		}
-		
-		page.addPacket(packet);
+
+		// Add to pages in turn
+		OggPage page = getCurrentPage(false);
+		int size = packet.getData().length;
+		int pos = 0;
+		while( pos < size ) {
+			int added = page.addPacket(packet, pos);
+			pos += added;
+			if(added < size) {
+				page = getCurrentPage(true);
+				page.setIsContinuation();
+			}
+		}
 		packet.setParent(page);
 	}
 	
