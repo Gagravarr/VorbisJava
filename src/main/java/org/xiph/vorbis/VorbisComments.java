@@ -44,6 +44,7 @@ public class VorbisComments extends VorbisPacket {
 	
 	public VorbisComments() {
 		super();
+		vendor = "Xiph.org Java Vorbis Tools 20100203";
 	}
 	
 	public String getVendor() {
