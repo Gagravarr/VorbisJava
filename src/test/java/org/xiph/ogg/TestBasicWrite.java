@@ -5,10 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.xiph.ogg.OggPage.OggPacketIterator;
-
-import sun.awt.image.ByteArrayImageSource;
-
 import junit.framework.TestCase;
 
 /**

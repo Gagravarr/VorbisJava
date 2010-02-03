@@ -175,7 +175,7 @@ public class OggPage {
 		return data;
 	}
 	
-	protected void setGranulePosition(int position) {
+	protected void setGranulePosition(long position) {
 		this.granulePosition = position;
 	}
 

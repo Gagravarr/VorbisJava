@@ -23,7 +23,7 @@ public class OggPacketWriter {
 	/**
 	 * Sets the current granule position.
 	 */
-	public void setGranulePosition(int position) {
+	public void setGranulePosition(long position) {
 		OggPage page = getCurrentPage(false);
 		page.setGranulePosition(position);
 	}
