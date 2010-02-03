@@ -3,6 +3,7 @@ package org.xiph.ogg;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 
 public class IOUtils {
 	public static void readFully(InputStream inp, byte[] destination) throws IOException {
@@ -103,5 +104,28 @@ public class IOUtils {
         data[i++] = (byte)((v >>> 40) & 0xFF);
         data[i++] = (byte)((v >>> 48) & 0xFF);
         data[i++] = (byte)((v >>> 56) & 0xFF);
+	}
+	
+	/**
+	 * @param length The length in BYTES
+	 */
+	public static String getUTF8(byte[] data, int offset, int length) {
+		try {
+			return new String(data, offset, length, "UTF-8");
+		} catch(UnsupportedEncodingException e) {
+			throw new RuntimeException("Broken JVM, UTF-8 not found", e);
+		}
+	}
+	/**
+	 * @return The length in BYTES
+	 */
+	public static int putUTF8(byte[] data, int offset, String str) {
+		try {
+			byte[] s = str.getBytes("UTF-8");
+			System.arraycopy(s, 0, data, offset, s.length);
+			return s.length;
+		} catch(UnsupportedEncodingException e) {
+			throw new RuntimeException("Broken JVM, UTF-8 not found", e);
+		}
 	}
 }
