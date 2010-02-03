@@ -41,6 +41,11 @@ public class OggPacketReader {
 		int r;
 		while(searched < 65536 && !found) {
 			r = inp.read();
+			if(r == -1) {
+				// No more data
+				return null;
+			}
+			
 			switch(pos) {
 			case -1:
 				if(r == (int)'O') {
@@ -79,6 +84,7 @@ public class OggPacketReader {
 			throw new IOException("Next ogg packet header not found after searching " + searched + " bytes");
 		}
 		
+		searched -= 3; // OggS
 		if(searched > 0) {
 			System.err.println("Warning - had to skip " + searched + " bytes of junk data before finding the next packet header");
 		}

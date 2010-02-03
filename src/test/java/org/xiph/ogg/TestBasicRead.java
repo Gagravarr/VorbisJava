@@ -173,10 +173,113 @@ public class TestBasicRead extends TestCase {
 	public void testPackets() throws IOException {
 		OggFile ogg = new OggFile(getTestFile());
 		OggPacketReader r = ogg.getPacketReader();
+		OggPacket p;
 
 		// Has 3 pages
 		//  1 packet
 		//  2 packets (2nd big)
 		//  9 packets
+		
+		// Page 1
+		p = r.getNextPacket();
+		assertEquals(0x1e, p.getData().length);
+		assertEquals(true, p.isBeginningOfStream());
+		assertEquals(false, p.isEndOfStream());
+		assertEquals(0x0473b45c, p.getSid());
+		assertEquals(0, p.getGranulePosition());
+		assertEquals(0, p.getSequenceNumber());
+		
+		// Page 2
+		p = r.getNextPacket();
+		assertEquals(0xbb, p.getData().length);
+		assertEquals(false, p.isBeginningOfStream());
+		assertEquals(false, p.isEndOfStream());
+		assertEquals(0x0473b45c, p.getSid());
+		assertEquals(0, p.getGranulePosition());
+		assertEquals(1, p.getSequenceNumber());
+		
+		p = r.getNextPacket();
+		assertEquals(255*13+0xa9, p.getData().length);
+		assertEquals(false, p.isBeginningOfStream());
+		assertEquals(false, p.isEndOfStream());
+		assertEquals(0x0473b45c, p.getSid());
+		assertEquals(0, p.getGranulePosition());
+		assertEquals(1, p.getSequenceNumber());
+		
+		// Page 3
+		p = r.getNextPacket();
+		assertEquals(0x23, p.getData().length);
+		assertEquals(false, p.isBeginningOfStream());
+		assertEquals(false, p.isEndOfStream());
+		assertEquals(0x0473b45c, p.getSid());
+		assertEquals(0x3c0, p.getGranulePosition());
+		assertEquals(2, p.getSequenceNumber());
+		
+		p = r.getNextPacket();
+		assertEquals(0x1c, p.getData().length);
+		assertEquals(false, p.isBeginningOfStream());
+		assertEquals(false, p.isEndOfStream());
+		assertEquals(0x0473b45c, p.getSid());
+		assertEquals(0x3c0, p.getGranulePosition());
+		assertEquals(2, p.getSequenceNumber());
+		
+		p = r.getNextPacket();
+		assertEquals(0x1e, p.getData().length);
+		assertEquals(false, p.isBeginningOfStream());
+		assertEquals(false, p.isEndOfStream());
+		assertEquals(0x0473b45c, p.getSid());
+		assertEquals(0x3c0, p.getGranulePosition());
+		assertEquals(2, p.getSequenceNumber());
+		
+		p = r.getNextPacket();
+		assertEquals(0x34, p.getData().length);
+		assertEquals(false, p.isBeginningOfStream());
+		assertEquals(false, p.isEndOfStream());
+		assertEquals(0x0473b45c, p.getSid());
+		assertEquals(0x3c0, p.getGranulePosition());
+		assertEquals(2, p.getSequenceNumber());
+		
+		p = r.getNextPacket();
+		assertEquals(0x33, p.getData().length);
+		assertEquals(false, p.isBeginningOfStream());
+		assertEquals(false, p.isEndOfStream());
+		assertEquals(0x0473b45c, p.getSid());
+		assertEquals(0x3c0, p.getGranulePosition());
+		assertEquals(2, p.getSequenceNumber());
+		
+		p = r.getNextPacket();
+		assertEquals(0x45, p.getData().length);
+		assertEquals(false, p.isBeginningOfStream());
+		assertEquals(false, p.isEndOfStream());
+		assertEquals(0x0473b45c, p.getSid());
+		assertEquals(0x3c0, p.getGranulePosition());
+		assertEquals(2, p.getSequenceNumber());
+		
+		p = r.getNextPacket();
+		assertEquals(0x3b, p.getData().length);
+		assertEquals(false, p.isBeginningOfStream());
+		assertEquals(false, p.isEndOfStream());
+		assertEquals(0x0473b45c, p.getSid());
+		assertEquals(0x3c0, p.getGranulePosition());
+		assertEquals(2, p.getSequenceNumber());
+		
+		p = r.getNextPacket();
+		assertEquals(0x28, p.getData().length);
+		assertEquals(false, p.isBeginningOfStream());
+		assertEquals(false, p.isEndOfStream());
+		assertEquals(0x0473b45c, p.getSid());
+		assertEquals(0x3c0, p.getGranulePosition());
+		assertEquals(2, p.getSequenceNumber());
+		
+		p = r.getNextPacket();
+		assertEquals(0x26, p.getData().length);
+		assertEquals(false, p.isBeginningOfStream());
+		assertEquals(true, p.isEndOfStream());
+		assertEquals(0x0473b45c, p.getSid());
+		assertEquals(0x3c0, p.getGranulePosition());
+		assertEquals(2, p.getSequenceNumber());
+		
+		p = r.getNextPacket();
+		assertEquals(null, p);
 	}
 }
