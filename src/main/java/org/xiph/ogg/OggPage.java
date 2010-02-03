@@ -199,6 +199,14 @@ public class OggPage {
 		isEOS = true;
 	}
 	
+	/**
+	 * For unit testing only!
+	 */
+	protected int getNumLVs() {
+		return numLVs;
+	}
+	
+	
 	public void writeHeader(OutputStream out) throws IOException {
 		out.write((int)'O');
 		out.write((int)'g');
@@ -229,6 +237,7 @@ public class OggPage {
 		out.write(numLVs);
 		out.write(lvs, 0, numLVs);
 	}
+	
 	
 	public OggPacketIterator getPacketIterator() {
 		return new OggPacketIterator(null);
@@ -263,7 +272,7 @@ public class OggPage {
 			int packetSize = 0;
 			
 			// How much data to we have?
-			for(int i=currentLV; i<= numLVs; i++) {
+			for(int i=currentLV; i< numLVs; i++) {
 				int size = IOUtils.toInt( lvs[i] );
 				packetSize += size;
 				packetLVs++;
@@ -280,7 +289,7 @@ public class OggPage {
 			byte[] pd = new byte[packetSize];
 			for(int i=currentLV; i<(currentLV + packetLVs); i++) {
 				int size = IOUtils.toInt( lvs[i] );
-				int offset = i*255;
+				int offset = (i-currentLV)*255;
 				System.arraycopy(data, currentOffset+offset, pd, offset, size);
 			}
 			// Tack on anything spare from last time too
