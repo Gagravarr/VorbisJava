@@ -80,7 +80,7 @@ public class IOUtils {
 		putInt4(b4, 0, v);
 		out.write(b4);
 	}
-	public static void putInt4(byte[] data, int offset, long v) throws IOException {
+	public static void putInt4(byte[] data, int offset, long v) {
         int i = offset;
         data[i++] = (byte)((v >>>  0) & 0xFF);
         data[i++] = (byte)((v >>>  8) & 0xFF);
@@ -93,7 +93,7 @@ public class IOUtils {
 		putInt8(b8, 0, v);
 		out.write(b8);
 	}
-	public static void putInt8(byte[] data, int offset, long v) throws IOException {
+	public static void putInt8(byte[] data, int offset, long v) {
         int i = offset;
         data[i++] = (byte)((v >>>  0) & 0xFF);
         data[i++] = (byte)((v >>>  8) & 0xFF);

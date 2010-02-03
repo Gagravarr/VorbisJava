@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
+import java.util.zip.CRC32;
 
 public class OggPage {
 	private int sid;
@@ -101,6 +102,20 @@ public class OggPage {
 		}
 		
 		return offset;
+	}
+	
+	/**
+	 * Is the checksum for the page valid?
+	 */
+	public boolean isChecksumValid() {
+		if(checksum == 0)
+			return true;
+		
+		CRC32 crc = new CRC32();
+		crc.update(getHeader());
+		crc.update(data);
+		
+		return (checksum == crc.getValue());
 	}
 	
 	/**
@@ -208,14 +223,31 @@ public class OggPage {
 	
 	
 	public void writeHeader(OutputStream out) throws IOException {
-		out.write((int)'O');
-		out.write((int)'g');
-		out.write((int)'g');
-		out.write((int)'S');
+		byte[] header = getHeader();
 		
-		out.write(0); // Version
+		// Generate the checksum and store
+		int crc = CRCUtils.getCRC(header);
+		if(data != null && data.length > 0) {
+			crc = CRCUtils.getCRC(data, crc);
+		}
+		IOUtils.putInt4(header, 22, crc);
 		
-		int flags = 0;
+		// Write out
+		out.write(header);
+	}
+	/**
+	 * Gets the header, but with a blank CRC field
+	 */
+	protected byte[] getHeader() {
+		byte[] header = new byte[27 + numLVs];
+		header[0] = (byte)'O';
+		header[1] = (byte)'g';
+		header[2] = (byte)'g';
+		header[3] = (byte)'S';
+		
+		header[4] = 0; // Version
+		
+		byte flags = 0;
 		if(isContinue) {
 			flags += 1;
 		}
@@ -225,17 +257,18 @@ public class OggPage {
 		if(isEOS) {
 			flags += 4;
 		}
-		out.write(flags);
+		header[5] = flags;
+
+		IOUtils.putInt8(header, 6, granulePosition);
+		IOUtils.putInt4(header, 14, sid);
+		IOUtils.putInt4(header, 18, seqNum);
 		
-		IOUtils.writeInt8(out, granulePosition);
-		IOUtils.writeInt4(out, sid);
-		IOUtils.writeInt4(out, seqNum);
+		// Checksum @ 22 left blank for now
+
+		header[26] = IOUtils.fromInt(numLVs);
+		System.arraycopy(lvs, 0, header, 27, numLVs);
 		
-		// TODO - Update checksum
-		IOUtils.writeInt4(out, checksum);
-		
-		out.write(numLVs);
-		out.write(lvs, 0, numLVs);
+		return header;
 	}
 	
 	
@@ -263,6 +296,11 @@ public class OggPage {
 			if(currentLV < numLVs) {
 				return true;
 			}
+			// Special case for an empty page
+			if(currentLV == 0 && numLVs == 0) {
+				return true;
+			}
+			
 			return false;
 		}
 
@@ -323,6 +361,9 @@ public class OggPage {
 			// Wind on
 			currentLV += packetLVs;
 			currentOffset += packetSize;
+			// Empty page special case wind-on
+			if(currentLV == 0)
+				currentLV = 1;
 			
 			// Done!
 			return packet;

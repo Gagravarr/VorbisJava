@@ -50,18 +50,21 @@ public class OggPacketWriter {
 			packet.setIsBOS();
 			doneFirstPacket = true;
 		}
+		
+		int size = packet.getData().length;
+		boolean emptyPacket = (size==0);
 
 		// Add to pages in turn
 		OggPage page = getCurrentPage(false);
-		int size = packet.getData().length;
 		int pos = 0;
-		while( pos < size ) {
+		while( pos < size || emptyPacket) {
 			int added = page.addPacket(packet, pos);
 			pos += added;
 			if(added < size) {
 				page = getCurrentPage(true);
 				page.setIsContinuation();
 			}
+			emptyPacket = false;
 		}
 		packet.setParent(page);
 	}

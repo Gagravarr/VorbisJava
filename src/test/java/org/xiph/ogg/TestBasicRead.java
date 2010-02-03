@@ -19,6 +19,12 @@ public class TestBasicRead extends TestCase {
 		OggFile ogg = new OggFile(getTestFile());
 		OggPacketReader r = ogg.getPacketReader();
 		r.getNextPacket();
+		
+		// Can't write to a reading file
+		try {
+			ogg.getPacketWriter();
+			fail();
+		} catch(IllegalStateException e) {}
 	}
 	
 	public void testPages() throws IOException {
@@ -35,6 +41,8 @@ public class TestBasicRead extends TestCase {
 		assertEquals(0, page.getGranulePosition());
 		assertEquals(0x0473b45c, page.getSid());
 		assertEquals(0, page.getSequenceNumber());
+		
+		assertEquals(true, page.isChecksumValid());
 		
 		assertEquals(0x1e, page.getDataSize());
 		assertEquals(0x1e + 28, page.getPageSize());
@@ -66,6 +74,8 @@ public class TestBasicRead extends TestCase {
 		assertEquals(0, page.getGranulePosition());
 		assertEquals(0x0473b45c, page.getSid());
 		assertEquals(1, page.getSequenceNumber());
+		
+		assertEquals(true, page.isChecksumValid());
 		
 		// Two packets, one small and one big
 		assertEquals(0x0f, page.getNumLVs());
@@ -105,6 +115,8 @@ public class TestBasicRead extends TestCase {
 		assertEquals(0x3c0, page.getGranulePosition());
 		assertEquals(0x0473b45c, page.getSid());
 		assertEquals(2, page.getSequenceNumber());
+		
+		assertEquals(true, page.isChecksumValid());
 		
 		// 9 small packets
 		assertEquals(0x09, page.getNumLVs());

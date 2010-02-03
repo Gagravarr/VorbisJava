@@ -50,6 +50,18 @@ public class OggFile {
 	
 	
 	/**
+	 * Closes our streams. It's up to you
+	 *  to close any {@link OggPacketWriter} instances
+	 *  first!
+	 */
+	public void close() throws IOException {
+		if(inp != null)
+			inp.close();
+		if(out != null)
+			out.close();
+	}
+	
+	/**
 	 * Returns a reader that will allow you to read packets
 	 *  from the file, across all Logical Bit Streams, 
 	 *  in the order that they occur.
