@@ -1,5 +1,7 @@
 package org.xiph.vorbis;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +46,13 @@ public class VorbisComments extends VorbisPacket {
 		super();
 	}
 	
+	public String getVendor() {
+		return vendor;
+	}
+	public void setVendor(String vendor) {
+		this.vendor = vendor;
+	}
+	
 	public List<String> getAllComments() {
 		return comments;
 	}
@@ -51,7 +60,28 @@ public class VorbisComments extends VorbisPacket {
 	@Override
 	public OggPacket write() {
 		// Serialise the comments
-		//populateStart(b, 3);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			baos.write(new byte[7]);
+			
+			IOUtils.writeInt4(baos, vendor.length());
+			IOUtils.writeUTF8(baos, vendor);
+			
+			IOUtils.writeInt4(baos, comments.size());
+			for(String comment : comments) {
+				IOUtils.writeInt4(baos, comment.length());
+				IOUtils.writeUTF8(baos, comment);
+			}
+			baos.write(1);
+		} catch(IOException e) {
+			// Should never happen!
+			throw new RuntimeException(e);
+		}
+		
+		// Now do the header bit
+		byte[] b = baos.toByteArray();
+		populateStart(b, 3);
+		setData(b);
 		
 		// Now write
 		return super.write();

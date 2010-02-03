@@ -128,4 +128,12 @@ public class IOUtils {
 			throw new RuntimeException("Broken JVM, UTF-8 not found", e);
 		}
 	}
+	public static void writeUTF8(OutputStream out, String str) throws IOException {
+		try {
+			byte[] s = str.getBytes("UTF-8");
+			out.write(s);
+		} catch(UnsupportedEncodingException e) {
+			throw new RuntimeException("Broken JVM, UTF-8 not found", e);
+		}
+	}
 }
