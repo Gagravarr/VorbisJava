@@ -1,11 +1,12 @@
 package org.xiph.ogg;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.xiph.ogg.OggPage.OggPacketIterator;
-
 import junit.framework.TestCase;
+
+import org.xiph.ogg.OggPage.OggPacketIterator;
 
 /**
  * Test that we can open a file and read packets from it
@@ -293,5 +294,58 @@ public class TestBasicRead extends TestCase {
 		
 		p = r.getNextPacket();
 		assertEquals(null, p);
+	}
+	
+	public void testCRC() throws IOException {
+		InputStream inp = getTestFile();
+		inp.read();
+		inp.read();
+		inp.read();
+		inp.read();
+		
+		OggPage page = new OggPage(inp);
+		assertEquals( 0x69e0b860, page.getChecksum() );
+		assertTrue( page.isChecksumValid() );
+		
+		// Grab the header, won't have a checksum in it 
+		byte[] header = page.getHeader();
+		assertEquals(28, header.length);
+		
+		
+		// Now re-create the page
+		OggPacket p = (OggPacket)
+			page.getPacketIterator().next();
+		page = new OggPage(0x0473b45c, 0);
+		page.addPacket(p, 0);
+		
+		// Checksum starts empty
+		assertEquals(0, page.getChecksum() );
+		assertTrue( page.isChecksumValid() );
+		
+		// Look at the headers
+		byte[] header2 = page.getHeader();
+		assertEquals(28, header2.length);
+		// Check they're the same so far
+		for(int i=0; i<28; i++) {
+			assertEquals(header[i], header2[i]);
+		}
+		
+		// Call the checksum ourselves
+		int crc = CRCUtils.getCRC(header);
+		crc = CRCUtils.getCRC(page.getData(), crc);
+		assertEquals(0x69e0b860, crc);
+		
+		crc = CRCUtils.getCRC(header);
+		crc = CRCUtils.getCRC(page.getData(), crc);
+		assertEquals(0x69e0b860, crc);
+		
+		// Ensure there's nothing funny in the crc
+		CRCUtils.getCRC(new byte[] {1,2,3,4});
+		
+		
+		// Write out - will calculate
+		page.writeHeader(new ByteArrayOutputStream());
+		assertEquals( 0x69e0b860, page.getChecksum() );
+		assertTrue( page.isChecksumValid() );
 	}
 }

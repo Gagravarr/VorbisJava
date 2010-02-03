@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
-import java.util.zip.CRC32;
 
 public class OggPage {
 	private int sid;
@@ -111,11 +110,17 @@ public class OggPage {
 		if(checksum == 0)
 			return true;
 		
-		CRC32 crc = new CRC32();
-		crc.update(getHeader());
-		crc.update(data);
+		int crc = CRCUtils.getCRC(getHeader());
+		if(data != null && data.length > 0) {
+			crc = CRCUtils.getCRC(data, crc);
+		}
 		
-		return (checksum == crc.getValue());
+		System.err.println(crc);
+		System.err.println(checksum);
+		return (checksum == crc);
+	}
+	protected long getChecksum() {
+		return checksum;
 	}
 	
 	/**
@@ -225,12 +230,16 @@ public class OggPage {
 	public void writeHeader(OutputStream out) throws IOException {
 		byte[] header = getHeader();
 		
+		// Ensure we've moved from tmpdata to data
+		getData();
+		
 		// Generate the checksum and store
 		int crc = CRCUtils.getCRC(header);
 		if(data != null && data.length > 0) {
 			crc = CRCUtils.getCRC(data, crc);
 		}
 		IOUtils.putInt4(header, 22, crc);
+		checksum = crc;
 		
 		// Write out
 		out.write(header);
