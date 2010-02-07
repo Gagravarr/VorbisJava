@@ -18,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.xiph.ogg.OggFile;
@@ -55,11 +56,12 @@ public class VorbisFile {
 		
 		r = ogg.getPacketReader();
 		OggPacket p = null;
-		while( (p = r.getNextPacket()) != null && sid == -1 ) {
+		while( (p = r.getNextPacket()) != null ) {
 			if(p.isBeginningOfStream() && p.getData().length > 10) {
 				try {
 					VorbisPacket.create(p);
 					sid = p.getSid();
+					break;
 				} catch(IllegalArgumentException e) {
 					// Not a vorbis stream, don't worry
 				}
@@ -75,16 +77,25 @@ public class VorbisFile {
 	}
 	
 	/**
-	 * Opens for writing.  
+	 * Opens for writing.
 	 */
 	public VorbisFile(OutputStream out) {
+		this(out, new VorbisInfo(), new VorbisComments(), new VorbisSetup());   
+	}
+	/**
+	 * Opens for writing, based on the settings
+	 *  from a pre-read file 
+	 */
+	public VorbisFile(OutputStream out, VorbisInfo info, VorbisComments comments, VorbisSetup setup) {
 		ogg = new OggFile(out);
 		w = ogg.getPacketWriter();
 		sid = w.getSid();
 		
-		info = new VorbisInfo();
-		comment = new VorbisComments();
-		setup = new VorbisSetup();
+		writtenPackets = new ArrayList<VorbisAudioData>();
+		
+		this.info = info;
+		this.comment = comments;
+		this.setup = setup;
 	}
 	
 	public VorbisAudioData getNextAudioPacket() throws IOException {

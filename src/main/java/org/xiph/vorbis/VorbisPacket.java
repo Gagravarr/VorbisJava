@@ -30,6 +30,10 @@ public abstract class VorbisPacket {
 		this.oggPacket = null;
 	}
 	
+	protected OggPacket getOggPacket() {
+		return oggPacket;
+	}
+	
 	public byte[] getData() {
 		if(data != null) {
 			return data;

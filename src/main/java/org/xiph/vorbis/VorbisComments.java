@@ -147,12 +147,20 @@ public class VorbisComments extends VorbisPacket {
 			return c;
 		}
 	}
+	
 	/**
 	 * Removes all comments for a given tag.
 	 */
 	public void removeComments(String tag) {
 		comments.remove( normaliseTag(tag) );
 	}
+	/**
+	 * Removes all comments across all tags
+	 */
+	public void removeAllComments() {
+		comments.clear();
+	}
+	
 	/**
 	 * Adds a comment for a given tag
 	 */

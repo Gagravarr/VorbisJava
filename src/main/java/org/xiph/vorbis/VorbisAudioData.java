@@ -26,4 +26,15 @@ public class VorbisAudioData extends VorbisPacket {
 		super();
 		setData(data);
 	}
+
+	/**
+	 * Returns the granule position, or -1 if
+	 *  this wasn't read from a file
+	 */
+	public long getGranulePosition() {
+		if(getOggPacket() != null) {
+			return getOggPacket().getGranulePosition();
+		}
+		return -1;
+	}
 }
