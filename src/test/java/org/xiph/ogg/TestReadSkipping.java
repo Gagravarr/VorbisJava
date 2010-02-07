@@ -13,13 +13,10 @@
  */
 package org.xiph.ogg;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import junit.framework.TestCase;
-
-import org.xiph.ogg.OggPage.OggPacketIterator;
 
 /**
  * Test that we can skip correctly through a file

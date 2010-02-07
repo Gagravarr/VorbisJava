@@ -23,4 +23,7 @@ public class VorbisSetup extends VorbisPacket {
 	public VorbisSetup(OggPacket pkt) {
 		super(pkt);
 	}
+	public VorbisSetup() {
+		super();
+	}
 }

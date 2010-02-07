@@ -119,6 +119,21 @@ public class OggPacketReader {
 	}
 	
 	/**
+	 * Returns the next packet with the given SID (Stream ID), or
+	 *  null if no more packets remain.
+	 * Any packets from other streams will be silently discarded.
+	 */
+	public OggPacket getNextPacketWithSid(int sid) throws IOException {
+		OggPacket p = null;
+		while( (p = getNextPacket()) != null ) {
+			if(p.getSid() == sid) {
+				return p;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Skips forward until the first packet with a Sequence Number
 	 *  of equal or greater than that specified. Call {@link #getNextPacket()}
 	 *  to retrieve this packet.

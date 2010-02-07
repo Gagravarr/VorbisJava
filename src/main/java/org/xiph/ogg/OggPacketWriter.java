@@ -22,6 +22,7 @@ public class OggPacketWriter {
 	private OggFile file;
 	private int sid;
 	private int sequenceNumber;
+	private long currentGranulePosition = 0;
 	
 	private ArrayList<OggPage> buffer =
 		new ArrayList<OggPage>();
@@ -35,15 +36,31 @@ public class OggPacketWriter {
 	
 	/**
 	 * Sets the current granule position.
+	 * The granule position will be applied to all
+	 *  un-flushed packets, and all future packets.
+	 * As such, you should normally either call a flush
+	 *  just before or just after this call. 
 	 */
 	public void setGranulePosition(long position) {
-		OggPage page = getCurrentPage(false);
-		page.setGranulePosition(position);
+		currentGranulePosition = position;
+		for(OggPage p : buffer) {
+			p.setGranulePosition(position);
+		}
+	}
+	public long getCurrentGranulePosition() {
+		return currentGranulePosition;
+	}
+	
+	public int getSid() {
+		return sid;
 	}
 	
 	private OggPage getCurrentPage(boolean forceNew) {
 		if(buffer.size() == 0 || forceNew) {
 			OggPage page = new OggPage(sid, sequenceNumber++); 
+			if(currentGranulePosition > 0) {
+				page.setGranulePosition(currentGranulePosition);
+			}
 			buffer.add( page );
 			return page;
 		}
