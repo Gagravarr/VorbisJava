@@ -36,6 +36,10 @@ public class TestVorbisFileWrite extends TestCase {
 		OggFile in = new OggFile(getTestFile());
 		VorbisFile vfIN = new VorbisFile(in);
 		
+		int infoSize = vfIN.getInfo().getData().length;
+		int commentSize = vfIN.getComment().getData().length;
+		int setupSize = vfIN.getSetup().getData().length;
+		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		VorbisFile vfOUT = new VorbisFile(
 				baos,
@@ -51,11 +55,19 @@ public class TestVorbisFileWrite extends TestCase {
 		
 		vfIN.close();
 		vfOUT.close();
+		
+		assertEquals(infoSize, vfOUT.getInfo().getData().length);
+		assertEquals(commentSize, vfOUT.getComment().getData().length);
+		assertEquals(setupSize, vfOUT.getSetup().getData().length);
 	}
 	
 	public void testReadWriteRead() throws IOException {
 		OggFile in = new OggFile(getTestFile());
 		VorbisFile vfOrig = new VorbisFile(in);
+		
+		int infoSize = vfOrig.getInfo().getData().length;
+		int commentSize = vfOrig.getComment().getData().length;
+		int setupSize = vfOrig.getSetup().getData().length;
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		VorbisFile vfOUT = new VorbisFile(
@@ -99,5 +111,14 @@ public class TestVorbisFileWrite extends TestCase {
 		VorbisAudioData ad = vfIN.getNextAudioPacket();
 		assertEquals(0x3c0, ad.getGranulePosition());
 		
+
+		// Check the core packets stayed the same size
+		assertEquals(infoSize, vfOUT.getInfo().getData().length);
+		assertEquals(commentSize, vfOUT.getComment().getData().length);
+		assertEquals(setupSize, vfOUT.getSetup().getData().length);
+		
+		assertEquals(infoSize, vfIN.getInfo().getData().length);
+		assertEquals(commentSize, vfIN.getComment().getData().length);
+		assertEquals(setupSize, vfIN.getSetup().getData().length);
 	}
 }

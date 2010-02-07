@@ -13,6 +13,7 @@
  */
 package org.xiph.vorbis;
 
+import org.xiph.ogg.IOUtils;
 import org.xiph.ogg.OggPacket;
 
 /**
@@ -22,8 +23,26 @@ import org.xiph.ogg.OggPacket;
 public class VorbisSetup extends VorbisPacket {
 	public VorbisSetup(OggPacket pkt) {
 		super(pkt);
+		
+		// Made up of:
+		//  Codebooks
+		//  Time Domain Transforms
+		//  Floors
+		//  Residues
+		//  Mappings
+		//  Modes
 	}
 	public VorbisSetup() {
 		super();
+	}
+	
+	// Example first bit of decoding
+	public int getNumberOfCodebooks() {
+		byte[] data = getData();
+		int number = -1;
+		if(data != null && data.length >= 10) {
+			number = IOUtils.toInt(data[8]);
+		}
+		return (number+1);
 	}
 }

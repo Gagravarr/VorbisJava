@@ -44,6 +44,9 @@ public class TestVorbisFileRead extends TestCase {
 		assertEquals("Test Title", vf.getComment().getTitle());
 		assertEquals("Test Artist", vf.getComment().getArtist());
 		
+		// TODO - proper setup packet checking
+		assertEquals(255*13+0xa9, vf.getSetup().getData().length);
+		
 		// Has audio data
 		assertNotNull( vf.getNextAudioPacket() );
 		assertNotNull( vf.getNextAudioPacket() );

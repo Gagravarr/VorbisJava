@@ -17,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import junit.framework.TestCase;
 
@@ -33,8 +34,10 @@ public class TestReadWrite extends TestCase {
 	/**
 	 * WARNING - assumes only one stream!
 	 */
-	private static void copy(OggFile in, OggFile out) throws IOException {
+	private static long[] copy(OggFile in, OggFile out) throws IOException {
 		OggPacketReader r = in.getPacketReader();
+		
+		ArrayList<Long> copyCRCs = new ArrayList<Long>();
 		
 		OggPacket p = null;
 		OggPacket pp = null;
@@ -42,10 +45,12 @@ public class TestReadWrite extends TestCase {
 		while( (p = r.getNextPacket()) != null ) {
 			if(w == null) {
 				w = out.getPacketWriter(p.getSid());
+				copyCRCs.add(p._getParent().getChecksum());
 			}
 			
 			if(pp != null && pp.getSequenceNumber() != p.getSequenceNumber()) {
 				w.flush();
+				copyCRCs.add(p._getParent().getChecksum());
 			}
 			
 			long oldGranule = p.getGranulePosition();
@@ -57,6 +62,13 @@ public class TestReadWrite extends TestCase {
 		
 		w.close();
 		out.close();
+		
+		// Grab the checksums
+		long[] ret = new long[copyCRCs.size()];
+		for(int i=0; i<ret.length; i++) {
+			ret[i] = copyCRCs.get(i);
+		}
+		return ret;
 	}
 	
 	public void testReadWrite() throws IOException {
@@ -70,23 +82,43 @@ public class TestReadWrite extends TestCase {
 	}
 	
 	public void testReadWriteContents() throws IOException {
-		// Copy
+		// Load the file and write it back out again
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		OggFile out = new OggFile(baos);
 
 		copy(new OggFile(getTestFile()), out);
 		
-		// Read
+		// Read the same file again to compare
 		InputStream inp = getTestFile();
 		byte[] original = new byte[4241];
 		IOUtils.readFully(inp, original);
 		assertEquals(-1, inp.read());
 		
+		// Check the raw bytes match
 		byte[] readwrite = baos.toByteArray();
 		
 		assertEquals(original.length, readwrite.length);
 		for(int i=0; i<original.length; i++) {
 			assertEquals(original[i], readwrite[i]);
+		}
+	}
+	
+	public void testReadWriteRead() throws IOException {
+		// Load the file and write it back out again
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		OggFile out = new OggFile(baos);
+
+		long[] crcs = copy(new OggFile(getTestFile()), out);
+		
+		// Load it in
+		OggFile in = new OggFile(new ByteArrayInputStream(baos.toByteArray()));
+		OggPacketReader r = in.getPacketReader();
+		
+		// Check roughly at a page level
+		OggPacket p;
+		while( (p = r.getNextPacket()) != null ) {
+			int page = p._getParent().getSequenceNumber();
+			assertEquals(crcs[page], p._getParent().getChecksum());
 		}
 	}
 	

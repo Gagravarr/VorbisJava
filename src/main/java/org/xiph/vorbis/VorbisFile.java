@@ -90,12 +90,28 @@ public class VorbisFile {
 	}
 	/**
 	 * Opens for writing, based on the settings
-	 *  from a pre-read file 
+	 *  from a pre-read file. The Steam ID (SID) is
+	 *  automatically allocated for you.
 	 */
 	public VorbisFile(OutputStream out, VorbisInfo info, VorbisComments comments, VorbisSetup setup) {
+		this(out, -1, info, comments, setup);
+	}
+	/**
+	 * Opens for writing, based on the settings
+	 *  from a pre-read file, with a specific
+	 *  Steam ID (SID). You should only set the SID
+	 *  when copying one file to another!
+	 */
+	public VorbisFile(OutputStream out, int sid, VorbisInfo info, VorbisComments comments, VorbisSetup setup) {
 		ogg = new OggFile(out);
-		w = ogg.getPacketWriter();
-		sid = w.getSid();
+		
+		if(sid > 0) {
+			w = ogg.getPacketWriter(sid);
+			this.sid = sid;
+		} else {
+			w = ogg.getPacketWriter();
+			this.sid = w.getSid();
+		}
 		
 		writtenPackets = new ArrayList<VorbisAudioData>();
 		
@@ -171,7 +187,7 @@ public class VorbisFile {
 		if(w != null) {
 			w.bufferPacket(info.write(), true);
 			w.bufferPacket(comment.write(), false);
-			w.bufferPacket(setup.write(), false);
+			w.bufferPacket(setup.write(), true);
 			
 			long lastGranule = 0;
 			for(VorbisAudioData vd : writtenPackets) {

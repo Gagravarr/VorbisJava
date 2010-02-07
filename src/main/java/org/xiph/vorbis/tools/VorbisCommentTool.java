@@ -113,6 +113,7 @@ public class VorbisCommentTool {
 		in.close();
 		VorbisFile out = new VorbisFile(
 				new FileOutputStream(outFile),
+				in.getSid(),
 				in.getInfo(),
 				in.getComment(),
 				in.getSetup()

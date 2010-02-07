@@ -33,13 +33,20 @@ public class VorbisInfoTool {
 		if(args.length == 0) {
 			printHelp();
 		}
+		
+		boolean debugging = false;
+		String filename = args[0];
+		if(args.length > 1 && args[0].equals("-d")) {
+			filename = args[1];
+			debugging = true;
+		}
 
 		InfoPacketReader r = new InfoPacketReader(
-				new FileInputStream(args[0])
+				new FileInputStream(filename)
 		);
 		VorbisFile vf = new VorbisFile(r);
 		
-		System.out.println("Processing file \"" + args[0] + "\"");
+		System.out.println("Processing file \"" + filename + "\"");
 		
 		System.out.println("");
 		System.out.println("Vorbis Headers:");
@@ -57,6 +64,10 @@ public class VorbisInfoTool {
 		listTags(vf);
 		System.out.println("");
 		
+		System.out.println("Vorbis Setup:");
+		System.out.println("  Codebooks: " + vf.getSetup().getNumberOfCodebooks());
+		System.out.println("");
+		
 		VorbisAudioData vad;
 		int dataPackets = 0;
 		long dataSize = 0;
@@ -65,6 +76,14 @@ public class VorbisInfoTool {
 			dataPackets += 1;
 			dataSize += vad.getData().length;
 			lastGranule = vad.getGranulePosition();
+			
+			if(debugging) {
+				System.out.println(
+						r.lastSeqNum + " - " +
+						vad.getGranulePosition() + " - " +
+						vad.getData().length + " bytes"
+				);
+			}
 		}
 		
 		float seconds = lastGranule / vf.getInfo().getRate();
@@ -97,6 +116,8 @@ public class VorbisInfoTool {
 	
 	protected static class InfoPacketReader extends OggPacketReader {
 		private boolean inProgress = false;
+		private int lastSeqNum = 0;
+		
 		public InfoPacketReader(InputStream inp) {
 			super(inp);
 		}
@@ -111,7 +132,11 @@ public class VorbisInfoTool {
 			}
 			
 			OggPacket p = super.getNextPacket();
+			inProgress = false;
+			
 			if(p != null) {
+				lastSeqNum = p.getSequenceNumber();
+				
 				if(p.isBeginningOfStream()) {
 					System.out.println(
 							"New logical stream " + 

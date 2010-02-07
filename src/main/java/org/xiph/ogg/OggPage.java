@@ -128,8 +128,6 @@ public class OggPage {
 			crc = CRCUtils.getCRC(data, crc);
 		}
 		
-		System.err.println(crc);
-		System.err.println(checksum);
 		return (checksum == crc);
 	}
 	protected long getChecksum() {
@@ -202,13 +200,17 @@ public class OggPage {
 	 *  remainder of the packets?
 	 */
 	public boolean hasContinuation() {
-		// Will only continuation if all
-		//  255 LVs are used, and the last
-		//  one is fully used
-		if(numLVs < 255) {
+		// Has a continuation if the last LV
+		//  is 255. 
+		// Normally one would expect to have 
+		//  the full 255 LVs, with the
+		//  last one at 255, but technically
+		//  you can force a continue without
+		//  using all your LVs up
+		if(numLVs == 0) {
 			return false;
 		}
-		if(IOUtils.toInt( lvs[255] ) == 255) {
+		if(IOUtils.toInt( lvs[numLVs-1] ) == 255) {
 			return true;
 		}
 		return false;
@@ -340,7 +342,7 @@ public class OggPage {
 				if(size < 255) {
 					break;
 				}
-				if(i == 255) {
+				if(i == (numLVs-1) && size == 255) {
 					continues = true;
 				}
 			}

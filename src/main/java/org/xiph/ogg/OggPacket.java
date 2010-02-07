@@ -53,6 +53,11 @@ public class OggPacket extends OggPacketData {
 		this.eos = true;
 	}
 	
+	/** Unit tests only! */
+	protected OggPage _getParent() {
+		return parent;
+	}
+	
 	/**
 	 * Returns the Stream ID (Sid) that
 	 *  this packet belongs to.
