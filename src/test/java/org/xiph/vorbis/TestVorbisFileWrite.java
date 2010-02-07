@@ -13,6 +13,8 @@
  */
 package org.xiph.vorbis;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -21,7 +23,7 @@ import junit.framework.TestCase;
 import org.xiph.ogg.OggFile;
 
 /**
- * Tests for reading things using VorbisFile
+ * Tests for round-tripping with VorbisFile
  * @author nick
  *
  */
@@ -30,27 +32,72 @@ public class TestVorbisFileWrite extends TestCase {
 		return this.getClass().getResourceAsStream("/testVORBIS.ogg");
 	}
 	
-	public void testRead() throws IOException {
-		OggFile ogg = new OggFile(getTestFile());
-		VorbisFile vf = new VorbisFile(ogg);
+	public void testReadWrite() throws IOException {
+		OggFile in = new OggFile(getTestFile());
+		VorbisFile vfIN = new VorbisFile(in);
 		
-		assertEquals(2, vf.getInfo().getChannels());
-		assertEquals(44100, vf.getInfo().getRate());
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		VorbisFile vfOUT = new VorbisFile(
+				baos,
+				vfIN.getInfo(),
+				vfIN.getComment(),
+				vfIN.getSetup()
+		);
 		
-		assertEquals(0, vf.getInfo().getBitrateLower());
-		assertEquals(0, vf.getInfo().getBitrateUpper());
-		assertEquals(80000, vf.getInfo().getBitrateNominal());
+		VorbisAudioData vad;
+		while( (vad = vfIN.getNextAudioPacket()) != null ) {
+			vfOUT.writeAudioData(vad);
+		}
 		
-		assertEquals("Test Title", vf.getComment().getTitle());
-		assertEquals("Test Artist", vf.getComment().getArtist());
+		vfIN.close();
+		vfOUT.close();
+	}
+	
+	public void testReadWriteRead() throws IOException {
+		OggFile in = new OggFile(getTestFile());
+		VorbisFile vfOrig = new VorbisFile(in);
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		VorbisFile vfOUT = new VorbisFile(
+				baos,
+				vfOrig.getInfo(),
+				vfOrig.getComment(),
+				vfOrig.getSetup()
+		);
+		
+		VorbisAudioData vad;
+		while( (vad = vfOrig.getNextAudioPacket()) != null ) {
+			vfOUT.writeAudioData(vad);
+		}
+		
+		vfOrig.close();
+		vfOUT.close();
+		
+		
+		// Now open the new one
+		VorbisFile vfIN = new VorbisFile(new OggFile(
+				new ByteArrayInputStream(baos.toByteArray())
+		));
+		
+		// And check
+		assertEquals(2, vfIN.getInfo().getChannels());
+		assertEquals(44100, vfIN.getInfo().getRate());
+		
+		assertEquals(0, vfIN.getInfo().getBitrateLower());
+		assertEquals(0, vfIN.getInfo().getBitrateUpper());
+		assertEquals(80000, vfIN.getInfo().getBitrateNominal());
+		
+		assertEquals("Test Title", vfIN.getComment().getTitle());
+		assertEquals("Test Artist", vfIN.getComment().getArtist());
 		
 		// Has audio data
-		assertNotNull( vf.getNextAudioPacket() );
-		assertNotNull( vf.getNextAudioPacket() );
-		assertNotNull( vf.getNextAudioPacket() );
-		assertNotNull( vf.getNextAudioPacket() );
+		assertNotNull( vfIN.getNextAudioPacket() );
+		assertNotNull( vfIN.getNextAudioPacket() );
+		assertNotNull( vfIN.getNextAudioPacket() );
+		assertNotNull( vfIN.getNextAudioPacket() );
 		
-		VorbisAudioData ad = vf.getNextAudioPacket();
+		VorbisAudioData ad = vfIN.getNextAudioPacket();
 		assertEquals(0x3c0, ad.getGranulePosition());
+		
 	}
 }

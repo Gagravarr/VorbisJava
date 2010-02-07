@@ -167,9 +167,18 @@ public class VorbisFile {
 			w.bufferPacket(comment.write(), false);
 			w.bufferPacket(setup.write(), false);
 			
+			long lastGranule = 0;
 			for(VorbisAudioData vd : writtenPackets) {
+				// Update the granule position as we go
+				if(lastGranule != vd.getGranulePosition()) {
+					w.flush();
+					lastGranule = vd.getGranulePosition();
+					w.setGranulePosition(lastGranule);
+				}
+				
+				// Write the data, flushing if needed
 				w.bufferPacket(vd.write());
-				if(w.getSizePendingFlush() > 8192) {
+				if(w.getSizePendingFlush() > 16384) {
 					w.flush();
 				}
 			}

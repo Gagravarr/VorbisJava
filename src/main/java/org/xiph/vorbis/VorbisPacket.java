@@ -85,8 +85,15 @@ public abstract class VorbisPacket {
 				case 5:
 					return new VorbisSetup(packet);
 				}
-			} else {
-				throw new IllegalArgumentException("Magic string 'vorbis' not found for packet of type " + type);
+//			} else {
+//				throw new IllegalArgumentException(
+//						"Magic string 'vorbis' not found for packet of type " + type +
+//						" - first few bytes are: " +
+//						Integer.toHexString(IOUtils.toInt(d[1])) + " " +
+//						Integer.toHexString(IOUtils.toInt(d[2])) + " " +
+//						Integer.toHexString(IOUtils.toInt(d[3])) + " " +
+//						Integer.toHexString(IOUtils.toInt(d[4])) + " "
+//				);
 			}
 		}
 		

@@ -64,7 +64,7 @@ public class VorbisInfo extends VorbisPacket {
 		populateStart(data, 1);
 		
 		IOUtils.putInt4(data, 7, version);
-		data[8] = IOUtils.fromInt(channels);
+		data[11] = IOUtils.fromInt(channels);
 		IOUtils.putInt4(data, 12, rate);
 		IOUtils.putInt4(data, 16, bitrateUpper);
 		IOUtils.putInt4(data, 20, bitrateNominal);
