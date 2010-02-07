@@ -24,9 +24,10 @@ import org.xiph.vorbis.VorbisFile;
 
 /**
  * A class for listing and editing Comments
- *  within a Vorbis File
+ *  within a Vorbis File, much like the
+ *  vorbiscomment program.
  */
-public class VorbisComment {
+public class VorbisCommentTool {
 	public static void main(String[] args) throws Exception {
 		if(args.length == 0) {
 			printHelp();
@@ -54,9 +55,9 @@ public class VorbisComment {
 	
 	public static void printHelp() {
 		System.err.println("Use:");
-		System.err.println("  VorbisComment [-l] file.ogg");
-		System.err.println("  VorbisComment -a [-t name=value] [-t name=value] in.ogg [out.ogg]");
-		System.err.println("  VorbisComment -w [-t name=value] [-t name=value] in.ogg [out.ogg]");
+		System.err.println("  VorbisCommentTool [-l] file.ogg");
+		System.err.println("  VorbisCommentTool -a [-t name=value] [-t name=value] in.ogg [out.ogg]");
+		System.err.println("  VorbisCommentTool -w [-t name=value] [-t name=value] in.ogg [out.ogg]");
 		System.exit(1);
 	}
 	

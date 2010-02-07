@@ -76,6 +76,10 @@ public class VorbisInfo extends VorbisPacket {
 		return super.write();
 	}
 	
+	public int getVersion() {
+		return version;
+	}
+	
 	public int getChannels() {
 		return channels;
 	}

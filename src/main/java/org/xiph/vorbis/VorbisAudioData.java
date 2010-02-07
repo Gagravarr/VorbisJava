@@ -19,12 +19,16 @@ import org.xiph.ogg.OggPacket;
  * Raw, compressed audio data
  */
 public class VorbisAudioData extends VorbisPacket {
+	private long granulePosition;
+	
 	public VorbisAudioData(OggPacket pkt) {
 		super(pkt);
+		granulePosition = pkt.getGranulePosition();
 	}
 	public VorbisAudioData(byte[] data) {
 		super();
 		setData(data);
+		granulePosition = -1;
 	}
 
 	/**
@@ -32,9 +36,9 @@ public class VorbisAudioData extends VorbisPacket {
 	 *  this wasn't read from a file
 	 */
 	public long getGranulePosition() {
-		if(getOggPacket() != null) {
-			return getOggPacket().getGranulePosition();
-		}
-		return -1;
+		return granulePosition;
+	}
+	public void setGranulePosition(long granulePosition) {
+		this.granulePosition = granulePosition;
 	}
 }

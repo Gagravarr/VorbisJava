@@ -52,9 +52,15 @@ public class VorbisFile {
 	 * Opens the given file for reading
 	 */
 	public VorbisFile(OggFile ogg) throws IOException {
+		this(ogg.getPacketReader());
 		this.ogg = ogg;
+	}
+	/**
+	 * Loads a Vorbis File from the given packet reader.
+	 */
+	public VorbisFile(OggPacketReader r) throws IOException {	
+		this.r = r;
 		
-		r = ogg.getPacketReader();
 		OggPacket p = null;
 		while( (p = r.getNextPacket()) != null ) {
 			if(p.isBeginningOfStream() && p.getData().length > 10) {
@@ -170,7 +176,8 @@ public class VorbisFile {
 			long lastGranule = 0;
 			for(VorbisAudioData vd : writtenPackets) {
 				// Update the granule position as we go
-				if(lastGranule != vd.getGranulePosition()) {
+				if(vd.getGranulePosition() >= 0 &&
+							lastGranule != vd.getGranulePosition()) {
 					w.flush();
 					lastGranule = vd.getGranulePosition();
 					w.setGranulePosition(lastGranule);
