@@ -99,7 +99,7 @@ public class TestBasicRead extends TestCase {
 		assertEquals(true, i.hasNext());
 		p = (OggPacket)i.next();
 		
-		assertEquals(0xbb, p.getData().length);
+		assertEquals(0xdb, p.getData().length);
 		assertEquals(false, p.isBeginningOfStream());
 		assertEquals(false, p.isEndOfStream());
 		assertEquals(0x0473b45c, p.getSid());
@@ -217,7 +217,7 @@ public class TestBasicRead extends TestCase {
 		
 		// Page 2
 		p = r.getNextPacket();
-		assertEquals(0xbb, p.getData().length);
+		assertEquals(0xdb, p.getData().length);
 		assertEquals(false, p.isBeginningOfStream());
 		assertEquals(false, p.isEndOfStream());
 		assertEquals(0x0473b45c, p.getSid());

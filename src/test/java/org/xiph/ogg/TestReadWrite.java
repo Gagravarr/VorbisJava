@@ -78,7 +78,7 @@ public class TestReadWrite extends TestCase {
 		
 		// Read
 		InputStream inp = getTestFile();
-		byte[] original = new byte[4209];
+		byte[] original = new byte[4241];
 		IOUtils.readFully(inp, original);
 		assertEquals(-1, inp.read());
 		
@@ -120,7 +120,7 @@ public class TestReadWrite extends TestCase {
 		
 		// Page 2
 		p = r.getNextPacket();
-		assertEquals(0xbb, p.getData().length);
+		assertEquals(0xdb, p.getData().length);
 		assertEquals(false, p.isBeginningOfStream());
 		assertEquals(false, p.isEndOfStream());
 		assertEquals(0x0473b45c, p.getSid());

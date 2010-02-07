@@ -141,9 +141,25 @@ public class IOUtils {
 			throw new RuntimeException("Broken JVM, UTF-8 not found", e);
 		}
 	}
+	/**
+	 * Writes the string out as UTF-8
+	 */
 	public static void writeUTF8(OutputStream out, String str) throws IOException {
 		try {
 			byte[] s = str.getBytes("UTF-8");
+			out.write(s);
+		} catch(UnsupportedEncodingException e) {
+			throw new RuntimeException("Broken JVM, UTF-8 not found", e);
+		}
+	}
+	/**
+	 * Writes out a 4 byte integer of the length (in bytes!) of the
+	 *  String, followed by the String (as UTF-8)
+	 */
+	public static void writeUTF8WithLength(OutputStream out, String str) throws IOException {
+		try {
+			byte[] s = str.getBytes("UTF-8");
+			writeInt4(out, s.length);
 			out.write(s);
 		} catch(UnsupportedEncodingException e) {
 			throw new RuntimeException("Broken JVM, UTF-8 not found", e);

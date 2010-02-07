@@ -20,6 +20,7 @@ import java.util.Iterator;
 public class OggPacketReader {
 	private InputStream inp;
 	private Iterator<OggPacketData> it;
+	private OggPacket nextPacket;
 	
 	public OggPacketReader(InputStream inp) {
 		this.inp = inp;
@@ -35,8 +36,17 @@ public class OggPacketReader {
 	 *  stream it belongs to.
 	 */
 	public OggPacket getNextPacket() throws IOException {
-		// If we have a whole packet ready to go,
-		//  just use that
+		// If we skipped to a point in the stream, and
+		//  have a packet waiting, return that
+		if(nextPacket != null) {
+			OggPacket p = nextPacket;
+			nextPacket = null;
+			return p;
+		}
+		
+		// If we're already part way through a page,
+		//  then fetch the next packet. If it's a
+		//  full one, then we're done.
 		OggPacketData leftOver = null;
 		if(it != null && it.hasNext()) {
 			OggPacketData packet = it.next();
@@ -106,5 +116,43 @@ public class OggPacketReader {
 		OggPage page = new OggPage(inp);
 		it = page.getPacketIterator(leftOver);
 		return getNextPacket();
+	}
+	
+	/**
+	 * Skips forward until the first packet with a Sequence Number
+	 *  of equal or greater than that specified. Call {@link #getNextPacket()}
+	 *  to retrieve this packet.
+	 * This method advances across all streams, but only searches the
+	 *  specified one.
+	 * @param sid The ID of the stream who's packets we will search
+	 * @param sequenceNumber The sequence number we're looking for
+	 */
+	public void skipToSequenceNumber(int sid, int sequenceNumber) throws IOException {
+		OggPacket p = null;
+		while( (p = getNextPacket()) != null ) {
+			if(p.getSid() == sid && p.getSequenceNumber() >= sequenceNumber) {
+				nextPacket = p;
+				break;
+			}
+		}
+	}
+	
+	/**
+	 * Skips forward until the first packet with a Granule Position
+	 *  of equal or greater than that specified. Call {@link #getNextPacket()}
+	 *  to retrieve this packet.
+	 * This method advances across all streams, but only searches the
+	 *  specified one.
+	 * @param sid The ID of the stream who's packets we will search
+	 * @param granulePosition The granule position we're looking for
+	 */
+	public void skipToGranulePosition(int sid, long granulePosition) throws IOException {
+		OggPacket p = null;
+		while( (p = getNextPacket()) != null ) {
+			if(p.getSid() == sid && p.getGranulePosition() >= granulePosition) {
+				nextPacket = p;
+				break;
+			}
+		}
 	}
 }
