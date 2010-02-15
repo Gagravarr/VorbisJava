@@ -51,6 +51,17 @@ public class IOUtils {
 	}
 
 	
+	public static long getInt3(byte[] data) {
+		return getInt3(data, 0);
+	}
+	public static long getInt3(byte[] data, int offset) {
+        int i=offset;
+        int b0 = data[i++] & 0xFF;
+        int b1 = data[i++] & 0xFF;
+        int b2 = data[i++] & 0xFF;
+        return getInt(b0, b1, b2);
+	}
+	
 	public static long getInt4(byte[] data) {
 		return getInt4(data, 0);
 	}
@@ -79,6 +90,9 @@ public class IOUtils {
         return getInt(b0, b1, b2, b3, b4, b5, b6, b7);
 	}
 	
+	public static long getInt(int i0, int i1, int i2) {
+        return (i2 << 16) + (i1 << 8) + (i0 << 0);
+	}
 	public static long getInt(int i0, int i1, int i2, int i3) {
         return (i3 << 24) + (i2 << 16) + (i1 << 8) + (i0 << 0);
 	}
@@ -88,6 +102,18 @@ public class IOUtils {
                (i3 << 24) + (i2 << 16) + (i1 << 8) + (i0 << 0);
 	}
 	
+	
+	public static void writeInt3(OutputStream out, long v) throws IOException {
+		byte[] b3 = new byte[3];
+		putInt3(b3, 0, v);
+		out.write(b3);
+	}
+	public static void putInt3(byte[] data, int offset, long v) {
+        int i = offset;
+        data[i++] = (byte)((v >>>  0) & 0xFF);
+        data[i++] = (byte)((v >>>  8) & 0xFF);
+        data[i++] = (byte)((v >>> 16) & 0xFF);
+	}
 	
 	public static void writeInt4(OutputStream out, long v) throws IOException {
 		byte[] b4 = new byte[4];

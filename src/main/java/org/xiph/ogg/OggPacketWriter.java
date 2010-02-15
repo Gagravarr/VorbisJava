@@ -88,9 +88,8 @@ public class OggPacketWriter {
 		OggPage page = getCurrentPage(false);
 		int pos = 0;
 		while( pos < size || emptyPacket) {
-			int added = page.addPacket(packet, pos);
-			pos += added;
-			if(added < size) {
+			pos = page.addPacket(packet, pos);
+			if(pos < size) {
 				page = getCurrentPage(true);
 				page.setIsContinuation();
 			}

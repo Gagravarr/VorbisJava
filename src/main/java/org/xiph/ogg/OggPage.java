@@ -296,6 +296,12 @@ public class OggPage {
 	}
 	
 	
+	public String toString() {
+		return "Ogg Page - " + getSid() + " @ " + getSequenceNumber() +
+		    " - " + numLVs + " LVs";
+	}
+	
+	
 	public OggPacketIterator getPacketIterator() {
 		return new OggPacketIterator(null);
 	}

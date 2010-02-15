@@ -37,10 +37,11 @@ public class VorbisComments extends VorbisPacket {
 		
 		byte[] d = pkt.getData();
 		
-		int vlen = (int)IOUtils.getInt4(d, 7);
-		vendor = IOUtils.getUTF8(d, 11, vlen);
+		int dataBeginsAt = getDataBeginsAt();
+		int vlen = (int)IOUtils.getInt4(d, dataBeginsAt);
+		vendor = IOUtils.getUTF8(d, dataBeginsAt+4, vlen);
 		
-		int offset = 11 + vlen;
+		int offset = dataBeginsAt + 4 + vlen;
 		int numComments = (int)IOUtils.getInt4(d, offset);
 		offset += 4;
 		
@@ -197,7 +198,7 @@ public class VorbisComments extends VorbisPacket {
 		// Serialise the comments
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
-			baos.write(new byte[7]);
+			baos.write(new byte[getDataBeginsAt()]);
 			
 			IOUtils.writeUTF8WithLength(baos, vendor);
 			

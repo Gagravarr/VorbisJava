@@ -60,12 +60,26 @@ public abstract class VorbisPacket {
 		b[5] = (byte)'i';
 		b[6] = (byte)'s';
 	}
+	/**
+	 * "#vorbis" then data
+	 */
+	protected int getDataBeginsAt() {
+		return 7;
+	}
 	
 	/**
-	 * Creates the appropriate {@link VorbisPacket}
-	 *  instance based on the type.
+	 * Does this packet (the first in the stream) contain
+	 *  the magic string indicating that it's a vorbis
+	 *  one?
 	 */
-	public static VorbisPacket create(OggPacket packet) {
+	public static boolean isVorbisStream(OggPacket firstPacket) {
+		if(! firstPacket.isBeginningOfStream()) {
+			return false;
+		}
+		return isVorbisSpecial(firstPacket);
+	}
+	
+	private static boolean isVorbisSpecial(OggPacket packet) {
 		byte type = packet.getData()[0];
 		
 		// Ensure "vorbis" on the special types
@@ -77,24 +91,39 @@ public abstract class VorbisPacket {
 				d[4] == (byte)'b' &&
 				d[5] == (byte)'i' &&
 				d[6] == (byte)'s') {
-				switch(type) {
-				case 1:
-					return new VorbisInfo(packet);
-				case 3:
-					return new VorbisComments(packet);
-				case 5:
-					return new VorbisSetup(packet);
-				}
-//			} else {
-//				throw new IllegalArgumentException(
-//						"Magic string 'vorbis' not found for packet of type " + type +
-//						" - first few bytes are: " +
-//						Integer.toHexString(IOUtils.toInt(d[1])) + " " +
-//						Integer.toHexString(IOUtils.toInt(d[2])) + " " +
-//						Integer.toHexString(IOUtils.toInt(d[3])) + " " +
-//						Integer.toHexString(IOUtils.toInt(d[4])) + " "
-//				);
+				
+				return true;
 			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Creates the appropriate {@link VorbisPacket}
+	 *  instance based on the type.
+	 */
+	public static VorbisPacket create(OggPacket packet) {
+		byte type = packet.getData()[0];
+		
+		// Special header types detection
+		if(isVorbisSpecial(packet)) {
+			switch(type) {
+			case 1:
+				return new VorbisInfo(packet);
+			case 3:
+				return new VorbisComments(packet);
+			case 5:
+				return new VorbisSetup(packet);
+			}
+//		} else {
+//			throw new IllegalArgumentException(
+//					"Magic string 'vorbis' not found for packet of type " + type +
+//					" - first few bytes are: " +
+//					Integer.toHexString(IOUtils.toInt(d[1])) + " " +
+//					Integer.toHexString(IOUtils.toInt(d[2])) + " " +
+//					Integer.toHexString(IOUtils.toInt(d[3])) + " " +
+//					Integer.toHexString(IOUtils.toInt(d[4])) + " "
+//			);
 		}
 		
 		return new VorbisAudioData(packet);

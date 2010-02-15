@@ -21,6 +21,7 @@ import java.io.IOException;
 import org.xiph.ogg.OggFile;
 import org.xiph.ogg.OggPacket;
 import org.xiph.ogg.OggPacketReader;
+import org.xiph.vorbis.VorbisPacket;
 
 /**
  * Prints out information on the Steams within
@@ -71,20 +72,15 @@ public class OggInfo {
 						Integer.toHexString(p.getSid()) + " (" + p.getSid() + ")");
 				
 				if(p.getData() != null && p.getData().length > 10) {
-					if(p.getData()[1] == (byte)'v' &&
-						p.getData()[2] == (byte)'o' &&
-						p.getData()[3] == (byte)'r' &&
-						p.getData()[4] == (byte)'b' &&
-						p.getData()[5] == (byte)'i' &&
-						p.getData()[6] == (byte)'s') {
+					if(VorbisPacket.isVorbisStream(p)) {
 						System.out.println("\tVorbis Info detected");
 					}
 					if(p.getData()[1] == (byte)'F' &&
 							p.getData()[2] == (byte)'L' &&
 							p.getData()[3] == (byte)'A' &&
 							p.getData()[4] == (byte)'C') {
-							System.out.println("\tFLAC Info detected");
-						}
+						System.out.println("\tFLAC Info detected");
+					}
 				}
 			} else if(p.isEndOfStream()) {
 				System.out.println("Stream " + Integer.toHexString(p.getSid()) + 
