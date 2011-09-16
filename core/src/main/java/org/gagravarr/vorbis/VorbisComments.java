@@ -133,7 +133,36 @@ public class VorbisComments extends VorbisPacket {
 	public String getGenre() {
 		return getSingleComment("genre");
 	}
-	
+	/**
+	 * Returns the (first) track number as a literal
+	 *  string, eg "4" or "09", or null if
+	 *  no track number tags present;
+	 */
+	public String getTrackNumber() {
+	   return getSingleComment("tracknumber");
+	}
+	/**
+	 * Returns the track number, as converted into
+	 *  an integer, or -1 if not available / not numeric
+	 */
+	public int getTrackNumberNumeric() {
+	   String number = getTrackNumber();
+	   
+	   if(number == null) return -1;
+	   try {
+	      return Integer.parseInt(number);
+	   } catch(NumberFormatException e) {
+	      return -1;
+	   }
+	}
+	/**
+	 * Returns the (first) Date, or null if no
+	 *  Date tags present. Dates are normally stored
+	 *  in ISO8601 date format, i.e. YYYY-MM-DD 
+	 */
+	public String getDate() {
+	   return getSingleComment("date");
+	}
 	
 	/**
 	 * Returns all comments for a given tag, in

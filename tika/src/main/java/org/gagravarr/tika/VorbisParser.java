@@ -26,6 +26,7 @@ import org.apache.tika.metadata.XMPDM;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.AbstractParser;
 import org.apache.tika.parser.ParseContext;
+import org.apache.tika.sax.XHTMLContentHandler;
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.vorbis.VorbisComments;
 import org.gagravarr.vorbis.VorbisFile;
@@ -52,16 +53,24 @@ public class VorbisParser extends AbstractParser {
          throws IOException, TikaException, SAXException {
       OggFile ogg = new OggFile(stream);
       VorbisFile vorbis = new VorbisFile(ogg);
-      
+
+      // Start
+      XHTMLContentHandler xhtml = new XHTMLContentHandler(handler, metadata);
+      xhtml.startDocument();
+
       // Extract the common Vorbis info
       extractInfo(metadata, vorbis.getInfo());
       
       // Extract any Vorbis comments
-      extractComments(metadata, handler, vorbis.getComment());
+      extractComments(metadata, xhtml, vorbis.getComment());
+      
+      // Finish
+      xhtml.endDocument();
    }
    
    protected void extractInfo(Metadata metadata, VorbisInfo info) throws TikaException {
       metadata.set(XMPDM.AUDIO_SAMPLE_RATE, (int)info.getRate());
+      metadata.add("version", "Vorbis " + info.getVersion());
       
       if(info.getChannels() == 1) {
          metadata.set(XMPDM.AUDIO_CHANNEL_TYPE, "Mono"); 
@@ -74,8 +83,51 @@ public class VorbisParser extends AbstractParser {
       }
    }
    
-   protected void extractComments(Metadata metadata, ContentHandler handler,
+   protected void extractComments(Metadata metadata, XHTMLContentHandler xhtml,
          VorbisComments comments) throws TikaException, SAXException {
-      // TODO
+      // Get the specific know comments
+      metadata.set(Metadata.TITLE, comments.getTitle());
+      metadata.set(Metadata.AUTHOR, comments.getArtist());
+      metadata.set(XMPDM.ARTIST, comments.getArtist());
+      metadata.set(XMPDM.ALBUM, comments.getAlbum());
+      metadata.set(XMPDM.GENRE, comments.getGenre());
+      metadata.set(XMPDM.RELEASE_DATE, comments.getDate());
+      metadata.add("vendor", comments.getVendor());
+      
+      for(String comment : comments.getComments("comment")) {
+         metadata.add(XMPDM.LOG_COMMENT.getName(), comment);
+      }
+      
+      // Grab the rest just in case
+      List<String> done = Arrays.asList(new String[] {
+         "title", "author", "artist", "album", "genre", "date",
+         "vendor", "tracknumber", "comment"
+      });
+      for(String key : comments.getAllComments().keySet()) {
+         if(! done.contains(key)) {
+            for(String value : comments.getAllComments().get(key)) {
+               metadata.add(key, value);
+            }
+         }
+      }
+
+      // Output as text too
+      xhtml.element("h1", comments.getTitle());
+      xhtml.element("p", comments.getArtist());
+
+       // Album and Track number
+       if (comments.getTrackNumber() != null) {
+           xhtml.element("p", comments.getAlbum() + ", track " + comments.getTrackNumber());
+           metadata.set(XMPDM.TRACK_NUMBER, comments.getTrackNumber());
+       } else {
+           xhtml.element("p", comments.getAlbum());
+       }
+       
+       // A few other bits
+       xhtml.element("p", comments.getDate());
+       for(String comment : comments.getComments("comment")) {
+          xhtml.element("p", comment);
+       }
+       xhtml.element("p", comments.getGenre());
    }
 }
