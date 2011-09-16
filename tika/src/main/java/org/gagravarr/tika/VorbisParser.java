@@ -22,9 +22,14 @@ import java.util.Set;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
+import org.apache.tika.metadata.XMPDM;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.AbstractParser;
 import org.apache.tika.parser.ParseContext;
+import org.gagravarr.ogg.OggFile;
+import org.gagravarr.vorbis.VorbisComments;
+import org.gagravarr.vorbis.VorbisFile;
+import org.gagravarr.vorbis.VorbisInfo;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -45,6 +50,32 @@ public class VorbisParser extends AbstractParser {
          InputStream stream, ContentHandler handler,
          Metadata metadata, ParseContext context)
          throws IOException, TikaException, SAXException {
+      OggFile ogg = new OggFile(stream);
+      VorbisFile vorbis = new VorbisFile(ogg);
+      
+      // Extract the common Vorbis info
+      extractInfo(metadata, vorbis.getInfo());
+      
+      // Extract any Vorbis comments
+      extractComments(metadata, handler, vorbis.getComment());
+   }
+   
+   protected void extractInfo(Metadata metadata, VorbisInfo info) throws TikaException {
+      metadata.set(XMPDM.AUDIO_SAMPLE_RATE, (int)info.getRate());
+      
+      if(info.getChannels() == 1) {
+         metadata.set(XMPDM.AUDIO_CHANNEL_TYPE, "Mono"); 
+      } else if(info.getChannels() == 2) {
+         metadata.set(XMPDM.AUDIO_CHANNEL_TYPE, "Stereo");
+      } else if(info.getChannels() == 5) {
+         metadata.set(XMPDM.AUDIO_CHANNEL_TYPE, "5.1");
+      } else if(info.getChannels() == 7) {
+         metadata.set(XMPDM.AUDIO_CHANNEL_TYPE, "7.1");
+      }
+   }
+   
+   protected void extractComments(Metadata metadata, ContentHandler handler,
+         VorbisComments comments) throws TikaException, SAXException {
       // TODO
    }
 }
