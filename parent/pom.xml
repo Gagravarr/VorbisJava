@@ -18,13 +18,13 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.xiph</groupId>
+  <groupId>org.gagravarr</groupId>
   <artifactId>vorbis-java-parent</artifactId>
   <version>0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>Xiph Ogg and Vorbis for Java</name>
-  <url>http://xiph.org</url>
+  <name>Ogg and Vorbis toolkit for Java</name>
+  <url>http://gagravarr.org</url>
   <description>
     Ogg and Vorbis toolkit and tools for Java
   </description>

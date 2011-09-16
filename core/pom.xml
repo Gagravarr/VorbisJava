@@ -18,12 +18,16 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.xiph</groupId>
-  <artifactId>vorbis-java</artifactId>
+  <parent>
+     <groupId>org.gagravarr</groupId>
+     <artifactId>vorbis-java-parent</artifactId>
+     <version>0.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>vorbis-java-core</artifactId>
   <packaging>jar</packaging>
-  <version>0.1-SNAPSHOT</version>
-  <name>Xiph Ogg and Vorbis for Java</name>
-  <url>http://xiph.org</url>
+  <name>Ogg and Vorbis for Java, Core</name>
+  <url>http://gagravarr.org</url>
 
   <dependencies>
     <dependency>
@@ -33,18 +37,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.0.2</version>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>

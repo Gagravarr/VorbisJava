@@ -19,15 +19,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-     <groupId>org.xiph</groupId>
+     <groupId>org.gagravarr</groupId>
      <artifactId>vorbis-java-parent</artifactId>
      <version>0.1-SNAPSHOT</version>
   </parent>
 
-  <name>Xiph Ogg and Vorbis for Java</name>
+  <name>Ogg and Vorbis toolkit for Java</name>
   <artifactId>vorbis-java</artifactId>
   <packaging>pom</packaging>
-  <url>http://xiph.org</url>
+  <url>http://gagravarr.org</url>
 
 <!--
   <modules>
@@ -36,18 +36,4 @@
     <module>tika</module>
   <modules>
 -->
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.0.2</version>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>
