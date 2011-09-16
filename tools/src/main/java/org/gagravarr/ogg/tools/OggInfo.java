@@ -18,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.gagravarr.flac.FlacOggPacket;
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
@@ -75,10 +76,7 @@ public class OggInfo {
 					if(VorbisPacket.isVorbisStream(p)) {
 						System.out.println("\tVorbis Info detected");
 					}
-					if(p.getData()[1] == (byte)'F' &&
-							p.getData()[2] == (byte)'L' &&
-							p.getData()[3] == (byte)'A' &&
-							p.getData()[4] == (byte)'C') {
+					if(FlacOggPacket.isFlacStream(p)) {
 						System.out.println("\tFLAC Info detected");
 					}
 				}

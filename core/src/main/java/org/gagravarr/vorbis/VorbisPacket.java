@@ -15,42 +15,20 @@ package org.gagravarr.vorbis;
 
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
+import org.gagravarr.ogg.HighLevelStreamPacket;
 
 /**
  * Parent of all Vorbis packets
  */
-public abstract class VorbisPacket {
-	private OggPacket oggPacket;
-	private byte[] data;
-	
+public abstract class VorbisPacket extends HighLevelStreamPacket {
 	protected VorbisPacket(OggPacket oggPacket) {
-		this.oggPacket = oggPacket;
+	   super(oggPacket);
 	}
 	protected VorbisPacket() {
-		this.oggPacket = null;
+	   super();
 	}
-	
-	protected OggPacket getOggPacket() {
-		return oggPacket;
-	}
-	
-	public byte[] getData() {
-		if(data != null) {
-			return data;
-		}
-		if(oggPacket != null) {
-			return oggPacket.getData();
-		}
-		return null;
-	}
-	public void setData(byte[] data) {
-		this.data = data;
-	}
-	
-	public OggPacket write() {
-		this.oggPacket = new OggPacket(getData());
-		return this.oggPacket;
-	}
+
+	@Override
 	protected void populateStart(byte[] b, int type) {
 		b[0] = IOUtils.fromInt(type);
 		b[1] = (byte)'v';
@@ -63,6 +41,7 @@ public abstract class VorbisPacket {
 	/**
 	 * "#vorbis" then data
 	 */
+   @Override
 	protected int getDataBeginsAt() {
 		return 7;
 	}
