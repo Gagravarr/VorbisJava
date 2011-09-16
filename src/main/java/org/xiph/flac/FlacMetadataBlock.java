@@ -15,8 +15,11 @@ package org.xiph.flac;
 
 
 /**
- * These come before the audio data.
- * Made up of a 1 byte type and a 3 byte length
+ * This comes before the audio data.
+ * Made up of a series of:
+ *  1 byte type
+ *  3 byte length
+ *  <data>
  */
 public class FlacMetadataBlock {
 	public static final int STREAMINFO = 0;

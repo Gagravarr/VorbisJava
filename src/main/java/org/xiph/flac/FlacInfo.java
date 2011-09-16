@@ -52,4 +52,6 @@ public class FlacInfo {
 	 */
 	private long numberOfSamples;
 	/* <128> MD5 signature of the unencoded audio data. */
+	
+	
 }
