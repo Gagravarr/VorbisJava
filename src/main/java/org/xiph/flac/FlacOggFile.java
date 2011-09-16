@@ -19,12 +19,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.xiph.ogg.OggFile;
 import org.xiph.ogg.OggPacket;
 import org.xiph.ogg.OggPacketReader;
-import org.xiph.ogg.OggPacketWriter;
+import org.xiph.vorbis.VorbisAudioData;
+import org.xiph.vorbis.VorbisComments;
+import org.xiph.vorbis.VorbisInfo;
+import org.xiph.vorbis.VorbisPacket;
+import org.xiph.vorbis.VorbisSetup;
 
 /**
  * This lets you work with FLAC files that
@@ -113,7 +116,7 @@ public class FlacOggFile extends FlacFile {
 		this.setup = setup;
 	}
 	
-	public VorbisAudioData getNextAudioPacket() throws IOException {
+	public FlacAudioData getNextAudioPacket() throws IOException {
 		OggPacket p = null;
 		VorbisPacket vp = null;
 		while( (p = r.getNextPacketWithSid(sid)) != null ) {
