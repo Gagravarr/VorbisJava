@@ -24,8 +24,17 @@
      <version>0.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>vorbis-java-core</artifactId>
+  <artifactId>vorbis-java-tools</artifactId>
   <packaging>jar</packaging>
-  <name>Ogg and Vorbis for Java, Core</name>
+  <name>Ogg and Vorbis for Java, Tools</name>
   <url>http://gagravarr.org</url>
+
+  <dependencies>
+   <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>vorbis-java-core</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 </project>
