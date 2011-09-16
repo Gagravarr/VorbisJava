@@ -9,8 +9,11 @@
 .project
 .classpath
 
-# Skip the build directory
+# Skip the build directories
 /target/
+/core/target/
+/tika/target/
+/tools/target/
 
 # Skip the eclipse static includes
 /lib/
