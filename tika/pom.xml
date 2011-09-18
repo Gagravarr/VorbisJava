@@ -35,13 +35,20 @@
   </properties>
 
   <dependencies>
-   <dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>vorbis-java-core</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-   <dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>vorbis-java-core</artifactId>
+      <version>${project.version}</version>
+      <classifier>tests</classifier>
+      <scope>test,provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-core</artifactId>
       <version>${tika.version}</version>

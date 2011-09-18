@@ -69,7 +69,7 @@ public class FlacParser extends AbstractParser {
    
    protected void extractInfo(Metadata metadata, FlacInfo info) throws TikaException {
       metadata.set(XMPDM.AUDIO_SAMPLE_RATE, (int)info.getSampleRate());
-      // TODO info.getBitsPerSample();
+      //metadata.set(XMPDM.AUDIO_SAMPLE_TYPE, info.getBitsPerSample()+"int"); // TODO
       
       VorbisParser.extractChannelInfo(metadata, info.getNumChannels());
    }
