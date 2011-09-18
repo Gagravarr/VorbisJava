@@ -16,7 +16,9 @@ package org.gagravarr.ogg;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -57,8 +59,30 @@ public class OggFile {
 	 * Will begin processing the file and notifying
 	 *  your listener immediately.
 	 */
-	public OggFile(InputStream input, OggStreamListener listener) {
-		// TODO
+	public OggFile(InputStream input, OggStreamListener listener) throws IOException {
+	   this(input);
+	   
+	   Map<Integer,OggStreamReader[]> readers = new HashMap<Integer, OggStreamReader[]>();
+	   OggPacketReader reader = getPacketReader();
+	   OggPacket packet = null;
+	   while( (packet = reader.getNextPacket()) != null ) {
+	      if(packet.isBeginningOfStream()) {
+	         OggStreamReader[] streams = listener.processNewStream(packet.getSid(), packet.getData());
+	         if(streams != null && streams.length > 0) {
+	            readers.put(packet.getSid(), streams);
+	         }
+	      } else {
+	         OggStreamReader[] streams = readers.get(packet.getSid());
+	         if(streams != null) {
+	            for(OggStreamReader r : streams) {
+	               r.processPacket(packet);
+	            }
+	         }
+	      }
+	      if(packet.isEndOfStream()) {
+	         listener.processStreamEnd(packet.getSid());
+	      }
+	   }
 	}
 	
 	
