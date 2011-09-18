@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.tika.exception.TikaException;
+import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.AbstractParser;
@@ -51,7 +52,12 @@ public class OggParser extends AbstractParser {
          InputStream stream, ContentHandler handler,
          Metadata metadata, ParseContext context)
          throws IOException, TikaException, SAXException {
-      OggFile ogg = new OggFile(stream);
+      // We potentially need to re-wind and process it again
+      TikaInputStream tikaStream = TikaInputStream.get(stream);
+      tikaStream.mark((int)tikaStream.getLength());
+      
+      // Process for the first time
+      OggFile ogg = new OggFile(tikaStream);
       
       // For tracking
       int streams = 0;
@@ -83,11 +89,18 @@ public class OggParser extends AbstractParser {
       
       // Can we specialise?
       if(vorbisCount == 1 && flacCount == 0) {
-         // TODO Pass to VorbisParser
+         tikaStream.reset();
+         VorbisParser vorbis = new VorbisParser();
+         vorbis.parse(tikaStream, handler, metadata);
       } else if(flacCount == 1 && vorbisCount == 0) {
-         // TODO Pass to FlacParser
+         tikaStream.reset();
+         FlacParser flac = new FlacParser();
+         flac.parse(tikaStream, handler, metadata);
       } else if(streams > 0) {
          // TODO Handle each one in turn or something
       }
+      
+      // All done
+      tikaStream.close();
    }
 }
