@@ -16,9 +16,9 @@ package org.gagravarr.flac;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.gagravarr.ogg.HighLevelOggStreamPacket;
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
-import org.gagravarr.ogg.HighLevelOggStreamPacket;
 
 /**
  * The first Flac packet stored in an Ogg stream is 
@@ -52,7 +52,7 @@ public class FlacFirstOggPacket extends HighLevelOggStreamPacket {
       // 1-4 = FLAC
       majorVersion = IOUtils.toInt(data[5]);
       minorVersion = IOUtils.toInt(data[6]);
-      numberOfHeaderBlocks = IOUtils.getInt2(data, 7);
+      numberOfHeaderBlocks = LittleEndianUtils.getLEInt2(data, 7);
       // 9-12 = fLaC
       
       // Then it's the info
@@ -66,7 +66,7 @@ public class FlacFirstOggPacket extends HighLevelOggStreamPacket {
          baos.write("FLAC".getBytes("ASCII"));
          baos.write(majorVersion);
          baos.write(minorVersion);
-         IOUtils.writeInt2(baos, numberOfHeaderBlocks);
+         LittleEndianUtils.writeLEInt2(baos, numberOfHeaderBlocks);
          baos.write("fLaC".getBytes("ASCII"));
          baos.write(info.getData());
       } catch(IOException e) {

@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.gagravarr.ogg.IOUtils;
+import org.gagravarr.flac.LittleEndianUtils;
 
 
 /**
@@ -46,11 +47,11 @@ public abstract class FlacMetadataBlock extends FlacFrame {
       if(typeI == -1) {
          throw new IllegalArgumentException();
       }
-      byte type = IOUtils.fromInt(typeI);
+      byte type = LittleEndianUtils.fromInt(typeI);
       
       byte[] l = new byte[3];
       IOUtils.readFully(inp, l);
-      int length = (int)IOUtils.getInt3(l);
+      int length = (int)LittleEndianUtils.getLEInt3(l);
       
       byte[] data = new byte[length];
       IOUtils.readFully(inp, data);
@@ -94,7 +95,7 @@ public abstract class FlacMetadataBlock extends FlacFrame {
       
       // Fix the length
       byte[] data = baos.toByteArray();
-      IOUtils.putInt3(data, 1, data.length);
+      LittleEndianUtils.putLEInt3(data, 1, data.length);
       
       // All done
       return data;

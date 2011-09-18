@@ -16,9 +16,6 @@ package org.gagravarr.flac;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.gagravarr.ogg.IOUtils;
-
-
 /**
  * The Stream Info metadata block holds useful
  *  information on the audio data of the file
@@ -84,23 +81,23 @@ public class FlacInfo extends FlacMetadataBlock {
 	   super(STREAMINFO);
 	   
 	   // Grab the range numbers
-	   minimumBlockSize = IOUtils.getInt(
-	         IOUtils.toInt(data[offset++]),
-	         IOUtils.toInt(data[offset++])
+	   minimumBlockSize = LittleEndianUtils.getLEInt(
+	         LittleEndianUtils.toInt(data[offset++]),
+	         LittleEndianUtils.toInt(data[offset++])
 	   );
-      maximumBlockSize = IOUtils.getInt(
-            IOUtils.toInt(data[offset++]),
-            IOUtils.toInt(data[offset++])
+      maximumBlockSize = LittleEndianUtils.getLEInt(
+            LittleEndianUtils.toInt(data[offset++]),
+            LittleEndianUtils.toInt(data[offset++])
       );
-      minimumFrameSize = (int)IOUtils.getInt(
-            IOUtils.toInt(data[offset++]),
-            IOUtils.toInt(data[offset++]),
-            IOUtils.toInt(data[offset++])
+      minimumFrameSize = (int)LittleEndianUtils.getLEInt(
+            LittleEndianUtils.toInt(data[offset++]),
+            LittleEndianUtils.toInt(data[offset++]),
+            LittleEndianUtils.toInt(data[offset++])
       );
-      maximumFrameSize = (int)IOUtils.getInt(
-            IOUtils.toInt(data[offset++]),
-            IOUtils.toInt(data[offset++]),
-            IOUtils.toInt(data[offset++])
+      maximumFrameSize = (int)LittleEndianUtils.getLEInt(
+            LittleEndianUtils.toInt(data[offset++]),
+            LittleEndianUtils.toInt(data[offset++]),
+            LittleEndianUtils.toInt(data[offset++])
       );
       
       // TODO Parse the next bit
@@ -116,10 +113,10 @@ public class FlacInfo extends FlacMetadataBlock {
 	@Override
 	protected void write(OutputStream out) throws IOException {
       // Write the frame numbers
-      IOUtils.writeInt2(out, minimumBlockSize);
-      IOUtils.writeInt2(out, maximumBlockSize);
-      IOUtils.writeInt3(out, minimumFrameSize);
-      IOUtils.writeInt3(out, maximumFrameSize);
+      LittleEndianUtils.writeLEInt2(out, minimumBlockSize);
+      LittleEndianUtils.writeLEInt2(out, maximumBlockSize);
+      LittleEndianUtils.writeLEInt3(out, minimumFrameSize);
+      LittleEndianUtils.writeLEInt3(out, maximumFrameSize);
       
       // Write the rates/channels/samples
       // TODO
