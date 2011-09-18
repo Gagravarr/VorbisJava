@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.tika.exception.TikaException;
-import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.AbstractParser;
@@ -36,12 +35,14 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 /**
- * Parser for non audio OGG files
+ * General parser for non audio OGG files.
+ * 
+ * We provide a detector which should help specialise Audio OGG
+ *  files to their appropriate types, so we just handle the rest
  */
 public class OggParser extends AbstractParser {
    private static List<MediaType> TYPES = Arrays.asList(new MediaType[] {
-         MediaType.video("ogg"),
-         MediaType.application("ogg"),
+         OggDetector.OGG_GENERAL, OggDetector.OGG_VIDEO 
    });
    
    public Set<MediaType> getSupportedTypes(ParseContext context) {
@@ -52,12 +53,8 @@ public class OggParser extends AbstractParser {
          InputStream stream, ContentHandler handler,
          Metadata metadata, ParseContext context)
          throws IOException, TikaException, SAXException {
-      // We potentially need to re-wind and process it again
-      TikaInputStream tikaStream = TikaInputStream.get(stream);
-      tikaStream.mark((int)tikaStream.getLength());
-      
-      // Process for the first time
-      OggFile ogg = new OggFile(tikaStream);
+      // Process the file straight through once
+      OggFile ogg = new OggFile(stream);
       
       // For tracking
       int streams = 0;
@@ -87,20 +84,9 @@ public class OggParser extends AbstractParser {
          }
       }
       
-      // Can we specialise?
-      if(vorbisCount == 1 && flacCount == 0) {
-         tikaStream.reset();
-         VorbisParser vorbis = new VorbisParser();
-         vorbis.parse(tikaStream, handler, metadata);
-      } else if(flacCount == 1 && vorbisCount == 0) {
-         tikaStream.reset();
-         FlacParser flac = new FlacParser();
-         flac.parse(tikaStream, handler, metadata);
-      } else if(streams > 0) {
-         // TODO Handle each one in turn or something
-      }
-      
-      // All done
-      tikaStream.close();
+      // Report what little we can do
+      metadata.add("streams-total", Integer.toString(streams));
+      metadata.add("streams-vorbis", Integer.toString(vorbisCount));
+      metadata.add("streams-flac", Integer.toString(flacCount));
    }
 }

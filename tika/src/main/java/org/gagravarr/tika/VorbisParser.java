@@ -39,8 +39,7 @@ import org.xml.sax.SAXException;
  */
 public class VorbisParser extends AbstractParser {
    private static List<MediaType> TYPES = Arrays.asList(new MediaType[] {
-         MediaType.audio("ogg"),
-         MediaType.audio("vorbis"),
+         OggDetector.OGG_AUDIO, OggDetector.OGG_VORBIS 
    });
    
    public Set<MediaType> getSupportedTypes(ParseContext context) {
