@@ -48,14 +48,15 @@ public class FlacFirstOggPacket extends HighLevelOggStreamPacket {
       
       // Extract the info
       byte[] data = getData();
-      // 0-4 = FLAC
-      majorVersion = IOUtils.toInt(data[4]);
-      minorVersion = IOUtils.toInt(data[5]);
-      numberOfHeaderBlocks = IOUtils.getInt2(data, 6);
-      // 8-12 = fLaC
+      // 0 = 0x7f
+      // 1-4 = FLAC
+      majorVersion = IOUtils.toInt(data[5]);
+      minorVersion = IOUtils.toInt(data[6]);
+      numberOfHeaderBlocks = IOUtils.getInt2(data, 7);
+      // 9-12 = fLaC
       
       // Then it's the info
-      info = new FlacInfo(data, 12);
+      info = new FlacInfo(data, 13);
    }
 
    @Override

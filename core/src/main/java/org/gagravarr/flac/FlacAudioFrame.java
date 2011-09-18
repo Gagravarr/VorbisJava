@@ -13,7 +13,6 @@
  */
 package org.gagravarr.flac;
 
-import org.gagravarr.ogg.OggPacket;
 
 /**
  * Raw, compressed audio data.
@@ -26,6 +25,7 @@ public class FlacAudioFrame extends FlacFrame {
    public FlacAudioFrame(byte[] data) {
       this.data = data;
    }
+   // TODO InputStream based constructor?
    
    public byte[] getData() {
       return data;
