@@ -140,6 +140,20 @@ public class OggPacketReader {
 	}
 	
 	/**
+	 * Un-reads a packet, leaving it ready to be feteched by the
+	 *  next call to {@link #getNextPacket()}.
+	 * Only one packet may be unread.
+	 * Normally used when identifying a stream, to leave the
+	 *  initial packet ready for a decoder 
+	 */
+	public void unreadPacket(OggPacket packet) {
+	   if(nextPacket != null) {
+	      throw new IllegalStateException("Can't un-read twice");
+	   }
+	   nextPacket = packet;
+	}
+	
+	/**
 	 * Skips forward until the first packet with a Sequence Number
 	 *  of equal or greater than that specified. Call {@link #getNextPacket()}
 	 *  to retrieve this packet.
