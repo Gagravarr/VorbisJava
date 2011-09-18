@@ -103,11 +103,16 @@ public class FlacInfo extends FlacMetadataBlock {
       );
       
       // The next bit is stored LE, bit packed
-      byte[] next = new byte[8];
-      System.arraycopy(data, offset, next, 0, 8);
+      int[] next = new int[8];
+      for(int i=0; i<8; i++) {
+         next[i] = IOUtils.toInt(data[i+offset]);
+      }
       offset += 8;
-      
-      
+      sampleRate = (next[0]<<12) + (next[1]<<4) + ((next[2]&0xf0)>>4);
+      numChannels = ((next[2] & 0x0e) >> 1) + 1;
+      bitsPerSample = ((next[2]&0x01)<<4) + ((next[3]&0xf0)>>4) + 1;
+      numberOfSamples = ((next[3]&0x0f)<<30) + (next[4]<<24) + 
+                        (next[5]<<16) + (next[6]<<8) + next[7];
       
       // Get the signature
       signature = new byte[16];

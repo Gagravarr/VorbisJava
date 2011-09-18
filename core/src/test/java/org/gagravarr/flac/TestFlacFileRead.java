@@ -55,11 +55,12 @@ public class TestFlacFileRead extends TestCase {
       assertEquals(44100, info.getSampleRate());
       assertEquals(16, info.getBitsPerSample());
       assertEquals(2, info.getNumChannels());
+      assertEquals(0x3c0, info.getNumberOfSamples());
 
       // Check the basics of the comments
       FlacTags tags = flac.getTags();
       assertNotNull(tags);
-      assertEquals(8, tags.getAllComments().size());
+      assertEquals(7, tags.getAllComments().size());
       assertEquals("Test Album", tags.getAlbum());
 
       // TODO Check other metadata
@@ -89,11 +90,12 @@ public class TestFlacFileRead extends TestCase {
       assertEquals(44100, info.getSampleRate());
       assertEquals(16, info.getBitsPerSample());
       assertEquals(2, info.getNumChannels());
+      assertEquals(0x3c0, info.getNumberOfSamples());
 
       // Check the basics of the comments
       FlacTags tags = flac.getTags();
       assertNotNull(tags);
-      assertEquals(8, tags.getAllComments().size());
+      assertEquals(7, tags.getAllComments().size());
       assertEquals("Test Album", tags.getAlbum());
 
       // TODO Check other metadata
