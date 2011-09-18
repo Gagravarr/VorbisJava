@@ -13,6 +13,11 @@
  */
 package org.gagravarr.flac;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import org.gagravarr.ogg.IOUtils;
+
 
 /**
  * The Stream Info metadata block holds useful
@@ -36,7 +41,9 @@ public class FlacInfo {
 	 */
 	private int maximumFrameSize;
 	/**
-	 * <20> Sample rate in Hz. Though 20 bits are available, the maximum sample rate is limited by the structure of frame headers to 655350Hz. Also, a value of 0 is invalid.
+	 * <20> Sample rate in Hz. Though 20 bits are available, the maximum sample
+	 *  rate is limited by the structure of frame headers to 655350Hz. 
+	 *  Also, a value of 0 is invalid.
 	 */
 	private int sampleRate;
 	/**
@@ -44,14 +51,154 @@ public class FlacInfo {
 	 */
 	private int numChannels;
 	/**
-	 * <5> (bits per sample)-1. FLAC supports from 4 to 32 bits per sample. Currently the reference encoder and decoders only support up to 24 bits per sample.
+	 * <5> (bits per sample)-1. FLAC supports from 4 to 32 bits per sample. 
+	 * Currently the reference encoder and decoders only support up to 
+	 *  24 bits per sample.
 	 */
 	private int bitsPerSample;
 	/**
-	 * <36> Total samples in stream. 'Samples' means inter-channel sample, i.e. one second of 44.1Khz audio will have 44100 samples regardless of the number of channels. A value of zero here means the number of total samples is unknown.
+	 * <36> Total samples in stream. 'Samples' means inter-channel sample, 
+	 *  i.e. one second of 44.1Khz audio will have 44100 samples regardless 
+	 *  of the number of channels. 
+	 * A value of zero here means the number of total samples is unknown.
 	 */
 	private long numberOfSamples;
-	/* <128> MD5 signature of the unencoded audio data. */
 	
+	/** 
+	 * <128> MD5 signature of the unencoded audio data. 
+	 */
+	private byte[] signature;
+
+	/**
+	 * Creates a new, empty info
+	 */
+	public FlacInfo() {
+	   signature = new byte[16];
+	}
 	
+	/**
+	 * Reads the Info from the specified data
+	 */
+	public FlacInfo(byte[] data, int offset) {
+	   // Grab the range numbers
+	   minimumBlockSize = IOUtils.getInt(
+	         IOUtils.toInt(data[offset++]),
+	         IOUtils.toInt(data[offset++])
+	   );
+      maximumBlockSize = IOUtils.getInt(
+            IOUtils.toInt(data[offset++]),
+            IOUtils.toInt(data[offset++])
+      );
+      minimumFrameSize = (int)IOUtils.getInt(
+            IOUtils.toInt(data[offset++]),
+            IOUtils.toInt(data[offset++]),
+            IOUtils.toInt(data[offset++])
+      );
+      maximumFrameSize = (int)IOUtils.getInt(
+            IOUtils.toInt(data[offset++]),
+            IOUtils.toInt(data[offset++]),
+            IOUtils.toInt(data[offset++])
+      );
+      
+      // TODO Parse the next bit
+      byte[] next = new byte[8];
+      System.arraycopy(data, offset, next, 0, 8);
+      offset += 8;
+      
+      // Get the signature
+      signature = new byte[16];
+      System.arraycopy(data, offset, signature, 0, 16);
+	}
+	
+	public byte[] getData() {
+	   ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	   try {
+	      // Write the frame numbers
+	      IOUtils.writeInt2(baos, minimumBlockSize);
+         IOUtils.writeInt2(baos, maximumBlockSize);
+         IOUtils.writeInt3(baos, minimumFrameSize);
+         IOUtils.writeInt3(baos, maximumFrameSize);
+         
+         // Write the rates/channels/samples
+         // TODO
+         baos.write(new byte[8]);
+         
+         // Write the signature
+         baos.write(signature);
+      } catch(IOException e) {
+         // Should never happen!
+         throw new RuntimeException(e);
+      }
+      return baos.toByteArray();
+	}
+
+	/**
+    * The minimum block size (in samples) used in the stream. 
+	 */
+   public int getMinimumBlockSize() {
+      return minimumBlockSize;
+   }
+   public void setMinimumBlockSize(int minimumBlockSize) {
+      this.minimumBlockSize = minimumBlockSize;
+   }
+
+   /**
+    * The maximum block size (in samples) used in the stream. 
+    * (Minimum blocksize == maximum blocksize) implies a fixed-blocksize stream.
+    */
+   public int getMaximumBlockSize() {
+      return maximumBlockSize;
+   }
+   public void setMaximumBlockSize(int maximumBlockSize) {
+      this.maximumBlockSize = maximumBlockSize;
+   }
+
+   public int getMinimumFrameSize() {
+      return minimumFrameSize;
+   }
+   public void setMinimumFrameSize(int minimumFrameSize) {
+      this.minimumFrameSize = minimumFrameSize;
+   }
+
+   public int getMaximumFrameSize() {
+      return maximumFrameSize;
+   }
+   public void setMaximumFrameSize(int maximumFrameSize) {
+      this.maximumFrameSize = maximumFrameSize;
+   }
+
+   public int getSampleRate() {
+      return sampleRate;
+   }
+   public void setSampleRate(int sampleRate) {
+      this.sampleRate = sampleRate;
+   }
+
+   public int getNumChannels() {
+      return numChannels;
+   }
+   public void setNumChannels(int numChannels) {
+      this.numChannels = numChannels;
+   }
+
+   public int getBitsPerSample() {
+      return bitsPerSample;
+   }
+   public void setBitsPerSample(int bitsPerSample) {
+      this.bitsPerSample = bitsPerSample;
+   }
+
+   public long getNumberOfSamples() {
+      return numberOfSamples;
+   }
+   public void setNumberOfSamples(long numberOfSamples) {
+      this.numberOfSamples = numberOfSamples;
+   }
+
+   public byte[] getSignature() {
+      return signature;
+   }
+   public void setSignature(byte[] signature) {
+      this.signature = signature;
+   }
 }

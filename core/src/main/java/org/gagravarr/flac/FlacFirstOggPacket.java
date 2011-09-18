@@ -55,7 +55,7 @@ public class FlacFirstOggPacket extends HighLevelOggStreamPacket {
       // 8-12 = fLaC
       
       // Then it's the info
-      // TODO
+      info = new FlacInfo(data, 12);
    }
 
    @Override
@@ -65,9 +65,9 @@ public class FlacFirstOggPacket extends HighLevelOggStreamPacket {
          baos.write("FLAC".getBytes("ASCII"));
          baos.write(majorVersion);
          baos.write(minorVersion);
-         IOUtils.writeInt3(baos, numberOfHeaderBlocks);
+         IOUtils.writeInt2(baos, numberOfHeaderBlocks);
          baos.write("fLaC".getBytes("ASCII"));
-//         baos.write(info.getData()); // TODO
+         baos.write(info.getData());
       } catch(IOException e) {
          // Should never happen!
          throw new RuntimeException(e);

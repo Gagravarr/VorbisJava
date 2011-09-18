@@ -18,5 +18,6 @@ package org.gagravarr.flac;
  * A Flac frame may be in a native bitstream, or wrapped in an OggPacket.
  * It may either be a {@link FlacMetadataBlock} or a {@link FlacAudioFrame}.
  */
-public class FlacFrame {
+public abstract class FlacFrame {
+   public abstract byte[] getData();
 }

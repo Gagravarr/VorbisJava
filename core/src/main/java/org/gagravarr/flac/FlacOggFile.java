@@ -121,7 +121,7 @@ public class FlacOggFile extends FlacFile {
 		OggPacket p = null;
 		VorbisPacket vp = null;
 		while( (p = r.getNextPacketWithSid(sid)) != null ) {
-		   //return new FlacAudioFrame(p.getData()); // TODO
+		   return new FlacAudioFrame(p.getData());
 		}
 		return null;
 	}
@@ -183,7 +183,7 @@ public class FlacOggFile extends FlacFile {
 //				}
 				
 				// Write the data, flushing if needed
-//				w.bufferPacket(new OggPacket(fa.getData())); // TODO
+			   w.bufferPacket(new OggPacket(fa.getData()));
 				if(w.getSizePendingFlush() > 16384) {
 					w.flush();
 				}

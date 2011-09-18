@@ -58,7 +58,7 @@ public class IOUtils {
         int i=offset;
         int b0 = data[i++] & 0xFF;
         int b1 = data[i++] & 0xFF;
-        return (int)getInt(b0, b1);
+        return getInt(b0, b1);
    }
    
 	public static long getInt3(byte[] data) {
@@ -100,7 +100,7 @@ public class IOUtils {
         return getInt(b0, b1, b2, b3, b4, b5, b6, b7);
 	}
 	
-   public static long getInt(int i0, int i1) {
+   public static int getInt(int i0, int i1) {
       return (i1 << 8) + (i0 << 0);
    }
 	public static long getInt(int i0, int i1, int i2) {
@@ -116,6 +116,17 @@ public class IOUtils {
 	}
 	
 	
+   public static void writeInt2(OutputStream out, int v) throws IOException {
+      byte[] b2 = new byte[2];
+      putInt2(b2, 0, v);
+      out.write(b2);
+   }
+   public static void putInt2(byte[] data, int offset, int v) {
+        int i = offset;
+        data[i++] = (byte)((v >>>  0) & 0xFF);
+        data[i++] = (byte)((v >>>  8) & 0xFF);
+   }
+   
 	public static void writeInt3(OutputStream out, long v) throws IOException {
 		byte[] b3 = new byte[3];
 		putInt3(b3, 0, v);

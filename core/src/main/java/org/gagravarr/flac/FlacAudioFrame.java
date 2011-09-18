@@ -16,8 +16,18 @@ package org.gagravarr.flac;
 import org.gagravarr.ogg.OggPacket;
 
 /**
- * Raw, compressed audio data
+ * Raw, compressed audio data.
+ * TODO Parse into constituent parts
  */
 public class FlacAudioFrame extends FlacFrame {
-   // TODO
+   private byte[] data; // TODO Parse
+   private long position; // TODO Is this always there?
+   
+   public FlacAudioFrame(byte[] data) {
+      this.data = data;
+   }
+   
+   public byte[] getData() {
+      return data;
+   }
 }
