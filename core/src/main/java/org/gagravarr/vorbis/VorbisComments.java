@@ -273,7 +273,7 @@ public class VorbisComments extends VorbisPacket {
 		
 		// Now fill in the header
 		byte[] data = baos.toByteArray();
-      populateMetadataHeader(data, 3, data.length);
+      populateMetadataHeader(data, TYPE_COMMENTS, data.length);
       
 		// Record the data
 		setData(data);

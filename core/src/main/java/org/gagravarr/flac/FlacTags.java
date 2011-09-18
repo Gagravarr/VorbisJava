@@ -61,12 +61,23 @@ public class FlacTags extends VorbisComments {
       
       protected FlacTagsAsMetadata(byte[] data) {
          super(VORBIS_COMMENT);
-         this.tags = new FlacTags(); // TODO
+         
+         // This is the only metadata which needs the type
+         //  and length in addition to the main data
+         byte[] d = new byte[data.length+4];
+         d[0] = FlacMetadataBlock.VORBIS_COMMENT;
+         System.arraycopy(data, 0, d, 4, data.length);
+         this.tags = new FlacTags(new OggPacket(d));
+      }
+      
+      @Override
+      public byte[] getData() {
+         return tags.getData();
       }
       
       @Override
       protected void write(OutputStream out) throws IOException {
-         out.write(tags.getData());
+         throw new IllegalStateException("Must not call directly");
       }
 
       public FlacTags getTags() {

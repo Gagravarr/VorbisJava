@@ -50,7 +50,7 @@ public class TestFlacComments extends TestCase {
    }
     
    private void doTestComments(FlacTags tags) {
-      assertEquals("Xiph.Org libVorbis I 20070622", tags.getVendor());
+      assertEquals("reference libFLAC 1.2.1 20070917", tags.getVendor());
       
       assertEquals(7, tags.getAllComments().size());
       

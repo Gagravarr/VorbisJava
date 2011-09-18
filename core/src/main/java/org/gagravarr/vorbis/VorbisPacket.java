@@ -21,6 +21,10 @@ import org.gagravarr.ogg.HighLevelOggStreamPacket;
  * Parent of all Vorbis packets
  */
 public abstract class VorbisPacket extends HighLevelOggStreamPacket {
+   public static final int TYPE_INFO = 1;
+   public static final int TYPE_COMMENTS = 3;
+   public static final int TYPE_SETUP = 5;
+   
    protected static final int HEADER_LENGTH_METADATA = 7;
    protected static final int HEADER_LENGTH_AUDIO = 0;
    
@@ -93,11 +97,11 @@ public abstract class VorbisPacket extends HighLevelOggStreamPacket {
 		// Special header types detection
 		if(isVorbisSpecial(packet)) {
 			switch(type) {
-			case 1:
+			case TYPE_INFO:
 				return new VorbisInfo(packet);
-			case 3:
+			case TYPE_COMMENTS:
 				return new VorbisComments(packet);
-			case 5:
+			case TYPE_SETUP:
 				return new VorbisSetup(packet);
 			}
 //		} else {
