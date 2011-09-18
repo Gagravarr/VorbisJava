@@ -13,6 +13,9 @@
  */
 package org.gagravarr.flac;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.HighLevelOggStreamPacket;
@@ -22,16 +25,22 @@ import org.gagravarr.ogg.HighLevelOggStreamPacket;
  *  special. This holds both the stream information,
  *  and the {@link FlacFrame}
  */
-public abstract class FlacFirstOggPacket extends HighLevelOggStreamPacket {
+public class FlacFirstOggPacket extends HighLevelOggStreamPacket {
    private int majorVersion;
    private int minorVersion;
    private int numberOfHeaderBlocks;
+   private FlacInfo info;
    
    public FlacFirstOggPacket() {
+      this(new FlacInfo());
+   }
+
+   public FlacFirstOggPacket(FlacInfo info) {
       super();
       majorVersion = 1;
       minorVersion = 0;
       numberOfHeaderBlocks = 0;
+      this.info = info;
    }
 
    public FlacFirstOggPacket(OggPacket oggPacket) {
@@ -43,6 +52,29 @@ public abstract class FlacFirstOggPacket extends HighLevelOggStreamPacket {
       majorVersion = IOUtils.toInt(data[4]);
       minorVersion = IOUtils.toInt(data[5]);
       numberOfHeaderBlocks = IOUtils.getInt2(data, 6);
+      // 8-12 = fLaC
+      
+      // Then it's the info
+      // TODO
+   }
+
+   @Override
+   public OggPacket write() {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      try {
+         baos.write("FLAC".getBytes("ASCII"));
+         baos.write(majorVersion);
+         baos.write(minorVersion);
+         IOUtils.writeInt3(baos, numberOfHeaderBlocks);
+         baos.write("fLaC".getBytes("ASCII"));
+//         baos.write(info.getData()); // TODO
+      } catch(IOException e) {
+         // Should never happen!
+         throw new RuntimeException(e);
+      }
+      
+      setData(baos.toByteArray());
+      return super.write();
    }
 
    /**
@@ -57,6 +89,10 @@ public abstract class FlacFirstOggPacket extends HighLevelOggStreamPacket {
          throw new IllegalArgumentException("Version numbers must be in the range 0-255");
       }
       this.majorVersion = majorVersion;
+   }
+   
+   public FlacInfo getInfo() {
+      return info;
    }
 
    /**

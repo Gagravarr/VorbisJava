@@ -19,15 +19,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
-import org.gagravarr.vorbis.VorbisAudioData;
-import org.gagravarr.vorbis.VorbisComments;
-import org.gagravarr.vorbis.VorbisInfo;
+import org.gagravarr.ogg.OggPacketWriter;
 import org.gagravarr.vorbis.VorbisPacket;
-import org.gagravarr.vorbis.VorbisSetup;
 
 /**
  * This lets you work with FLAC files that
@@ -36,8 +34,12 @@ import org.gagravarr.vorbis.VorbisSetup;
 public class FlacOggFile extends FlacFile {
 	private OggFile ogg;
 	private OggPacketReader r;
+   private OggPacketWriter w;
 	private int sid = -1;
 	
+	private FlacFirstOggPacket firstPacket;
+   private List<FlacAudioFrame> writtenAudio;
+   
 	/**
 	 * Opens the given file for reading
 	 */
@@ -60,20 +62,19 @@ public class FlacOggFile extends FlacFile {
 		OggPacket p = null;
 		while( (p = r.getNextPacket()) != null ) {
 			if(p.isBeginningOfStream() && p.getData().length > 10) {
-				try {
-					VorbisPacket.create(p);
-					sid = p.getSid();
-					break;
-				} catch(IllegalArgumentException e) {
-					// Not a vorbis stream, don't worry
-				}
+			   if(FlacFirstOggPacket.isFlacStream(p)) {
+			      sid = p.getSid();
+			      break;
+			   }
 			}
 		}
+
+		// First packet is special
+		firstPacket = new FlacFirstOggPacket(p);
 		
-		// First three packets are required to be info, comments, setup
-		info = (VorbisInfo)VorbisPacket.create( p );
-		comment = (VorbisComments)VorbisPacket.create( r.getNextPacketWithSid(sid) );
-		setup = (VorbisSetup)VorbisPacket.create( r.getNextPacketWithSid(sid) );
+		// Next must be the Tags (Comments)
+		
+		// Then continue until the last metadata
 		
 		// Everything else should be audio data
 	}
@@ -82,15 +83,15 @@ public class FlacOggFile extends FlacFile {
 	 * Opens for writing.
 	 */
 	public FlacOggFile(OutputStream out) {
-		this(out, new VorbisInfo(), new VorbisComments(), new VorbisSetup());   
+		this(out, new FlacInfo(), new FlacTags());   
 	}
 	/**
 	 * Opens for writing, based on the settings
 	 *  from a pre-read file. The Steam ID (SID) is
 	 *  automatically allocated for you.
 	 */
-	public FlacFile(OutputStream out, VorbisInfo info, VorbisComments comments, VorbisSetup setup) {
-		this(out, -1, info, comments, setup);
+	public FlacOggFile(OutputStream out, FlacInfo info, FlacTags tags) {
+		this(out, -1, info, tags);
 	}
 	/**
 	 * Opens for writing, based on the settings
@@ -98,7 +99,7 @@ public class FlacOggFile extends FlacFile {
 	 *  Steam ID (SID). You should only set the SID
 	 *  when copying one file to another!
 	 */
-	public FlacFile(OutputStream out, int sid, VorbisInfo info, VorbisComments comments, VorbisSetup setup) {
+	public FlacOggFile(OutputStream out, int sid, FlacInfo info, FlacTags tags) {
 		ogg = new OggFile(out);
 		
 		if(sid > 0) {
@@ -109,23 +110,18 @@ public class FlacOggFile extends FlacFile {
 			this.sid = w.getSid();
 		}
 		
-		writtenPackets = new ArrayList<VorbisAudioData>();
+		writtenAudio = new ArrayList<FlacAudioFrame>();
 		
+		this.firstPacket = new FlacFirstOggPacket(info);
 		this.info = info;
-		this.comment = comments;
-		this.setup = setup;
+		this.tags = tags;
 	}
 	
-	public FlacAudioData getNextAudioPacket() throws IOException {
+	public FlacAudioFrame getNextAudioPacket() throws IOException {
 		OggPacket p = null;
 		VorbisPacket vp = null;
 		while( (p = r.getNextPacketWithSid(sid)) != null ) {
-			vp = VorbisPacket.create(p);
-			if(vp instanceof VorbisAudioData) {
-				return (VorbisAudioData)vp;
-			} else {
-				System.err.println("Skipping non audio packet " + vp + " mid audio stream");
-			}
+		   //return new FlacAudioFrame(p.getData()); // TODO
 		}
 		return null;
 	}
@@ -146,17 +142,6 @@ public class FlacOggFile extends FlacFile {
 		return sid;
 	}
 
-	public VorbisInfo getInfo() {
-		return info;
-	}
-	public VorbisComments getComment() {
-		return comment;
-	}
-	public VorbisSetup getSetup() {
-		return setup;
-	}
-	
-	
 	/**
 	 * Buffers the given audio ready for writing
 	 *  out. Data won't be written out yet, you
@@ -164,8 +149,8 @@ public class FlacOggFile extends FlacFile {
 	 *  because we assume you'll still be populating
 	 *  the Info/Comment/Setup objects
 	 */
-	public void writeAudioData(VorbisAudioData data) {
-		writtenPackets.add(data);
+	public void writeAudioData(FlacAudioFrame data) {
+		writtenAudio.add(data);
 	}
 	
 	/**
@@ -181,22 +166,24 @@ public class FlacOggFile extends FlacFile {
 			ogg = null;
 		}
 		if(w != null) {
-			w.bufferPacket(info.write(), true);
-			w.bufferPacket(comment.write(), false);
-			w.bufferPacket(setup.write(), true);
+			w.bufferPacket(firstPacket.write(), true);
+			w.bufferPacket(tags.write(), false);
+			// TODO Write the others
+			//w.bufferPacket(setup.write(), true);
 			
 			long lastGranule = 0;
-			for(VorbisAudioData vd : writtenPackets) {
+			for(FlacAudioFrame fa : writtenAudio) {
 				// Update the granule position as we go
-				if(vd.getGranulePosition() >= 0 &&
-							lastGranule != vd.getGranulePosition()) {
-					w.flush();
-					lastGranule = vd.getGranulePosition();
-					w.setGranulePosition(lastGranule);
-				}
+			   // TODO Track this
+//				if(vd.getGranulePosition() >= 0 &&
+//							lastGranule != vd.getGranulePosition()) {
+//					w.flush();
+//					lastGranule = vd.getGranulePosition();
+//					w.setGranulePosition(lastGranule);
+//				}
 				
 				// Write the data, flushing if needed
-				w.bufferPacket(vd.write());
+//				w.bufferPacket(new OggPacket(fa.getData())); // TODO
 				if(w.getSizePendingFlush() > 16384) {
 					w.flush();
 				}

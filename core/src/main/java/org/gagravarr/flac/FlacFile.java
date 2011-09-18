@@ -17,14 +17,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
+import java.io.InputStream;
 import java.util.List;
 
+import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggFile;
-import org.gagravarr.ogg.OggPacket;
-import org.gagravarr.ogg.OggPacketReader;
-import org.gagravarr.ogg.OggPacketWriter;
 
 /**
  * This wrapper lets you work with FLAC files,
@@ -32,13 +29,27 @@ import org.gagravarr.ogg.OggPacketWriter;
  */
 public abstract class FlacFile {
 	protected FlacInfo info;
-	protected FlacComments comment;
+	protected FlacTags tags;
+	protected List<FlacMetadataBlock> otherMetadata;
 	
 	/**
 	 * Opens the given file for reading
 	 */
 	public static FlacFile open(File f) throws IOException, FileNotFoundException {
-		this(new OggFile(new FileInputStream(f)));
+		InputStream inp = new FileInputStream(f);
+		byte[] header = new byte[4];
+		IOUtils.readFully(inp, header);
+		inp.close();
+		
+		if(header[0] == (byte)'O' && header[1] == (byte)'g' &&
+		   header[2] == (byte)'g' && header[3] == (byte)'S') {
+		   return new FlacOggFile(f);
+		}
+      if(header[0] == (byte)'f' && header[1] == (byte)'L' &&
+         header[2] == (byte)'a' && header[3] == (byte)'c') {
+         return new FlacNativeFile(f);
+      }
+      throw new IllegalArgumentException("File type not recognised");
 	}
 	/**
 	 * Opens the given file for reading
@@ -47,7 +58,7 @@ public abstract class FlacFile {
 		return new FlacOggFile(ogg);
 	}
 	
-	public abstract FlacAudioData getNextAudioPacket() throws IOException;
+	public abstract FlacAudioFrame getNextAudioPacket() throws IOException;
 	
 	/**
 	 * Skips the audio data to the next packet with a granule
@@ -59,13 +70,12 @@ public abstract class FlacFile {
 	public FlacInfo getInfo() {
 		return info;
 	}
-	public FlacComments getComment() {
-		return comment;
+	public FlacTags getTags() {
+		return tags;
 	}
 
-	
 	/**
-	 * In Reading mode, will close the underlying ogg/fac
+	 * In Reading mode, will close the underlying ogg/flac
 	 *  file and free its resources.
 	 * In Writing mode, will write out the Info and 
 	 *  Comments objects, and then the audio data.
