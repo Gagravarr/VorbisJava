@@ -13,6 +13,7 @@
  */
 package org.gagravarr.tika;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +48,7 @@ public class TestOggDetector extends TestCase {
 	   // Needs to be a TikaInputStream to be detected properly
       assertEquals(
             OggDetector.OGG_GENERAL,
-            d.detect(getTestVorbisFile(), m)
+            d.detect(new BufferedInputStream(getTestOggFile()), m)
       );
       assertEquals(
             OggDetector.OGG_VORBIS, 
@@ -71,9 +72,15 @@ public class TestOggDetector extends TestCase {
       // TODO Video
       
       // It won't detect native FLAC files however
-      assertEquals(MediaType.OCTET_STREAM, d.detect(getTestFlacNativeFile(), m));
+      assertEquals(
+            MediaType.OCTET_STREAM, 
+            d.detect(TikaInputStream.get(getTestFlacNativeFile()), m)
+      );
       
       // Random junk is a Octet Stream too
-      assertEquals(MediaType.OCTET_STREAM, d.detect(getDummy(), m));
+      assertEquals(
+            MediaType.OCTET_STREAM, 
+            d.detect(TikaInputStream.get(getDummy()), m)
+      );
 	}
 }
