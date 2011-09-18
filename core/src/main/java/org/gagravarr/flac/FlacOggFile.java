@@ -72,6 +72,7 @@ public class FlacOggFile extends FlacFile {
 
 		// First packet is special
 		firstPacket = new FlacFirstOggPacket(p);
+		info = firstPacket.getInfo();
 		
 		// Next must be the Tags (Comments)
 		tags = new FlacTags(r.getNextPacketWithSid(sid));

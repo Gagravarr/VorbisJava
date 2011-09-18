@@ -32,37 +32,67 @@ public class TestFlacFileRead extends TestCase {
    private InputStream getTestFlacFile() throws IOException {
       return this.getClass().getResourceAsStream("/testFLAC.flac");
    }
-	
-	public void testReadOgg() throws IOException {
-		OggFile ogg = new OggFile(getTestOggFile());
-		FlacOggFile flac = new FlacOggFile(ogg);
-		
-		// Check the first packet for general info
+
+   public void testReadOgg() throws IOException {
+      OggFile ogg = new OggFile(getTestOggFile());
+      FlacOggFile flac = new FlacOggFile(ogg);
+
+      // Check the first packet for general info
       FlacFirstOggPacket first = flac.getFirstPacket();
       assertNotNull(first);
       assertEquals(1, first.getMajorVersion());
       assertEquals(0, first.getMinorVersion());
-      
-		// Check the info
-		assertNotNull(flac.getInfo());
-		
-		// Check the basics of the comments
-		
-		// TODO Check other metadata
-		
-		// Has audio data
-		assertNotNull( flac.getNextAudioPacket() );
-		assertNotNull( flac.getNextAudioPacket() );
-		assertNotNull( flac.getNextAudioPacket() );
-		assertNotNull( flac.getNextAudioPacket() );
-		
-		FlacAudioFrame ad = flac.getNextAudioPacket();
-		//assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
-	}
-	
-	public void testReadFlacNative() throws IOException {
+
+      // Check the info
+      FlacInfo info = flac.getInfo();
+      assertNotNull(info);
+      assertEquals(44100, info.getSampleRate());
+      assertEquals(16, info.getBitsPerSample());
+      assertEquals(2, info.getNumChannels());
+
+      // Check the basics of the comments
+      FlacTags tags = flac.getTags();
+      assertNotNull(tags);
+      assertEquals(8, tags.getAllComments().size());
+      assertEquals("Test Album", tags.getAlbum());
+
+      // TODO Check other metadata
+
+      // Has audio data
+      assertNotNull( flac.getNextAudioPacket() );
+      //assertNotNull( flac.getNextAudioPacket() );
+      //assertNotNull( flac.getNextAudioPacket() );
+      //assertNotNull( flac.getNextAudioPacket() );
+
+      FlacAudioFrame ad = flac.getNextAudioPacket();
+      //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
+   }
+
+   public void testReadFlacNative() throws IOException {
       FlacNativeFile flac = new FlacNativeFile(getTestFlacFile());
-	   
-      // TODO
-	}
+
+      // Check the info
+      FlacInfo info = flac.getInfo();
+      assertNotNull(info);
+      assertEquals(44100, info.getSampleRate());
+      assertEquals(16, info.getBitsPerSample());
+      assertEquals(2, info.getNumChannels());
+
+      // Check the basics of the comments
+      FlacTags tags = flac.getTags();
+      assertNotNull(tags);
+      assertEquals(8, tags.getAllComments().size());
+      assertEquals("Test Album", tags.getAlbum());
+
+      // TODO Check other metadata
+
+      // Has audio data
+      assertNotNull( flac.getNextAudioPacket() );
+      //assertNotNull( flac.getNextAudioPacket() );
+      //assertNotNull( flac.getNextAudioPacket() );
+      //assertNotNull( flac.getNextAudioPacket() );
+
+      FlacAudioFrame ad = flac.getNextAudioPacket();
+      //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
+   }
 }
