@@ -15,12 +15,12 @@ package org.gagravarr.flac;
 
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
-import org.gagravarr.ogg.HighLevelStreamPacket;
+import org.gagravarr.ogg.HighLevelOggStreamPacket;
 
 /**
  * Parent of all Flac packets stored in Ogg
  */
-public abstract class FlacOggPacket extends HighLevelStreamPacket {
+public abstract class FlacOggPacket extends HighLevelOggStreamPacket {
    @Override
 	protected void populateStart(byte[] b, int type) {
 		b[0] = IOUtils.fromInt(type);

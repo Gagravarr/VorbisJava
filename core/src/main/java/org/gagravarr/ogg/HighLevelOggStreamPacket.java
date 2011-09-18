@@ -18,14 +18,14 @@ package org.gagravarr.ogg;
  * A high level stream packet sat atop
  *  of an OggPacket
  */
-public abstract class HighLevelStreamPacket {
+public abstract class HighLevelOggStreamPacket {
 	private OggPacket oggPacket;
 	private byte[] data;
 	
-	protected HighLevelStreamPacket(OggPacket oggPacket) {
+	protected HighLevelOggStreamPacket(OggPacket oggPacket) {
 		this.oggPacket = oggPacket;
 	}
-	protected HighLevelStreamPacket() {
+	protected HighLevelOggStreamPacket() {
 		this.oggPacket = null;
 	}
 	

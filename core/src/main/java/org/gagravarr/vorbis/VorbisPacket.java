@@ -15,12 +15,12 @@ package org.gagravarr.vorbis;
 
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
-import org.gagravarr.ogg.HighLevelStreamPacket;
+import org.gagravarr.ogg.HighLevelOggStreamPacket;
 
 /**
  * Parent of all Vorbis packets
  */
-public abstract class VorbisPacket extends HighLevelStreamPacket {
+public abstract class VorbisPacket extends HighLevelOggStreamPacket {
 	protected VorbisPacket(OggPacket oggPacket) {
 	   super(oggPacket);
 	}
