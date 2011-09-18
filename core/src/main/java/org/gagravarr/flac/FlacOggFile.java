@@ -13,6 +13,7 @@
  */
 package org.gagravarr.flac;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -56,7 +57,7 @@ public class FlacOggFile extends FlacFile {
 	/**
 	 * Loads a Vorbis File from the given packet reader.
 	 */
-	public FlacOggFile(OggPacketReader r) throws IOException {	
+	public FlacOggFile(OggPacketReader r) throws IOException {
 		this.r = r;
 		
 		OggPacket p = null;
@@ -73,8 +74,17 @@ public class FlacOggFile extends FlacFile {
 		firstPacket = new FlacFirstOggPacket(p);
 		
 		// Next must be the Tags (Comments)
+		tags = new FlacTags(r.getNextPacketWithSid(sid));
 		
 		// Then continue until the last metadata
+		otherMetadata = new ArrayList<FlacMetadataBlock>();
+		while( (p = r.getNextPacketWithSid(sid)) != null ) {
+		   FlacMetadataBlock block = FlacMetadataBlock.create(new ByteArrayInputStream(p.getData()));
+		   otherMetadata.add(block);
+		   if(block.isLastMetadataBlock()) {
+		      break;
+		   }
+		}
 		
 		// Everything else should be audio data
 	}
@@ -115,6 +125,13 @@ public class FlacOggFile extends FlacFile {
 		this.firstPacket = new FlacFirstOggPacket(info);
 		this.info = info;
 		this.tags = tags;
+	}
+	
+	/**
+	 * Returns the first Ogg Packet, which has some metadata in it
+	 */
+	public FlacFirstOggPacket getFirstPacket() {
+	   return firstPacket;
 	}
 	
 	public FlacAudioFrame getNextAudioPacket() throws IOException {

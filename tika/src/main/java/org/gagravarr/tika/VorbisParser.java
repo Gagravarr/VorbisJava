@@ -70,19 +70,22 @@ public class VorbisParser extends AbstractParser {
    protected void extractInfo(Metadata metadata, VorbisInfo info) throws TikaException {
       metadata.set(XMPDM.AUDIO_SAMPLE_RATE, (int)info.getRate());
       metadata.add("version", "Vorbis " + info.getVersion());
-      
-      if(info.getChannels() == 1) {
+    
+      extractChannelInfo(metadata, info.getChannels());
+   }
+   protected static void extractChannelInfo(Metadata metadata, int channelCount) {
+      if(channelCount == 1) {
          metadata.set(XMPDM.AUDIO_CHANNEL_TYPE, "Mono"); 
-      } else if(info.getChannels() == 2) {
+      } else if(channelCount == 2) {
          metadata.set(XMPDM.AUDIO_CHANNEL_TYPE, "Stereo");
-      } else if(info.getChannels() == 5) {
+      } else if(channelCount == 5) {
          metadata.set(XMPDM.AUDIO_CHANNEL_TYPE, "5.1");
-      } else if(info.getChannels() == 7) {
+      } else if(channelCount == 7) {
          metadata.set(XMPDM.AUDIO_CHANNEL_TYPE, "7.1");
       }
    }
    
-   protected void extractComments(Metadata metadata, XHTMLContentHandler xhtml,
+   protected static void extractComments(Metadata metadata, XHTMLContentHandler xhtml,
          VorbisComments comments) throws TikaException, SAXException {
       // Get the specific know comments
       metadata.set(Metadata.TITLE, comments.getTitle());

@@ -37,20 +37,30 @@ public abstract class FlacFile {
 	 */
 	public static FlacFile open(File f) throws IOException, FileNotFoundException {
 		InputStream inp = new FileInputStream(f);
-		byte[] header = new byte[4];
-		IOUtils.readFully(inp, header);
+		FlacFile file = open(inp);
 		inp.close();
-		
-		if(header[0] == (byte)'O' && header[1] == (byte)'g' &&
-		   header[2] == (byte)'g' && header[3] == (byte)'S') {
-		   return new FlacOggFile(f);
-		}
+		return file;
+	}
+   /**
+    * Opens the given file for reading.
+    * @param inp The InputStrem to read from, which must support mark/reset
+    */
+   public static FlacFile open(InputStream inp) throws IOException, FileNotFoundException {
+      inp.mark(4);
+      byte[] header = new byte[4];
+      IOUtils.readFully(inp, header);
+      inp.reset();
+      
+      if(header[0] == (byte)'O' && header[1] == (byte)'g' &&
+         header[2] == (byte)'g' && header[3] == (byte)'S') {
+         return new FlacOggFile(new OggFile(inp));
+      }
       if(header[0] == (byte)'f' && header[1] == (byte)'L' &&
-         header[2] == (byte)'a' && header[3] == (byte)'c') {
-         return new FlacNativeFile(f);
+         header[2] == (byte)'a' && header[3] == (byte)'C') {
+         return new FlacNativeFile(inp);
       }
       throw new IllegalArgumentException("File type not recognised");
-	}
+   }
 	/**
 	 * Opens the given file for reading
 	 */

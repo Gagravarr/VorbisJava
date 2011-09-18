@@ -18,7 +18,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
+import org.gagravarr.flac.FlacTags.FlacTagsAsMetadata;
 import org.gagravarr.ogg.IOUtils;
 
 /**
@@ -43,20 +45,37 @@ public class FlacNativeFile extends FlacFile {
       byte[] header = new byte[4];
       IOUtils.readFully(inp, header);
       if(header[0] == (byte)'f' && header[1] == (byte)'L' &&
-         header[2] == (byte)'a' && header[3] == (byte)'c') {
+         header[2] == (byte)'a' && header[3] == (byte)'C') {
          // Good
       } else {
          throw new IllegalArgumentException("Not a FLAC file");
       }
       
-      // Read the Metadata blocks
-      // TODO
+      // First must be the FLAC info
+      info = (FlacInfo)FlacMetadataBlock.create(inp); 
+      
+      // Read the rest of the Metadata blocks
+      otherMetadata = new ArrayList<FlacMetadataBlock>();
+      while(true) {
+         FlacMetadataBlock m = FlacMetadataBlock.create(inp);
+         if(m instanceof FlacTagsAsMetadata) {
+            tags = ((FlacTagsAsMetadata)m).getTags();
+         } else {
+            otherMetadata.add(m);
+         }
+         
+         if(m.isLastMetadataBlock()) {
+            break;
+         }
+      }
+      
+      // Rest is audio
    }
    
 	
 	public FlacAudioFrame getNextAudioPacket() throws IOException {
-	   // TODO
-	   return null;
+	   // TODO How to know how long the frames are?
+	   return new FlacAudioFrame(null);
 	}
 	
 	/**

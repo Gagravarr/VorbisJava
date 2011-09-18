@@ -13,8 +13,8 @@
  */
 package org.gagravarr.flac;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.gagravarr.ogg.IOUtils;
 
@@ -23,7 +23,7 @@ import org.gagravarr.ogg.IOUtils;
  * The Stream Info metadata block holds useful
  *  information on the audio data of the file
  */
-public class FlacInfo {
+public class FlacInfo extends FlacMetadataBlock {
 	/**
 	 * <16> The minimum block size (in samples) used in the stream. 
 	 */
@@ -73,6 +73,7 @@ public class FlacInfo {
 	 * Creates a new, empty info
 	 */
 	public FlacInfo() {
+	   super(STREAMINFO);
 	   signature = new byte[16];
 	}
 	
@@ -80,6 +81,8 @@ public class FlacInfo {
 	 * Reads the Info from the specified data
 	 */
 	public FlacInfo(byte[] data, int offset) {
+	   super(STREAMINFO);
+	   
 	   // Grab the range numbers
 	   minimumBlockSize = IOUtils.getInt(
 	         IOUtils.toInt(data[offset++]),
@@ -110,26 +113,20 @@ public class FlacInfo {
       System.arraycopy(data, offset, signature, 0, 16);
 	}
 	
-	public byte[] getData() {
-	   ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	   try {
-	      // Write the frame numbers
-	      IOUtils.writeInt2(baos, minimumBlockSize);
-         IOUtils.writeInt2(baos, maximumBlockSize);
-         IOUtils.writeInt3(baos, minimumFrameSize);
-         IOUtils.writeInt3(baos, maximumFrameSize);
-         
-         // Write the rates/channels/samples
-         // TODO
-         baos.write(new byte[8]);
-         
-         // Write the signature
-         baos.write(signature);
-      } catch(IOException e) {
-         // Should never happen!
-         throw new RuntimeException(e);
-      }
-      return baos.toByteArray();
+	@Override
+	protected void write(OutputStream out) throws IOException {
+      // Write the frame numbers
+      IOUtils.writeInt2(out, minimumBlockSize);
+      IOUtils.writeInt2(out, maximumBlockSize);
+      IOUtils.writeInt3(out, minimumFrameSize);
+      IOUtils.writeInt3(out, maximumFrameSize);
+      
+      // Write the rates/channels/samples
+      // TODO
+      out.write(new byte[8]);
+      
+      // Write the signature
+      out.write(signature);
 	}
 
 	/**

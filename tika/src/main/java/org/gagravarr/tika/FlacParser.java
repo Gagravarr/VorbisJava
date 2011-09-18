@@ -20,9 +20,15 @@ import java.util.Set;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
+import org.apache.tika.metadata.XMPDM;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.AbstractParser;
 import org.apache.tika.parser.ParseContext;
+import org.apache.tika.sax.XHTMLContentHandler;
+import org.gagravarr.flac.FlacFile;
+import org.gagravarr.flac.FlacInfo;
+import org.gagravarr.flac.FlacOggFile;
+import org.gagravarr.vorbis.VorbisInfo;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -40,6 +46,31 @@ public class FlacParser extends AbstractParser {
          InputStream stream, ContentHandler handler,
          Metadata metadata, ParseContext context)
          throws IOException, TikaException, SAXException {
-      // TODO Implement
+      FlacFile flac = FlacFile.open(stream);
+      
+      // Start
+      XHTMLContentHandler xhtml = new XHTMLContentHandler(handler, metadata);
+      xhtml.startDocument();
+
+      // Extract the common FLAC info
+      extractInfo(metadata, flac.getInfo());
+      if(flac instanceof FlacOggFile) {
+         FlacOggFile ogg = (FlacOggFile)flac;
+         metadata.add("version", "Flac " + ogg.getFirstPacket().getMajorVersion() +
+                                 "." + ogg.getFirstPacket().getMinorVersion());
+      }
+      
+      // Extract any Vorbis comments
+      VorbisParser.extractComments(metadata, xhtml, flac.getTags());
+      
+      // Finish
+      xhtml.endDocument();
+   }
+   
+   protected void extractInfo(Metadata metadata, FlacInfo info) throws TikaException {
+      metadata.set(XMPDM.AUDIO_SAMPLE_RATE, (int)info.getSampleRate());
+      // TODO info.getBitsPerSample();
+      
+      VorbisParser.extractChannelInfo(metadata, info.getNumChannels());
    }
 }

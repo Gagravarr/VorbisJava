@@ -13,6 +13,13 @@
  */
 package org.gagravarr.flac;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import org.gagravarr.ogg.IOUtils;
+
 
 /**
  * This comes before the audio data.
@@ -21,37 +28,77 @@ package org.gagravarr.flac;
  *  3 byte length
  *  <data>
  */
-public class FlacMetadataBlock extends FlacFrame {
-	public static final int STREAMINFO = 0;
-	public static final int PADDING = 1;
-	public static final int APPLICATION = 2;
-	public static final int SEEKTABLE = 3;
-	public static final int VORBIS_COMMENT = 4;
-	public static final int CUESHEET = 5;
-	public static final int PICTURE = 6;
+public abstract class FlacMetadataBlock extends FlacFrame {
+	public static final byte STREAMINFO = 0;
+	public static final byte PADDING = 1;
+	public static final byte APPLICATION = 2;
+	public static final byte SEEKTABLE = 3;
+	public static final byte VORBIS_COMMENT = 4;
+	public static final byte CUESHEET = 5;
+	public static final byte PICTURE = 6;
 	// 7-126 : reserved
 	// 127 : invalid, to avoid confusion with a frame sync code
 	
-	protected FlacMetadataBlock(byte type, int length, byte[] data) {
+   private byte type;
+   
+   public static FlacMetadataBlock create(InputStream inp) throws IOException {
+      int typeI = inp.read();
+      if(typeI == -1) {
+         throw new IllegalArgumentException();
+      }
+      byte type = IOUtils.fromInt(typeI);
+      
+      byte[] l = new byte[3];
+      IOUtils.readFully(inp, l);
+      int length = (int)IOUtils.getInt3(l);
+      
+      byte[] data = new byte[length];
+      IOUtils.readFully(inp, data);
+      
+      switch(type) {
+         case STREAMINFO:
+            return new FlacInfo(data, 0);
+         case VORBIS_COMMENT:
+            return new FlacTags.FlacTagsAsMetadata(data);
+         default:
+            return new FlacUnhandledMetadataBlock(type, data);
+      }
+   }
+   
+	protected FlacMetadataBlock(byte type) {
 		this.type = type;
-		this.length = length;
-		this.data = data;
 	}
-	
-	private byte type;
-	private int length;
-	private byte[] data;
 	
 	public int getType() {
 		return type & 0x7f;
 	}
-	public int getLength() {
-		return length;
-	}
-	public byte[] getData() {
-		return data;
-	}
 	public boolean isLastMetadataBlock() {
 		return (type < 0);
 	}
+	
+   public byte[] getData() {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      
+      try {
+         // Type goes first
+         baos.write(type);
+         // Pad length, will do later
+         baos.write(new byte[3]);
+         
+         // Do the main data
+         write(baos);
+      } catch(IOException e) {
+         // Shouldn't ever happen!
+         throw new RuntimeException(e);
+      }
+      
+      // Fix the length
+      byte[] data = baos.toByteArray();
+      IOUtils.putInt3(data, 1, data.length);
+      
+      // All done
+      return data;
+   }
+	
+	protected abstract void write(OutputStream out) throws IOException;
 }
