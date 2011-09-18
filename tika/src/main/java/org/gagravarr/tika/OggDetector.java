@@ -62,7 +62,7 @@ public class OggDetector implements Detector {
       if (tis != null) {
          // We could potentially need to go a long way through the
          //  file in order to figure out what it is
-         tis.mark((int)tis.getLength());
+         tis.mark((int)tis.getLength()+1);
          
          OggFile ogg = new OggFile(tis);
          
@@ -101,7 +101,7 @@ public class OggDetector implements Detector {
          if(vorbisCount == 1 && streams == 1) {
             // Single Vorbis stream, regular Vorbis Audio file
             return OGG_VORBIS;
-         } else if(flacCount == 1 && streams == 0) {
+         } else if(flacCount == 1 && streams == 1) {
             // Single FLAC-in-Ogg stream, regular FLAC Audio file
             return FLAC;
          } else if(vorbisCount > 1 && vorbisCount == streams) {
