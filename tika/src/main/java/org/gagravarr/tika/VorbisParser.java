@@ -100,8 +100,10 @@ public class VorbisParser extends AbstractParser {
       
       // Grab the rest just in case
       List<String> done = Arrays.asList(new String[] {
-         "title", "author", "artist", "album", "genre", "date",
-         "vendor", "tracknumber", "comment"
+            VorbisComments.KEY_TITLE, VorbisComments.KEY_ARTIST,
+            VorbisComments.KEY_ALBUM, VorbisComments.KEY_GENRE,
+            VorbisComments.KEY_DATE, VorbisComments.KEY_TRACKNUMBER,
+            "vendor", "comment"
       });
       for(String key : comments.getAllComments().keySet()) {
          if(! done.contains(key)) {

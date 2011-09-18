@@ -28,6 +28,13 @@ import org.gagravarr.ogg.OggPacket;
  * Holds encoder information and user specified tags
  */
 public class VorbisComments extends VorbisPacket {
+   public static final String KEY_ARTIST = "artist";
+   public static final String KEY_ALBUM = "album";
+   public static final String KEY_TITLE = "title";
+   public static final String KEY_GENRE = "genre";
+   public static final String KEY_TRACKNUMBER = "tracknumber";
+   public static final String KEY_DATE = "date";
+   
 	private String vendor;
 	private Map<String, List<String>> comments =
 		new HashMap<String, List<String>>();
@@ -110,28 +117,28 @@ public class VorbisComments extends VorbisPacket {
 	 *  Artist tags present.
 	 */
 	public String getArtist() {
-		return getSingleComment("artist");
+		return getSingleComment(KEY_ARTIST);
 	}
 	/**
 	 * Returns the (first) Album, or null if no
 	 *  Album tags present.
 	 */
 	public String getAlbum() {
-		return getSingleComment("album");
+		return getSingleComment(KEY_ALBUM);
 	}
 	/**
 	 * Returns the (first) Title, or null if no
 	 *  Title tags present.
 	 */
 	public String getTitle() {
-		return getSingleComment("title");
+		return getSingleComment(KEY_TITLE);
 	}
 	/**
 	 * Returns the (first) Genre, or null if no
 	 *  Genre tags present.
 	 */
 	public String getGenre() {
-		return getSingleComment("genre");
+		return getSingleComment(KEY_GENRE);
 	}
 	/**
 	 * Returns the (first) track number as a literal
@@ -139,7 +146,7 @@ public class VorbisComments extends VorbisPacket {
 	 *  no track number tags present;
 	 */
 	public String getTrackNumber() {
-	   return getSingleComment("tracknumber");
+	   return getSingleComment(KEY_TRACKNUMBER);
 	}
 	/**
 	 * Returns the track number, as converted into
