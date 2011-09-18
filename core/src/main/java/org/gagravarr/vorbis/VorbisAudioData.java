@@ -30,6 +30,10 @@ public class VorbisAudioData extends VorbisPacket {
 		setData(data);
 		granulePosition = -1;
 	}
+	
+	protected int getHeaderSize() {
+	   return 0;
+	}
 
 	/**
 	 * Returns the granule position, or -1 if

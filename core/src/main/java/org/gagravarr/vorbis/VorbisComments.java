@@ -44,7 +44,7 @@ public class VorbisComments extends VorbisPacket {
 		
 		byte[] d = pkt.getData();
 		
-		int dataBeginsAt = getDataBeginsAt();
+		int dataBeginsAt = getHeaderSize();
 		int vlen = (int)IOUtils.getInt4(d, dataBeginsAt);
 		vendor = IOUtils.getUTF8(d, dataBeginsAt+4, vlen);
 		
@@ -79,6 +79,10 @@ public class VorbisComments extends VorbisPacket {
 		vendor = "Xiph.org Java Vorbis Tools 20100203";
 	}
 	
+   protected int getHeaderSize() {
+      return HEADER_LENGTH_METADATA;
+   }
+
 	public String getVendor() {
 		return vendor;
 	}
@@ -234,10 +238,14 @@ public class VorbisComments extends VorbisPacket {
 		// Serialise the comments
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
-			baos.write(new byte[getDataBeginsAt()]);
+		   // Pad for the header
+		   byte[] header = new byte[getHeaderSize()];
+			baos.write(header);
 			
+			// Do the vendor string
 			IOUtils.writeUTF8WithLength(baos, vendor);
 			
+			// Next is the number of comments
 			int numComments = 0;
 			for(List<String> c : comments.values()) {
 				numComments += c.size();
@@ -261,10 +269,12 @@ public class VorbisComments extends VorbisPacket {
 			throw new RuntimeException(e);
 		}
 		
-		// Now do the header bit
-		byte[] b = baos.toByteArray();
-		populateStart(b, 3);
-		setData(b);
+		// Now fill in the header
+		byte[] data = baos.toByteArray();
+      populateMetadataHeader(data, 3, data.length);
+      
+		// Record the data
+		setData(data);
 		
 		// Now write
 		return super.write();

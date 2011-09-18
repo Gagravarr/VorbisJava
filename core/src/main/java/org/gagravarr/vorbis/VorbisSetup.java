@@ -36,6 +36,10 @@ public class VorbisSetup extends VorbisPacket {
 		super();
 	}
 	
+   protected int getHeaderSize() {
+      return HEADER_LENGTH_METADATA;
+   }
+
 	// Example first bit of decoding
 	public int getNumberOfCodebooks() {
 		byte[] data = getData();

@@ -51,6 +51,16 @@ public class IOUtils {
 	}
 
 	
+   public static int getInt2(byte[] data) {
+      return getInt2(data, 0);
+   }
+   public static int getInt2(byte[] data, int offset) {
+        int i=offset;
+        int b0 = data[i++] & 0xFF;
+        int b1 = data[i++] & 0xFF;
+        return (int)getInt(b0, b1);
+   }
+   
 	public static long getInt3(byte[] data) {
 		return getInt3(data, 0);
 	}
@@ -90,6 +100,9 @@ public class IOUtils {
         return getInt(b0, b1, b2, b3, b4, b5, b6, b7);
 	}
 	
+   public static long getInt(int i0, int i1) {
+      return (i1 << 8) + (i0 << 0);
+   }
 	public static long getInt(int i0, int i1, int i2) {
         return (i2 << 16) + (i1 << 8) + (i0 << 0);
 	}

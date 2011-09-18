@@ -21,15 +21,28 @@ import org.gagravarr.ogg.HighLevelOggStreamPacket;
  * Parent of all Vorbis packets
  */
 public abstract class VorbisPacket extends HighLevelOggStreamPacket {
+   protected static final int HEADER_LENGTH_METADATA = 7;
+   protected static final int HEADER_LENGTH_AUDIO = 0;
+   
 	protected VorbisPacket(OggPacket oggPacket) {
 	   super(oggPacket);
 	}
 	protected VorbisPacket() {
 	   super();
 	}
-
-	@Override
-	protected void populateStart(byte[] b, int type) {
+	
+	/**
+	 * How big is the header on this packet?
+	 * For Metadata packets it's normally 7 bytes,
+	 *  otherwise for audio packets there is no header.
+	 */
+	protected abstract int getHeaderSize();
+	
+	/**
+	 * Popupulates the metadata packet header,
+	 *  which is "#vorbis" where # is the type.
+	 */
+	protected void populateMetadataHeader(byte[] b, int type, int dataLength) {
 		b[0] = IOUtils.fromInt(type);
 		b[1] = (byte)'v';
 		b[2] = (byte)'o';
@@ -37,13 +50,6 @@ public abstract class VorbisPacket extends HighLevelOggStreamPacket {
 		b[4] = (byte)'b';
 		b[5] = (byte)'i';
 		b[6] = (byte)'s';
-	}
-	/**
-	 * "#vorbis" then data
-	 */
-   @Override
-	protected int getDataBeginsAt() {
-		return 7;
 	}
 	
 	/**

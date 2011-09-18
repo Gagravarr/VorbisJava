@@ -13,29 +13,11 @@
  */
 package org.gagravarr.flac;
 
-import org.gagravarr.ogg.IOUtils;
-import org.gagravarr.vorbis.VorbisComments;
-
+import org.gagravarr.ogg.OggPacket;
 
 /**
- * This is a {@link VorbisComments} with a Flac metadata
- *  block header, rather than the usual vorbis one.
+ * Raw, compressed audio data
  */
-public class FlacTags extends VorbisComments {
-   /**
-    * Type plus three byte length
-    */
-   @Override
-   protected int getHeaderSize() {
-      return 4;
-   }
-
-   /**
-    * Type plus three byte length
-    */
-   @Override
-   protected void populateMetadataHeader(byte[] b, int type, int dataLength) {
-      b[0] = FlacMetadataBlock.VORBIS_COMMENT;
-      IOUtils.putInt3(b, 1, dataLength);
-   }
+public class FlacAudioFrame extends FlacFrame {
+   // TODO
 }

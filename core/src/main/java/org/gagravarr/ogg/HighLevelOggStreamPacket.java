@@ -16,7 +16,9 @@ package org.gagravarr.ogg;
 
 /**
  * A high level stream packet sat atop
- *  of an OggPacket
+ *  of an OggPacket.
+ * Provides support for reading and writing
+ *  new and existing OggPacket instances.
  */
 public abstract class HighLevelOggStreamPacket {
 	private OggPacket oggPacket;
@@ -50,14 +52,4 @@ public abstract class HighLevelOggStreamPacket {
 		this.oggPacket = new OggPacket(getData());
 		return this.oggPacket;
 	}
-	
-	/**
-	 * Populates the start of a new packet with the 
-	 *  appropriate header
-	 */
-	protected abstract void populateStart(byte[] b, int type);
-	/**
-	 * How big is the header?
-	 */
-	protected abstract int getDataBeginsAt();
 }

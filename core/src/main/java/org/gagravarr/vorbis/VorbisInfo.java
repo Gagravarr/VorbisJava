@@ -58,10 +58,14 @@ public class VorbisInfo extends VorbisPacket {
 		}
 	}
 
+   protected int getHeaderSize() {
+      return HEADER_LENGTH_METADATA;
+   }
+
 	@Override
 	public OggPacket write() {
 		byte[] data = new byte[30];
-		populateStart(data, 1);
+		populateMetadataHeader(data, 1, data.length);
 		
 		IOUtils.putInt4(data, 7, version);
 		data[11] = IOUtils.fromInt(channels);

@@ -22,7 +22,7 @@ import org.apache.tika.detect.Detector;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
-import org.gagravarr.flac.FlacOggPacket;
+import org.gagravarr.flac.FlacFirstOggPacket;
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
@@ -86,7 +86,7 @@ public class OggDetector implements Detector {
                      // Vorbis Audio stream
                      vorbisCount++;
                   }
-                  if(FlacOggPacket.isFlacStream(p)) {
+                  if(FlacFirstOggPacket.isFlacStream(p)) {
                      // FLAC-in-Ogg Audio stream
                      flacCount++;
                   }

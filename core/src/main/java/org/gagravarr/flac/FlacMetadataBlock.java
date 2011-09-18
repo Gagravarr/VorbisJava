@@ -21,7 +21,7 @@ package org.gagravarr.flac;
  *  3 byte length
  *  <data>
  */
-public class FlacMetadataBlock {
+public class FlacMetadataBlock extends FlacFrame {
 	public static final int STREAMINFO = 0;
 	public static final int PADDING = 1;
 	public static final int APPLICATION = 2;
