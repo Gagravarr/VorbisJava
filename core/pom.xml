@@ -27,5 +27,5 @@
   <artifactId>vorbis-java-core</artifactId>
   <packaging>jar</packaging>
   <name>Ogg and Vorbis for Java, Core</name>
-  <url>http://gagravarr.org</url>
+  <url>https://github.com/Gagravarr/VorbisJava</url>
 </project>

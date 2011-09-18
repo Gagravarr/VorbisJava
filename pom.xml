@@ -27,13 +27,11 @@
   <name>Ogg and Vorbis toolkit for Java</name>
   <artifactId>vorbis-java</artifactId>
   <packaging>pom</packaging>
-  <url>http://gagravarr.org</url>
+  <url>https://github.com/Gagravarr/VorbisJava</url>
 
-<!--
   <modules>
     <module>core</module>
     <module>tools</module>
     <module>tika</module>
-  <modules>
--->
+  </modules>
 </project>

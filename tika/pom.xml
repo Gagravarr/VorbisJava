@@ -27,7 +27,7 @@
   <artifactId>vorbis-java-tika</artifactId>
   <packaging>jar</packaging>
   <name>Apache Tika plugin for Ogg, Vorbis and FLAC</name>
-  <url>http://gagravarr.org</url>
+  <url>https://github.com/Gagravarr/VorbisJava</url>
 
   <properties>
     <!-- <tika.version>0.9</tika.version> -->

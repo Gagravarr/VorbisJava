@@ -27,14 +27,14 @@
   <artifactId>vorbis-java-tools</artifactId>
   <packaging>jar</packaging>
   <name>Ogg and Vorbis for Java, Tools</name>
-  <url>http://gagravarr.org</url>
+  <url>https://github.com/Gagravarr/VorbisJava</url>
 
   <dependencies>
    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>vorbis-java-core</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
+      <!-- <scope>provided</scope> -->
     </dependency>
   </dependencies>
 

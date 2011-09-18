@@ -24,7 +24,7 @@
   <packaging>pom</packaging>
 
   <name>Ogg and Vorbis toolkit for Java</name>
-  <url>http://gagravarr.org</url>
+  <url>https://github.com/Gagravarr/VorbisJava</url>
   <description>
     Ogg and Vorbis toolkit and tools for Java
   </description>
