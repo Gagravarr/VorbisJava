@@ -28,23 +28,23 @@ import org.gagravarr.vorbis.VorbisPacket;
  * Prints out information on the Steams within
  *  an Ogg File
  */
-public class OggInfo {
+public class OggInfoTool {
 	public static void main(String[] args) throws Exception {
 		if(args.length == 0) {
 			System.err.println("Use:");
-			System.err.println("   OggInfo <file> [file] [file]");
+			System.err.println("   OggInfoTool <file> [file] [file]");
 			System.exit(1);
 		}
 		
 		for(String f : args) {
-			OggInfo info = new OggInfo(new File(f));
+			OggInfoTool info = new OggInfoTool(new File(f));
 			info.printStreamInfo();
 		}
 	}
 	
 	private File file;
 	private OggFile ogg;
-	public OggInfo(File f) throws FileNotFoundException {
+	public OggInfoTool(File f) throws FileNotFoundException {
 		if(! f.exists()) {
 			throw new FileNotFoundException(f.toString());
 		}
