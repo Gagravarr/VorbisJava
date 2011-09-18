@@ -18,6 +18,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Utilities for working with IO streams, such
+ *  as reading and writing.
+ *  
+ * Endian Note - Ogg and Vorbis tend to work in
+ *  Little Endian format, while FLAC tends to 
+ *  work in Big Endian format.
+ */
 public class IOUtils {
 	public static void readFully(InputStream inp, byte[] destination) throws IOException {
 		readFully(inp, destination, 0, destination.length);
@@ -116,6 +124,50 @@ public class IOUtils {
 	}
 	
 	
+   public static int getInt2BE(byte[] data) {
+      return getInt2BE(data, 0);
+   }
+   public static int getInt2BE(byte[] data, int offset) {
+        int i=offset;
+        int b0 = data[i++] & 0xFF;
+        int b1 = data[i++] & 0xFF;
+        return getIntBE(b0, b1);
+   }
+   
+   public static long getInt3BE(byte[] data) {
+      return getInt3BE(data, 0);
+   }
+   public static long getInt3BE(byte[] data, int offset) {
+        int i=offset;
+        int b0 = data[i++] & 0xFF;
+        int b1 = data[i++] & 0xFF;
+        int b2 = data[i++] & 0xFF;
+        return getIntBE(b0, b1, b2);
+   }
+   
+   public static long getInt4BE(byte[] data) {
+      return getInt4BE(data, 0);
+   }
+   public static long getInt4BE(byte[] data, int offset) {
+        int i=offset;
+        int b0 = data[i++] & 0xFF;
+        int b1 = data[i++] & 0xFF;
+        int b2 = data[i++] & 0xFF;
+        int b3 = data[i++] & 0xFF;
+        return getIntBE(b0, b1, b2, b3);
+   }
+   
+   public static int getIntBE(int i0, int i1) {
+      return (i0 << 8) + (i1 << 0);
+   }
+   public static long getIntBE(int i0, int i1, int i2) {
+        return (i0 << 16) + (i1 << 8) + (i2 << 0);
+   }
+   public static long getIntBE(int i0, int i1, int i2, int i3) {
+        return (i0 << 24) + (i1 << 16) + (i2 << 8) + (i3 << 0);
+   }
+	
+	
    public static void writeInt2(OutputStream out, int v) throws IOException {
       byte[] b2 = new byte[2];
       putInt2(b2, 0, v);
@@ -169,6 +221,44 @@ public class IOUtils {
         data[i++] = (byte)((v >>> 56) & 0xFF);
 	}
 	
+   
+   public static void writeInt2BE(OutputStream out, int v) throws IOException {
+      byte[] b2 = new byte[2];
+      putInt2BE(b2, 0, v);
+      out.write(b2);
+   }
+   public static void putInt2BE(byte[] data, int offset, int v) {
+        int i = offset;
+        data[i+1] = (byte)((v >>>  0) & 0xFF);
+        data[i+0] = (byte)((v >>>  8) & 0xFF);
+   }
+   
+   public static void writeInt3BE(OutputStream out, long v) throws IOException {
+      byte[] b3 = new byte[3];
+      putInt3BE(b3, 0, v);
+      out.write(b3);
+   }
+   public static void putInt3BE(byte[] data, int offset, long v) {
+        int i = offset;
+        data[i+2] = (byte)((v >>>  0) & 0xFF);
+        data[i+1] = (byte)((v >>>  8) & 0xFF);
+        data[i+0] = (byte)((v >>> 16) & 0xFF);
+   }
+   
+   public static void writeInt4BE(OutputStream out, long v) throws IOException {
+      byte[] b4 = new byte[4];
+      putInt4BE(b4, 0, v);
+      out.write(b4);
+   }
+   public static void putInt4BE(byte[] data, int offset, long v) {
+        int i = offset;
+        data[i+3] = (byte)((v >>>  0) & 0xFF);
+        data[i+2] = (byte)((v >>>  8) & 0xFF);
+        data[i+1] = (byte)((v >>> 16) & 0xFF);
+        data[i+0] = (byte)((v >>> 24) & 0xFF);
+   }
+   
+   
 	/**
 	 * @param length The length in BYTES
 	 */

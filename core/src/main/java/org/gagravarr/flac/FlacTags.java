@@ -16,6 +16,7 @@ package org.gagravarr.flac;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.vorbis.VorbisComments;
 
@@ -52,7 +53,7 @@ public class FlacTags extends VorbisComments {
    @Override
    protected void populateMetadataHeader(byte[] b, int type, int dataLength) {
       b[0] = FlacMetadataBlock.VORBIS_COMMENT;
-      LittleEndianUtils.putLEInt3(b, 1, dataLength);
+      IOUtils.putInt3BE(b, 1, dataLength);
    }
    
    protected static class FlacTagsAsMetadata extends FlacMetadataBlock {

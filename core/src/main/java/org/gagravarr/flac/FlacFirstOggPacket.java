@@ -52,11 +52,12 @@ public class FlacFirstOggPacket extends HighLevelOggStreamPacket {
       // 1-4 = FLAC
       majorVersion = IOUtils.toInt(data[5]);
       minorVersion = IOUtils.toInt(data[6]);
-      numberOfHeaderBlocks = LittleEndianUtils.getLEInt2(data, 7);
+      numberOfHeaderBlocks = IOUtils.getInt2BE(data, 7);
       // 9-12 = fLaC
+      // 13-16 = 0 + length
       
       // Then it's the info
-      info = new FlacInfo(data, 13);
+      info = new FlacInfo(data, 17);
    }
 
    @Override
@@ -66,7 +67,7 @@ public class FlacFirstOggPacket extends HighLevelOggStreamPacket {
          baos.write("FLAC".getBytes("ASCII"));
          baos.write(majorVersion);
          baos.write(minorVersion);
-         LittleEndianUtils.writeLEInt2(baos, numberOfHeaderBlocks);
+         IOUtils.writeInt2BE(baos, numberOfHeaderBlocks);
          baos.write("fLaC".getBytes("ASCII"));
          baos.write(info.getData());
       } catch(IOException e) {

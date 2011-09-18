@@ -46,6 +46,12 @@ public class TestFlacFileRead extends TestCase {
       // Check the info
       FlacInfo info = flac.getInfo();
       assertNotNull(info);
+      
+      assertEquals(0x1000, info.getMinimumBlockSize());
+      assertEquals(0x1000, info.getMaximumBlockSize());
+      assertEquals(0x084e, info.getMinimumFrameSize());
+      assertEquals(0x084e, info.getMaximumFrameSize());
+      
       assertEquals(44100, info.getSampleRate());
       assertEquals(16, info.getBitsPerSample());
       assertEquals(2, info.getNumChannels());
@@ -74,6 +80,12 @@ public class TestFlacFileRead extends TestCase {
       // Check the info
       FlacInfo info = flac.getInfo();
       assertNotNull(info);
+      
+      assertEquals(0x1000, info.getMinimumBlockSize());
+      assertEquals(0x1000, info.getMaximumBlockSize());
+      assertEquals(0x084e, info.getMinimumFrameSize());
+      assertEquals(0x084e, info.getMaximumFrameSize());
+      
       assertEquals(44100, info.getSampleRate());
       assertEquals(16, info.getBitsPerSample());
       assertEquals(2, info.getNumChannels());
