@@ -50,6 +50,10 @@ public class VorbisParser extends AbstractParser {
          InputStream stream, ContentHandler handler,
          Metadata metadata, ParseContext context)
          throws IOException, TikaException, SAXException {
+      metadata.set(Metadata.CONTENT_TYPE, OggDetector.OGG_VORBIS.toString());
+      metadata.set(XMPDM.AUDIO_COMPRESSOR, "Vorbis");
+
+      // Open the process the files
       OggFile ogg = new OggFile(stream);
       VorbisFile vorbis = new VorbisFile(ogg);
 

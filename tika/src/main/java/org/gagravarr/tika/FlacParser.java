@@ -46,6 +46,10 @@ public class FlacParser extends AbstractParser {
          InputStream stream, ContentHandler handler,
          Metadata metadata, ParseContext context)
          throws IOException, TikaException, SAXException {
+      metadata.set(Metadata.CONTENT_TYPE, TYPE.toString());
+      metadata.set(XMPDM.AUDIO_COMPRESSOR, "FLAC");
+
+      // Open the FLAC file
       FlacFile flac = FlacFile.open(stream);
       
       // Start
