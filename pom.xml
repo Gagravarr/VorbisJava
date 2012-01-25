@@ -21,6 +21,7 @@
   <parent>
      <groupId>org.gagravarr</groupId>
      <artifactId>vorbis-java-parent</artifactId>
+     <relativePath>parent/pom.xml</relativePath>
      <version>0.1-SNAPSHOT</version>
   </parent>
 
@@ -28,6 +29,15 @@
   <artifactId>vorbis-java</artifactId>
   <packaging>pom</packaging>
   <url>https://github.com/Gagravarr/VorbisJava</url>
+
+  <scm>
+    <connection>
+       scm:git:git://github.com/Gagravarr/VorbisJava.git
+    </connection>
+    <developerConnection>
+       scm:git:https://github.com/Gagravarr/VorbisJava.git
+    </developerConnection>
+  </scm>
 
   <modules>
     <module>core</module>
