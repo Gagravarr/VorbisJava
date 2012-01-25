@@ -1,0 +1,5 @@
+Ogg and Vorbis Tools for Java
+Copyright 2012 Nick Burch
+
+The Apache Tika Plugin includes developed at
+The Apache Software Foundation (http://www.apache.org/).
