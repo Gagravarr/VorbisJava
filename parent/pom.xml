@@ -37,6 +37,18 @@
     </license>
   </licenses>
 
+  <scm>
+    <url>
+       https://github.com/Gagravarr/VorbisJava
+    </url>
+    <connection>
+       scm:git:git://github.com/Gagravarr/VorbisJava.git
+    </connection>
+    <developerConnection>
+       scm:git:https://github.com/Gagravarr/VorbisJava.git
+    </developerConnection>
+  </scm>
+
   <properties>
     <maven.compile.source>1.5</maven.compile.source>
     <maven.compile.target>1.5</maven.compile.target>
