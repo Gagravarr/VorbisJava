@@ -31,6 +31,7 @@
   <url>https://github.com/Gagravarr/VorbisJava</url>
 
   <modules>
+    <module>parent</module>
     <module>core</module>
     <module>tools</module>
     <module>tika</module>
