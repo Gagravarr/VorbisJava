@@ -30,8 +30,8 @@
   <url>https://github.com/Gagravarr/VorbisJava</url>
 
   <properties>
-    <tika.version>1.1-SNAPSHOT</tika.version>
-    <!-- <tika.version>1.0</tika.version> -->
+    <!-- <tika.version>1.1-SNAPSHOT</tika.version> -->
+    <tika.version>1.0</tika.version>
   </properties>
 
   <dependencies>
