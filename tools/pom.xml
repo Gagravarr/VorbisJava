@@ -21,7 +21,7 @@
   <parent>
      <groupId>org.gagravarr</groupId>
      <artifactId>vorbis-java-parent</artifactId>
-     <version>0.1-SNAPSHOT</version>
+     <version>0.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>vorbis-java-tools</artifactId>
