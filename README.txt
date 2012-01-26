@@ -55,6 +55,36 @@ tika module, and the core module are present on the Tika classpath and
 they will be used.
 
 
+Getting Started
+---------------
+There are four main classes that you can start with, depending on the
+kind of file you have, and your interests. These are:
+
+  org.gagravarr.ogg.OggFile
+     Provides read and write support for Ogg files of all types, working
+     at the packet / stream level
+
+  org.gagravarr.vorbis.VorbisFile
+     Provides read and write support for Ogg Vorbis audio files. Provides
+     access to the key parts of the Vorbis file, such as info and comments.
+     (No support yet for encoding or decoding the audio packets though)
+
+  org.gagravarr.flac.FlacOggFile
+     Provides read support for FLAC files stored in an Ogg container. Allows
+     access to the key parts of the file, such as Info, Tags and compressed
+     audio. (No encoding or decoding of audio packets though)
+
+  org.gagravarr.flac.FlacFile
+     Provides read support for regular FLAC files. Provides access to the 
+     key parts of the file, such as Info, Tags and compressed audio. 
+     (No encoding or decoding of audio packets though)
+
+The best way to see how to use the code is to look at the Tools Package,
+which has examples of reading and writing tags, and the Tika Package, which
+has examples of reading audio metadata. In addition, the unit tests can
+provide examples of uses too.
+
+
 Information Resources
 ---------------------
  * Ogg file format - RFC3533, plus http://xiph.org/vorbis/doc/oggstream.html 

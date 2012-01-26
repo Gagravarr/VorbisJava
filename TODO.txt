@@ -1,7 +1,7 @@
---Vorbis detection helper
 Better exceptions
 FLAC Ogg support
 FLAC native support
 
 --Tricky packet/page boundary read test
 --Packet/page boundary write test
+--Vorbis detection helper
