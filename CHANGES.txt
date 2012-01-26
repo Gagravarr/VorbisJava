@@ -1,0 +1,10 @@
+Version 0.2 (Unreleased)
+ 
+
+Version 0.1 (2012-01-26)
+ * Initial Version
+ * Read and write support for low-level Vorbis and Ogg
+ * Read and write support for Vorbis info and tags
+ * Read support for low level FLAC (FLAC native and FLAC Ogg)
+ * Tools for reading and writing Vorbis Comments (tags)
+ * Tika plugin, with Parser and Detector
