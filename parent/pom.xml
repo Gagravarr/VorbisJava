@@ -49,6 +49,14 @@
     </developerConnection>
   </scm>
 
+  <developers>
+    <developer>
+      <id>Gagravarr</id>
+      <name>Nick Burch</name>
+      <email>code@gagravarr.org</email>
+    </developer>
+  </developers>
+
   <properties>
     <maven.compile.source>1.5</maven.compile.source>
     <maven.compile.target>1.5</maven.compile.target>
