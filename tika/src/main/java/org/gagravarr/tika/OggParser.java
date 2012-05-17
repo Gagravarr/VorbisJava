@@ -41,6 +41,8 @@ import org.xml.sax.SAXException;
  *  files to their appropriate types, so we just handle the rest
  */
 public class OggParser extends AbstractParser {
+   private static final long serialVersionUID = -5686095376587813226L;
+
    private static List<MediaType> TYPES = Arrays.asList(new MediaType[] {
          OggDetector.OGG_GENERAL, OggDetector.OGG_VIDEO 
    });

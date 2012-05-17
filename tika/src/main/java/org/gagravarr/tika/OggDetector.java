@@ -33,6 +33,8 @@ import org.gagravarr.vorbis.VorbisPacket;
  *  within an Ogg container.
  */
 public class OggDetector implements Detector {
+   private static final long serialVersionUID = 591382028699008553L;
+
    public static final MediaType OGG_VIDEO = MediaType.video("ogg");
    public static final MediaType OGG_GENERAL = MediaType.application("ogg");
    public static final MediaType OGG_AUDIO = MediaType.audio("ogg");

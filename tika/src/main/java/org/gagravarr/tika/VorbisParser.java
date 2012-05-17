@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
+import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.metadata.XMPDM;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.AbstractParser;
@@ -38,6 +39,8 @@ import org.xml.sax.SAXException;
  * Parser for OGG Vorbis audio files
  */
 public class VorbisParser extends AbstractParser {
+   private static final long serialVersionUID = 5904981674814527529L;
+
    private static List<MediaType> TYPES = Arrays.asList(new MediaType[] {
          OggDetector.OGG_AUDIO, OggDetector.OGG_VORBIS 
    });
@@ -92,8 +95,8 @@ public class VorbisParser extends AbstractParser {
    protected static void extractComments(Metadata metadata, XHTMLContentHandler xhtml,
          VorbisComments comments) throws TikaException, SAXException {
       // Get the specific know comments
-      metadata.set(Metadata.TITLE, comments.getTitle());
-      metadata.set(Metadata.AUTHOR, comments.getArtist());
+      metadata.set(TikaCoreProperties.TITLE, comments.getTitle());
+      metadata.set(TikaCoreProperties.AUTHOR, comments.getArtist());
       metadata.set(XMPDM.ARTIST, comments.getArtist());
       metadata.set(XMPDM.ALBUM, comments.getAlbum());
       metadata.set(XMPDM.GENRE, comments.getGenre());

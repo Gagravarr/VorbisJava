@@ -28,7 +28,6 @@ import org.apache.tika.sax.XHTMLContentHandler;
 import org.gagravarr.flac.FlacFile;
 import org.gagravarr.flac.FlacInfo;
 import org.gagravarr.flac.FlacOggFile;
-import org.gagravarr.vorbis.VorbisInfo;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -36,6 +35,8 @@ import org.xml.sax.SAXException;
  * TODO Finish FLAC support then implement
  */
 public class FlacParser extends AbstractParser {
+   private static final long serialVersionUID = -7546577301474546694L;
+
    private static MediaType TYPE = MediaType.audio("x-flac");
 
    public Set<MediaType> getSupportedTypes(ParseContext context) {
