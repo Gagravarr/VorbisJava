@@ -43,7 +43,7 @@
       <artifactId>vorbis-java-core</artifactId>
       <version>${project.version}</version>
       <classifier>tests</classifier>
-      <scope>test,provided</scope>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tika</groupId>
