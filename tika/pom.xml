@@ -18,6 +18,7 @@
   <parent>
      <groupId>org.gagravarr</groupId>
      <artifactId>vorbis-java-parent</artifactId>
+     <relativePath>../parent/pom.xml</relativePath>
      <version>0.2-SNAPSHOT</version>
   </parent>
 
@@ -27,8 +28,7 @@
   <url>https://github.com/Gagravarr/VorbisJava</url>
 
   <properties>
-    <tika.version>1.2-SNAPSHOT</tika.version>
-    <!-- <tika.version>1.1</tika.version> -->
+    <tika.version>1.2</tika.version>
   </properties>
 
   <dependencies>
@@ -43,7 +43,7 @@
       <artifactId>vorbis-java-core</artifactId>
       <version>${project.version}</version>
       <classifier>tests</classifier>
-      <scope>test,provided</scope>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tika</groupId>
