@@ -96,7 +96,7 @@ public class VorbisParser extends AbstractParser {
          VorbisComments comments) throws TikaException, SAXException {
       // Get the specific know comments
       metadata.set(TikaCoreProperties.TITLE, comments.getTitle());
-      metadata.set(TikaCoreProperties.AUTHOR, comments.getArtist());
+      metadata.set(TikaCoreProperties.CREATOR, comments.getArtist());
       metadata.set(XMPDM.ARTIST, comments.getArtist());
       metadata.set(XMPDM.ALBUM, comments.getAlbum());
       metadata.set(XMPDM.GENRE, comments.getGenre());
