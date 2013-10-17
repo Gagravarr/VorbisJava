@@ -47,6 +47,12 @@ public class OggDetector implements Detector {
       if (input == null) {
           return MediaType.OCTET_STREAM;
       }
+      
+      // Ensure we can mark and reset before detecting
+      // Otherwise bail, to avoid us nibbling an unwindable stream
+      if (!input.markSupported()) {
+          return MediaType.OCTET_STREAM;
+      }
 
       // Check if the document starts with the OGG header
       input.mark(4);
