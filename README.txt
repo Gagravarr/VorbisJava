@@ -2,7 +2,7 @@
            -----------------------------
 
 This library is a pure Java, Apache v2 licensed project for working with
-Ogg and Vorbis files
+Ogg, Vorbis, FLAC and Opus files
 
 Currently, support for the Ogg container is fairly complete, offering
 the ability to read, write, add and change streams within an Ogg file.
@@ -16,8 +16,14 @@ user comments etc), and tools are provided to query and alter these
 decoding or encoding audio data. Contributions for these areas would
 be welcomed!
 
+Opus support is slightly less than that of Vorbis, covering retrieving
+of metadata (such as sampling rates, user comments etc). However, basic
+Opus audio frame support is outstanding, and there are no tools for it.
+Contributions to expand it most appreciated!
+
 Very limited support is also included for FLAC comments (user metadata),
-which use the same scheme as Vorbis.
+which use the same scheme as Vorbis. FLAC-native and FLAC-in-Ogg files
+are both supproted for extracting the user metadata.
 
 
 Tools
@@ -47,7 +53,8 @@ included.
 Apache Tika
 -----------
 Included in the tika module are Parser and Detector plugins for
-Apache Tika for Ogg based file formats (current Ogg, Vorbis and FLAC).
+Apache Tika for Ogg based file formats (current Ogg, Vorbis, Opus
+and FLAC).
 
 These include appropriate service registry entries for Tika to allow
 these plugins to be automatically loaded by Tika. Simply ensure that the
@@ -68,6 +75,11 @@ kind of file you have, and your interests. These are:
      Provides read and write support for Ogg Vorbis audio files. Provides
      access to the key parts of the Vorbis file, such as info and comments.
      (No support yet for encoding or decoding the audio packets though)
+
+  org.gagravarr.opus.OpusFile
+     Provides read support for Ogg Opus audio files. Provides access to 
+     the key parts of the Opus file, such as info and comments.
+     (No support at all for audio packets, for now)
 
   org.gagravarr.flac.FlacOggFile
      Provides read support for FLAC files stored in an Ogg container. Allows
@@ -90,6 +102,7 @@ Information Resources
  * Ogg file format - RFC3533, plus http://xiph.org/vorbis/doc/oggstream.html 
    and http://xiph.org/vorbis/doc/framing.html
  * Vorbis - http://xiph.org/vorbis/doc/
+ * Opus - http://www.opus-codec.org/docs/
  * FLAC - http://flac.sourceforge.net/format.html
  * FLAC in Ogg - http://flac.sourceforge.net/ogg_mapping.html
  * Tika - http://tika.apache.org/
