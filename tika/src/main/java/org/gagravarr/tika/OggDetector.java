@@ -26,6 +26,7 @@ import org.gagravarr.flac.FlacFirstOggPacket;
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
+import org.gagravarr.opus.OpusPacket;
 import org.gagravarr.vorbis.VorbisPacket;
 
 /**
@@ -39,6 +40,7 @@ public class OggDetector implements Detector {
    public static final MediaType OGG_GENERAL = MediaType.application("ogg");
    public static final MediaType OGG_AUDIO = MediaType.audio("ogg");
    public static final MediaType OGG_VORBIS = MediaType.audio("vorbis");
+   public static final MediaType OPUS_AUDIO = MediaType.audio("ogg; codecs=opus");
    public static final MediaType FLAC = MediaType.audio("x-flac");
    
    public MediaType detect(InputStream input, Metadata metadata)
@@ -77,6 +79,7 @@ public class OggDetector implements Detector {
          // For tracking
          int streams = 0;
          int flacCount = 0;
+         int opusCount = 0;
          int vorbisCount = 0;
          List<Integer> sids = new ArrayList<Integer>();
          
@@ -94,6 +97,10 @@ public class OggDetector implements Detector {
                      // Vorbis Audio stream
                      vorbisCount++;
                   }
+                  if(OpusPacket.isOpusStream(p)) {
+                      // Opus Audio stream
+                      opusCount++;
+                   }
                   if(FlacFirstOggPacket.isFlacStream(p)) {
                      // FLAC-in-Ogg Audio stream
                      flacCount++;
@@ -109,12 +116,18 @@ public class OggDetector implements Detector {
          if(vorbisCount == 1 && streams == 1) {
             // Single Vorbis stream, regular Vorbis Audio file
             return OGG_VORBIS;
+         } else if(opusCount == 1 && streams == 1) {
+             // Single Opus stream, regular Opus Audio file
+             return OPUS_AUDIO;
          } else if(flacCount == 1 && streams == 1) {
             // Single FLAC-in-Ogg stream, regular FLAC Audio file
             return FLAC;
          } else if(vorbisCount > 1 && vorbisCount == streams) {
             // Multiple Vorbis streams, multi-track Vorbis audio
             return OGG_VORBIS;
+         } else if(opusCount > 1 && vorbisCount == streams) {
+             // Multiple Opus streams, multi-track Opus audio
+             return OPUS_AUDIO;
          } else if(flacCount > 1 && flacCount == streams) {
             // Multiple FLAC streams, multi-track FLAC audio
             return FLAC;
