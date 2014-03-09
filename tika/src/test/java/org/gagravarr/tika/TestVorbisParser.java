@@ -20,6 +20,8 @@ import junit.framework.TestCase;
 
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
+import org.apache.tika.metadata.Office;
+import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.metadata.XMPDM;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.BodyContentHandler;
@@ -30,7 +32,7 @@ public class TestVorbisParser extends TestCase {
 		return this.getClass().getResourceAsStream("/testVORBIS.ogg");
 	}
 	
-	public void testParser() throws Exception {
+    public void testParser() throws Exception {
 	   VorbisParser parser = new VorbisParser();
 	   
       ContentHandler handler = new BodyContentHandler();
@@ -42,9 +44,14 @@ public class TestVorbisParser extends TestCase {
 	         metadata, context
 	   );
 	   
-	   // Check metadata
+	   // Check legacy style metadata
 	   assertEquals("Test Artist", metadata.get(Metadata.AUTHOR));
       assertEquals("Test Title", metadata.get(Metadata.TITLE));
+      
+      // Check new-style metadata
+      assertEquals("Test Artist", metadata.get(Office.AUTHOR));
+      assertEquals("Test Artist", metadata.get(TikaCoreProperties.CREATOR));
+      assertEquals("Test Title", metadata.get(TikaCoreProperties.TITLE));
       
       assertEquals("Test Album", metadata.get(XMPDM.ALBUM));
       assertEquals("Test Artist", metadata.get(XMPDM.ARTIST));
