@@ -49,12 +49,12 @@ included.
      file. Works similar to *vorbiscomment* commandline tool that ships
      with libvorbis
 
-  org.gagravarr.vorbis.tools.OpusCommentTool
+  org.gagravarr.opus.tools.OpusCommentTool
      Allows the listing and editing of comments (user metadata) of an Opus
      file. Works similar to *vorbiscomment* commandline tool that ships
      with libvorbis, except for Opus files
 
-  org.gagravarr.vorbis.tools.FlacCommentTool
+  org.gagravarr.flac.tools.FlacCommentTool
      Allows the listing of comments (user metadata) of a Flac file (native or
      ogg contained) file. Works similar to *vorbiscomment* commandline tool
      that ships with libvorbis, except for Flac files, and lists only

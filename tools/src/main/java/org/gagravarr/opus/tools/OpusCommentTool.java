@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.gagravarr.vorbis.tools;
+package org.gagravarr.opus.tools;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.gagravarr.opus.OpusAudioData;
 import org.gagravarr.opus.OpusFile;
+import org.gagravarr.vorbis.tools.VorbisLikeCommentTool;
 import org.gagravarr.vorbis.tools.VorbisLikeCommentTool.Command.Commands;
 
 /**

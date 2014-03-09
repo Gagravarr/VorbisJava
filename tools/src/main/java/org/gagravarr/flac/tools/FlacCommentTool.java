@@ -11,11 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.gagravarr.vorbis.tools;
+package org.gagravarr.flac.tools;
 
 import java.io.File;
 
 import org.gagravarr.flac.FlacFile;
+import org.gagravarr.vorbis.tools.VorbisLikeCommentTool;
 import org.gagravarr.vorbis.tools.VorbisLikeCommentTool.Command.Commands;
 
 /**

@@ -59,12 +59,12 @@ public abstract class VorbisLikeCommentTool {
         System.exit(1);
     }
     
-    protected static class Command {
-        protected String inFile;
-        protected String outFile;
-        protected List<String> tagPairs;
-        protected Commands command;
-        protected enum Commands { List, Append, Overwrite, Help }
+    public static class Command {
+        public final String inFile;
+        public final String outFile;
+        public final List<String> tagPairs;
+        public final Commands command;
+        public enum Commands { List, Append, Overwrite, Help }
         
         protected Command(String inFile, String outFile, List<String> tagPairs, Commands command) {
             this.inFile = inFile;
