@@ -25,7 +25,6 @@ import org.gagravarr.vorbis.tools.VorbisLikeCommentTool.Command.Commands;
 /**
  * A class for listing and editing Comments (Tags) within an
  *  Opus File, much like the vorbiscomments program (but Opus)
- *  within a Vorbis File, much like the
  */
 public class OpusCommentTool extends VorbisLikeCommentTool {
     public static void main(String[] args) throws Exception {

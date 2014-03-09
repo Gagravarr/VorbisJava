@@ -13,6 +13,7 @@
  */
 package org.gagravarr.flac;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,19 +29,20 @@ import org.gagravarr.ogg.OggFile;
  *  whether they're Ogg or Native framed.
  */
 public abstract class FlacFile {
-	protected FlacInfo info;
-	protected FlacTags tags;
-	protected List<FlacMetadataBlock> otherMetadata;
-	
-	/**
-	 * Opens the given file for reading
-	 */
-	public static FlacFile open(File f) throws IOException, FileNotFoundException {
-		InputStream inp = new FileInputStream(f);
-		FlacFile file = open(inp);
-		inp.close();
-		return file;
-	}
+    protected FlacInfo info;
+    protected FlacTags tags;
+    protected List<FlacMetadataBlock> otherMetadata;
+
+    /**
+     * Opens the given file for reading
+     */
+    public static FlacFile open(File f) throws IOException, FileNotFoundException {
+        // Open, in a way that we can skip backwards a few bytes
+        InputStream inp = new BufferedInputStream(new FileInputStream(f), 8);
+        FlacFile file = open(inp);
+        inp.close();
+        return file;
+    }
    /**
     * Opens the given file for reading.
     * @param inp The InputStrem to read from, which must support mark/reset
