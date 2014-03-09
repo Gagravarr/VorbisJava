@@ -13,19 +13,18 @@
  */
 package org.gagravarr.opus;
 
-import static org.gagravarr.opus.OpusPacket.MAGIC_TAGS_BYTES;
-
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.vorbis.VorbisComments;
+import org.gagravarr.vorbis.VorbisStyleComments;
 
 /**
  * This is a {@link VorbisComments} with an Opus metadata
  *  block header, rather than the usual vorbis one.
  */
-public class OpusTags extends VorbisComments implements OpusPacket {
+public class OpusTags extends VorbisStyleComments implements OpusPacket {
    public OpusTags(OggPacket packet) {
-      super(packet);
+      super(packet, MAGIC_TAGS_BYTES.length);
       
       // Verify the type
       if (! IOUtils.byteRangeMatches(MAGIC_TAGS_BYTES, getData(), 0)) {
@@ -40,7 +39,7 @@ public class OpusTags extends VorbisComments implements OpusPacket {
     * 8 byte OpusTags
     */
    @Override
-   public int getHeaderSize() {
+   protected int getHeaderSize() {
       return 8;
    }
 
@@ -48,7 +47,7 @@ public class OpusTags extends VorbisComments implements OpusPacket {
     * Magic string
     */
    @Override
-   public void populateMetadataHeader(byte[] b, int type, int dataLength) {
+   protected void populateMetadataHeader(byte[] b, int dataLength) {
        System.arraycopy(MAGIC_TAGS_BYTES, 0, b, 0, MAGIC_TAGS_BYTES.length);
    }
 }

@@ -20,7 +20,7 @@ package org.gagravarr.ogg;
  * Provides support for reading and writing
  *  new and existing OggPacket instances.
  */
-public abstract class HighLevelOggStreamPacket {
+public abstract class HighLevelOggStreamPacket implements OggStreamPacket {
 	private OggPacket oggPacket;
 	private byte[] data;
 	

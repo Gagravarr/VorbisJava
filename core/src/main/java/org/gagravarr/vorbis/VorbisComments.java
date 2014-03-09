@@ -27,6 +27,7 @@ import org.gagravarr.ogg.OggPacket;
 
 /**
  * Holds encoder information and user specified tags
+ * TODO Refactor onto {@link VorbisStyleComments}
  */
 public class VorbisComments extends HighLevelOggStreamPacket implements VorbisPacket {
    public static final String KEY_ARTIST = "artist";
