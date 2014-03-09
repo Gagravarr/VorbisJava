@@ -17,11 +17,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import junit.framework.TestCase;
+
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
-
-import junit.framework.TestCase;
 
 public class TestVorbisComments extends TestCase {
 	private InputStream getTestFile() throws IOException {
@@ -34,7 +34,7 @@ public class TestVorbisComments extends TestCase {
 
 		// 2nd packet
 		r.getNextPacket();
-		VorbisPacket p = VorbisPacket.create(r.getNextPacket());
+		VorbisPacket p = VorbisPacketFactory.create(r.getNextPacket());
 		assertEquals(VorbisComments.class, p.getClass());
 		
 		VorbisComments c = (VorbisComments)p;

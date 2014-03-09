@@ -65,7 +65,7 @@ public class VorbisFile {
 		while( (p = r.getNextPacket()) != null ) {
 			if(p.isBeginningOfStream() && p.getData().length > 10) {
 				try {
-					VorbisPacket.create(p);
+					VorbisPacketFactory.create(p);
 					sid = p.getSid();
 					break;
 				} catch(IllegalArgumentException e) {
@@ -75,9 +75,9 @@ public class VorbisFile {
 		}
 		
 		// First three packets are required to be info, comments, setup
-		info = (VorbisInfo)VorbisPacket.create( p );
-		comment = (VorbisComments)VorbisPacket.create( r.getNextPacketWithSid(sid) );
-		setup = (VorbisSetup)VorbisPacket.create( r.getNextPacketWithSid(sid) );
+		info = (VorbisInfo)VorbisPacketFactory.create( p );
+		comment = (VorbisComments)VorbisPacketFactory.create( r.getNextPacketWithSid(sid) );
+		setup = (VorbisSetup)VorbisPacketFactory.create( r.getNextPacketWithSid(sid) );
 		
 		// Everything else should be audio data
 	}
@@ -124,7 +124,7 @@ public class VorbisFile {
 		OggPacket p = null;
 		VorbisPacket vp = null;
 		while( (p = r.getNextPacketWithSid(sid)) != null ) {
-			vp = VorbisPacket.create(p);
+			vp = VorbisPacketFactory.create(p);
 			if(vp instanceof VorbisAudioData) {
 				return (VorbisAudioData)vp;
 			} else {

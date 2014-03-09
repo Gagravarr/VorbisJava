@@ -13,10 +13,11 @@
  */
 package org.gagravarr.opus;
 
+import static org.gagravarr.opus.OpusPacket.MAGIC_TAGS_BYTES;
+
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.vorbis.VorbisComments;
-import static org.gagravarr.opus.OpusPacket.MAGIC_TAGS_BYTES;
 
 /**
  * This is a {@link VorbisComments} with an Opus metadata

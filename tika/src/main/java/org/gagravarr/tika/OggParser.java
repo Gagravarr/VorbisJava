@@ -31,7 +31,7 @@ import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.opus.OpusPacketFactory;
-import org.gagravarr.vorbis.VorbisPacket;
+import org.gagravarr.vorbis.VorbisPacketFactory;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -76,7 +76,7 @@ public class OggParser extends AbstractParser {
             sids.add(p.getSid());
             
             if(p.getData() != null && p.getData().length > 10) {
-               if(VorbisPacket.isVorbisStream(p)) {
+               if(VorbisPacketFactory.isVorbisStream(p)) {
                   // Vorbis Audio stream
                   vorbisCount++;
                }

@@ -27,7 +27,7 @@ import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.opus.OpusPacketFactory;
-import org.gagravarr.vorbis.VorbisPacket;
+import org.gagravarr.vorbis.VorbisPacketFactory;
 
 /**
  * Detector for identifying specific file types stored
@@ -94,7 +94,7 @@ public class OggDetector implements Detector {
                sids.add(p.getSid());
                
                if(p.getData() != null && p.getData().length > 10) {
-                  if(VorbisPacket.isVorbisStream(p)) {
+                  if(VorbisPacketFactory.isVorbisStream(p)) {
                      // Vorbis Audio stream
                      vorbisCount++;
                   }

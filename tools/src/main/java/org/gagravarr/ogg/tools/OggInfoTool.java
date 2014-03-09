@@ -23,7 +23,7 @@ import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.opus.OpusPacketFactory;
-import org.gagravarr.vorbis.VorbisPacket;
+import org.gagravarr.vorbis.VorbisPacketFactory;
 
 /**
  * Prints out information on the Steams within
@@ -74,7 +74,7 @@ public class OggInfoTool {
 						Integer.toHexString(p.getSid()) + " (" + p.getSid() + ")");
 				
 				if(p.getData() != null && p.getData().length > 10) {
-					if(VorbisPacket.isVorbisStream(p)) {
+					if(VorbisPacketFactory.isVorbisStream(p)) {
 						System.out.println("\tVorbis Info detected");
 					}
                                         if(OpusPacketFactory.isOpusStream(p)) {

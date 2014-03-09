@@ -16,9 +16,9 @@ package org.gagravarr.ogg;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.gagravarr.ogg.OggPage.OggPacketIterator;
-
 import junit.framework.TestCase;
+
+import org.gagravarr.ogg.OggPage.OggPacketIterator;
 
 /**
  * Test that we do the right things when reading files

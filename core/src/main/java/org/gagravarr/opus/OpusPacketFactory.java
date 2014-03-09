@@ -13,11 +13,12 @@
  */
 package org.gagravarr.opus;
 
+import static org.gagravarr.opus.OpusPacket.MAGIC_HEADER_BYTES;
+import static org.gagravarr.opus.OpusPacket.MAGIC_TAGS_BYTES;
+
 import org.gagravarr.ogg.HighLevelOggStreamPacket;
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
-import static org.gagravarr.opus.OpusPacket.MAGIC_HEADER_BYTES;
-import static org.gagravarr.opus.OpusPacket.MAGIC_TAGS_BYTES;
 
 /**
  * Identifies the right kind of {@link OpusPacket} for a given
