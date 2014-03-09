@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.gagravarr.vorbis;
+package org.gagravarr.opus;
 
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggStreamAudioData;
@@ -19,18 +19,11 @@ import org.gagravarr.ogg.OggStreamAudioData;
 /**
  * Raw, compressed audio data
  */
-public class VorbisAudioData extends OggStreamAudioData implements VorbisPacket {
-    public VorbisAudioData(OggPacket pkt) {
+public class OpusAudioData extends OggStreamAudioData implements OpusPacket {
+    public OpusAudioData(OggPacket pkt) {
         super(pkt);
     }
-    public VorbisAudioData(byte[] data) {
+    public OpusAudioData(byte[] data) {
         super(data);
-    }
-
-    public int getHeaderSize() {
-        return 0;
-    }
-    public void populateMetadataHeader(byte[] b, int dataLength) {
-        throw new IllegalStateException("Audio Data packets don't have Metadata Headers");
     }
 }

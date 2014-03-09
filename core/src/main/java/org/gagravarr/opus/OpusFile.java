@@ -18,6 +18,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
@@ -37,7 +39,7 @@ public class OpusFile {
     private OpusInfo info;
     private OpusTags tags;
 
-//    private List<OpusAudioData> writtenPackets;
+    private List<OpusAudioData> writtenPackets;
 
     /**
      * Opens the given file for reading
@@ -66,7 +68,7 @@ public class OpusFile {
                     sid = p.getSid();
                     break;
                 } catch(IllegalArgumentException e) {
-                    // Not a vorbis stream, don't worry
+                    // Not an opus stream, don't worry
                 }
             }
         }
@@ -109,18 +111,17 @@ public class OpusFile {
             this.sid = w.getSid();
         }
 
-        //writtenPackets = new ArrayList<OpusAudioData>();
+        writtenPackets = new ArrayList<OpusAudioData>();
 
         this.info = info;
         this.tags = tags;
     }
 
-/*
     public OpusAudioData getNextAudioPacket() throws IOException {
         OggPacket p = null;
-        HighLevelOggStreamPacket op = null;
+        OpusPacket op = null;
         while( (p = r.getNextPacketWithSid(sid)) != null ) {
-            op = OpusPacket.create(p);
+            op = OpusPacketFactory.create(p);
             if(op instanceof OpusAudioData) {
                 return (OpusAudioData)op;
             } else {
@@ -129,7 +130,6 @@ public class OpusFile {
         }
         return null;
     }
-*/
 
     /**
      * Skips the audio data to the next packet with a granule
@@ -162,11 +162,9 @@ public class OpusFile {
      *  because we assume you'll still be populating
      *  the Info/Comment/Setup objects
      */
-/*    
     public void writeAudioData(OpusAudioData data) {
         writtenPackets.add(data);
     }
-*/
 
     /**
      * In Reading mode, will close the underlying ogg
@@ -185,7 +183,6 @@ public class OpusFile {
             w.bufferPacket(tags.write(), false);
 
             long lastGranule = 0;
-/*            
             for(OpusAudioData vd : writtenPackets) {
                 // Update the granule position as we go
                 if(vd.getGranulePosition() >= 0 &&
@@ -201,7 +198,6 @@ public class OpusFile {
                     w.flush();
                 }
             }
-*/
 
             w.close();
             w = null;

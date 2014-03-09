@@ -65,7 +65,6 @@ public class OpusPacketFactory extends HighLevelOggStreamPacket {
            }
        }
 
-       //return new OpusAudioData(packet);
-       return null;
+       return new OpusAudioData(packet);
    }
 }
