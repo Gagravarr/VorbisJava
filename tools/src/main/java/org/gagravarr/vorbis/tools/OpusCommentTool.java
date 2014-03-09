@@ -18,45 +18,44 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.gagravarr.vorbis.VorbisAudioData;
-import org.gagravarr.vorbis.VorbisFile;
+import org.gagravarr.opus.OpusAudioData;
+import org.gagravarr.opus.OpusFile;
 import org.gagravarr.vorbis.tools.VorbisLikeCommentTool.Command.Commands;
 
 /**
- * A class for listing and editing Comments
+ * A class for listing and editing Comments (Tags) within an
+ *  Opus File, much like the vorbiscomments program (but Opus)
  *  within a Vorbis File, much like the
- *  vorbiscomment program.
  */
-public class VorbisCommentTool extends VorbisLikeCommentTool {
+public class OpusCommentTool extends VorbisLikeCommentTool {
     public static void main(String[] args) throws Exception {
-        Command command = processArgs(args, "VorbisComment");
+        Command command = processArgs(args, "OpusComment");
         
-        VorbisFile vf = new VorbisFile(new File(command.inFile));
+        OpusFile op = new OpusFile(new File(command.inFile));
         
         if (command.command == Commands.List) {
-            listTags(vf.getComment());
+            listTags(op.getTags());
         } else {
             // Have the new tags added
-            addTags(vf.getComment(), command);
+            addTags(op.getTags(), command);
             
             // Write out
-            List<VorbisAudioData> audio = new ArrayList<VorbisAudioData>();
-            VorbisAudioData ad;
-            while( (ad = vf.getNextAudioPacket()) != null ) {
+            List<OpusAudioData> audio = new ArrayList<OpusAudioData>();
+            OpusAudioData ad;
+            while( (ad = op.getNextAudioPacket()) != null ) {
                 audio.add(ad);
             }
 
             // Now write out
-            vf.close();
-            VorbisFile out = new VorbisFile(
+            op.close();
+            OpusFile out = new OpusFile(
                     new FileOutputStream(command.outFile),
-                    vf.getSid(),
-                    vf.getInfo(),
-                    vf.getComment(),
-                    vf.getSetup()
+                    op.getSid(),
+                    op.getInfo(),
+                    op.getTags()
             );
-            for(VorbisAudioData vad : audio) {
-                out.writeAudioData(vad);
+            for(OpusAudioData oad : audio) {
+                out.writeAudioData(oad);
             }
             out.close();
         }
