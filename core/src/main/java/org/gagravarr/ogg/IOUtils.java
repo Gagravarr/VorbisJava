@@ -273,14 +273,20 @@ public class IOUtils {
 	 * @return The length in BYTES
 	 */
 	public static int putUTF8(byte[] data, int offset, String str) {
-		try {
-			byte[] s = str.getBytes("UTF-8");
-			System.arraycopy(s, 0, data, offset, s.length);
-			return s.length;
-		} catch(UnsupportedEncodingException e) {
-			throw new RuntimeException("Broken JVM, UTF-8 not found", e);
-		}
+	    byte[] s = toUTF8Bytes(str);
+	    System.arraycopy(s, 0, data, offset, s.length);
+	    return s.length;
 	}
+        /**
+         * @return The length in BYTES
+         */
+        public static byte[] toUTF8Bytes(String str) {
+            try {
+                return str.getBytes("UTF-8");
+            } catch(UnsupportedEncodingException e) {
+                throw new RuntimeException("Broken JVM, UTF-8 not found", e);
+            }
+        }
 	/**
 	 * Writes the string out as UTF-8
 	 */
