@@ -311,4 +311,18 @@ public class IOUtils {
 			throw new RuntimeException("Broken JVM, UTF-8 not found", e);
 		}
 	}
+	
+	/**
+	 * Checks to see if the wanted byte pattern is found in the
+	 *  within bytes from the given offset
+	 * @param wanted Byte sequence to look for
+	 * @param within Bytes to find in
+	 * @param withinOffset Offset to check from
+	 */
+	public static boolean byteRangeMatches(byte[] wanted, byte[] within, int withinOffset) {
+	    for (int i=0; i<wanted.length; i++) {
+	        if (wanted[i] != within[i+withinOffset]) return false;
+	    }
+	    return true;
+	}
 }

@@ -42,12 +42,17 @@ public class OpusInfo extends OpusPacket {
 
     public OpusInfo(OggPacket pkt) {
         super(pkt);
+        
+        // Verify the type
+        byte[] data = getData();
+        if (! IOUtils.byteRangeMatches(MAGIC_HEADER_BYTES, data, 0)) {
+            throw new IllegalArgumentException("Invalid type, not a Opus Header");
+        }
 
         // Parse
-        byte[] data = getData();
         version = data[8];
         parseVersion();
-        if(majorVersion != 0) {
+        if (majorVersion != 0) {
             throw new IllegalArgumentException("Unsupported Opus version " + version + " at major version " + majorVersion + " detected");
         }
 
@@ -68,7 +73,7 @@ public class OpusInfo extends OpusPacket {
     @Override
     public OggPacket write() {
         byte[] data = new byte[30];
-        IOUtils.putUTF8(data, 0, MAGIC_HEADER);
+        System.arraycopy(MAGIC_HEADER_BYTES, 0, data, 0, 8);
 
         data[8] = version;
         data[9] = (byte)channels; 

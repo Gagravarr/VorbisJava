@@ -26,7 +26,7 @@ import org.gagravarr.flac.FlacFirstOggPacket;
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
-import org.gagravarr.opus.OpusPacket;
+import org.gagravarr.opus.OpusPacketFactory;
 import org.gagravarr.vorbis.VorbisPacket;
 
 /**
@@ -98,7 +98,7 @@ public class OggDetector implements Detector {
                      // Vorbis Audio stream
                      vorbisCount++;
                   }
-                  if(OpusPacket.isOpusStream(p)) {
+                  if(OpusPacketFactory.isOpusStream(p)) {
                       // Opus Audio stream
                       opusCount++;
                    }

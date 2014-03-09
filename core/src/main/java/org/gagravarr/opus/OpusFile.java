@@ -62,7 +62,7 @@ public class OpusFile {
         while( (p = r.getNextPacket()) != null ) {
             if(p.isBeginningOfStream() && p.getData().length > 10) {
                 try {
-                    OpusPacket.create(p);
+                    OpusPacketFactory.create(p);
                     sid = p.getSid();
                     break;
                 } catch(IllegalArgumentException e) {
@@ -72,8 +72,8 @@ public class OpusFile {
         }
 
         // First two packets are required to be info then tags
-        info = (OpusInfo)OpusPacket.create( p );
-        tags = (OpusTags)OpusPacket.create( r.getNextPacketWithSid(sid) );
+        info = (OpusInfo)OpusPacketFactory.create( p );
+        tags = (OpusTags)OpusPacketFactory.create( r.getNextPacketWithSid(sid) );
 
         // Everything else should be audio data
     }

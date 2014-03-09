@@ -16,7 +16,7 @@ package org.gagravarr.opus;
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.vorbis.VorbisComments;
-
+import static org.gagravarr.opus.OpusPacket.MAGIC_TAGS_BYTES;
 
 /**
  * This is a {@link VorbisComments} with an Opus metadata
@@ -27,9 +27,8 @@ public class OpusTags extends VorbisComments {
       super(packet);
       
       // Verify the type
-      String type = IOUtils.getUTF8(getData(), 0, 8);
-      if(! OpusPacket.MAGIC_TAGS.equals(type)) {
-         throw new IllegalArgumentException("Invalid type " + type);
+      if (! IOUtils.byteRangeMatches(MAGIC_TAGS_BYTES, getData(), 0)) {
+          throw new IllegalArgumentException("Invalid type, not a Opus Header");
       }
    }
    public OpusTags() {
@@ -49,6 +48,6 @@ public class OpusTags extends VorbisComments {
     */
    @Override
    protected void populateMetadataHeader(byte[] b, int type, int dataLength) {
-       IOUtils.putUTF8(b, 0, OpusPacket.MAGIC_TAGS);
+       System.arraycopy(MAGIC_TAGS_BYTES, 0, b, 0, MAGIC_TAGS_BYTES.length);
    }
 }
