@@ -37,26 +37,24 @@ public class TestOpusFileRead extends TestCase {
         assertEquals(1, of.getInfo().getMinorVersion());
         
         assertEquals(2, of.getInfo().getChannels());
-/*        
+
         assertEquals(44100, of.getInfo().getRate());
+        assertEquals(0x164, of.getInfo().getPreSkip());
+        assertEquals(0, of.getInfo().getOutputGain());
+        
+        assertEquals(0, of.getInfo().getChannelMappingFamily());
 
-        assertEquals(0, of.getInfo().getBitrateLower());
-        assertEquals(0, of.getInfo().getBitrateUpper());
-        assertEquals(80000, of.getInfo().getBitrateNominal());
-
-        assertEquals("Test Title", of.getComment().getTitle());
-        assertEquals("Test Artist", of.getComment().getArtist());
-
-        // TODO - proper setup packet checking
-        assertEquals(255*13+0xa9, of.getSetup().getData().length);
+        assertEquals("Test Title", of.getTags().getTitle());
+        assertEquals("Test Artist", of.getTags().getArtist());
 
         // Has audio data
+/*        
         assertNotNull( of.getNextAudioPacket() );
         assertNotNull( of.getNextAudioPacket() );
         assertNotNull( of.getNextAudioPacket() );
         assertNotNull( of.getNextAudioPacket() );
 
-        VorbisAudioData ad = of.getNextAudioPacket();
+        OpusAudioData ad = of.getNextAudioPacket();
         assertEquals(0x3c0, ad.getGranulePosition());
 */
     }
