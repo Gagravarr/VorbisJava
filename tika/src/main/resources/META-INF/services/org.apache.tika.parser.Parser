@@ -1,3 +1,4 @@
 org.gagravarr.tika.FlacParser
 org.gagravarr.tika.OggParser
+org.gagravarr.tika.OpusParser
 org.gagravarr.tika.VorbisParser
