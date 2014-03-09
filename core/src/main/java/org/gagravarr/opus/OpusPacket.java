@@ -71,6 +71,7 @@ public abstract class OpusPacket extends HighLevelOggStreamPacket {
    /**
     * Creates the appropriate {@link OpusPacket}
     *  instance based on the type.
+    * TODO Refactor to return OpusPacket instead of HighLevelOggStreamPacket
     */
    public static HighLevelOggStreamPacket create(OggPacket packet) {
        // Special header types detection
@@ -84,7 +85,10 @@ public abstract class OpusPacket extends HighLevelOggStreamPacket {
            }
        }
 
-       // TODO
+       // TODO Support Opus Audio packets in a basic way
+       // Will need refactoring to make VorbisPacket / OpusPacket an
+       //  interface, and changing this helper to be a Factory
+       
        //return new OpusAudioData(packet);
        return null;
    }
