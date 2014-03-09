@@ -76,14 +76,14 @@ public class VorbisComments extends VorbisPacket {
 		}
 	}
 	
-	public VorbisComments() {
-		super();
-		vendor = "Xiph.org Java Vorbis Tools 20100203";
-	}
+    public VorbisComments() {
+        super();
+        vendor = "Gagravarr.org Java Vorbis Tools v0.3 20140309";
+    }
 	
-   protected int getHeaderSize() {
-      return HEADER_LENGTH_METADATA;
-   }
+    protected int getHeaderSize() {
+        return HEADER_LENGTH_METADATA;
+    }
 
 	public String getVendor() {
 		return vendor;
