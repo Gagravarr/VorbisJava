@@ -24,8 +24,6 @@ import org.gagravarr.ogg.OggFile;
 
 /**
  * Tests for round-tripping with VorbisFile
- * @author nick
- *
  */
 public class TestVorbisFileWrite extends TestCase {
 	private InputStream getTestFile() throws IOException {

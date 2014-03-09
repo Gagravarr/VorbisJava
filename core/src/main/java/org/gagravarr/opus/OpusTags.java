@@ -13,6 +13,8 @@
  */
 package org.gagravarr.opus;
 
+import java.io.OutputStream;
+
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.vorbis.VorbisComments;
@@ -49,5 +51,9 @@ public class OpusTags extends VorbisStyleComments implements OpusPacket {
    @Override
    protected void populateMetadataHeader(byte[] b, int dataLength) {
        System.arraycopy(MAGIC_TAGS_BYTES, 0, b, 0, MAGIC_TAGS_BYTES.length);
+   }
+   @Override
+   protected void populateMetadataFooter(OutputStream out) {
+       // No footer needed on Opus Tag Packets
    }
 }

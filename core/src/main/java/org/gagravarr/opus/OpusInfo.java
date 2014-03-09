@@ -73,7 +73,12 @@ public class OpusInfo extends HighLevelOggStreamPacket implements OpusPacket {
 
     @Override
     public OggPacket write() {
-        byte[] data = new byte[30];
+        int length = 19;
+        if (channelMappingFamily != 0) {
+            length += 2;
+            length += channels;
+        }
+        byte[] data = new byte[length];
         System.arraycopy(MAGIC_HEADER_BYTES, 0, data, 0, 8);
 
         data[8] = version;

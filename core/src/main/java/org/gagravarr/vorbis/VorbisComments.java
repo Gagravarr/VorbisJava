@@ -13,6 +13,9 @@
  */
 package org.gagravarr.vorbis;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import org.gagravarr.ogg.OggPacket;
 
 /**
@@ -31,5 +34,14 @@ public class VorbisComments extends VorbisStyleComments implements VorbisPacket 
     }
     public void populateMetadataHeader(byte[] b, int dataLength) {
         VorbisPacketFactory.populateMetadataHeader(b, TYPE_COMMENTS, dataLength);
+    }
+    public void populateMetadataFooter(OutputStream out) {
+        // Vorbis requires a single framing bit at the end
+        try {
+            out.write(1);
+        } catch (IOException e) {
+            // Shouldn't happen here!
+            throw new RuntimeException(e);
+        }
     }
 }

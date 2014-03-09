@@ -55,6 +55,10 @@ public class FlacTags extends VorbisStyleComments {
       b[0] = FlacMetadataBlock.VORBIS_COMMENT;
       IOUtils.putInt3BE(b, 1, dataLength);
    }
+   @Override
+   protected void populateMetadataFooter(OutputStream out) {
+       // No footer needed on FLAC Tag Packets
+   }
    
    protected static class FlacTagsAsMetadata extends FlacMetadataBlock {
       private FlacTags tags;

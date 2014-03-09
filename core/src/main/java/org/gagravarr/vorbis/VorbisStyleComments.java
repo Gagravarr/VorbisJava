@@ -15,6 +15,7 @@ package org.gagravarr.vorbis;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -232,6 +233,7 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket {
 
    protected abstract int getHeaderSize();
    protected abstract void populateMetadataHeader(byte[] data, int packetLength);
+   protected abstract void populateMetadataFooter(OutputStream out);
 
    @Override
    public OggPacket write() {
@@ -263,7 +265,9 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket {
                    IOUtils.writeUTF8WithLength(baos, comment);
                }
            }
-           baos.write(1);
+           
+           // Do a header, if required for the format
+           populateMetadataFooter(baos);
        } catch(IOException e) {
            // Should never happen!
            throw new RuntimeException(e);

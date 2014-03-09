@@ -47,15 +47,18 @@ public class TestOpusFileRead extends TestCase {
         assertEquals("Test Title", of.getTags().getTitle());
         assertEquals("Test Artist", of.getTags().getArtist());
 
-        // Has audio data
-/*        
-        assertNotNull( of.getNextAudioPacket() );
-        assertNotNull( of.getNextAudioPacket() );
-        assertNotNull( of.getNextAudioPacket() );
-        assertNotNull( of.getNextAudioPacket() );
-
-        OpusAudioData ad = of.getNextAudioPacket();
-        assertEquals(0x3c0, ad.getGranulePosition());
-*/
+        // Has some audio data, but not very much
+        OpusAudioData ad = null;
+        
+        ad = of.getNextAudioPacket();
+        assertNotNull( ad );
+        assertEquals(0x579, ad.getGranulePosition());
+        
+        ad = of.getNextAudioPacket();
+        assertNotNull( ad );
+        assertEquals(0x579, ad.getGranulePosition());
+        
+        ad = of.getNextAudioPacket();
+        assertNull( ad );
     }
 }
