@@ -19,7 +19,7 @@
      <groupId>org.gagravarr</groupId>
      <artifactId>vorbis-java-parent</artifactId>
      <relativePath>../parent/pom.xml</relativePath>
-     <version>0.3</version>
+     <version>0.4-SNAPSHOT</version>
   </parent>
 
   <artifactId>vorbis-java-tools</artifactId>
