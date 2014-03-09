@@ -14,8 +14,12 @@
 package org.gagravarr.ogg;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -25,8 +29,10 @@ import org.gagravarr.ogg.OggPage.OggPacketIterator;
  * Test that we can open a file and read packets from it
  */
 public class TestBasicRead extends TestCase {
+        protected static final String testOggFile = "/testVORBIS.ogg";
+        
 	private InputStream getTestFile() throws IOException {
-		return this.getClass().getResourceAsStream("/testVORBIS.ogg");
+		return this.getClass().getResourceAsStream(testOggFile);
 	}
 	
 	public void testOpen() throws IOException {
@@ -360,5 +366,66 @@ public class TestBasicRead extends TestCase {
 		page.writeHeader(new ByteArrayOutputStream());
 		assertEquals( 0x69e0b860, page.getChecksum() );
 		assertTrue( page.isChecksumValid() );
+	}
+	
+        // Which file extensions aren't actually Ogg files
+	protected static final List<String> NON_OGG_EXTENSIONS =
+	        Arrays.asList(new String[] { "flac" });
+	
+	/**
+	 * Ensures that we can read all of the ogg-based files in
+	 *  the Test Resources directory, and correctly fail on
+	 *  the non-ogg ones.
+	 */
+	public void testManyFormats() throws IOException {
+	    // Get the directory holding our test files
+	    File testFilesDir = new File(getClass().getResource(testOggFile).getFile()).getParentFile();
+
+	    // Check each one
+	    int validFiles = 0;
+	    for (File file : testFilesDir.listFiles()) {
+	        String filename = file.getName();
+	        if (filename.startsWith("test") && 
+	                filename.contains(".")) {
+	            // Work out if we expect it to pass or not
+	            String extension = filename.substring(filename.lastIndexOf('.')+1);
+	            boolean isOgg = ! NON_OGG_EXTENSIONS.contains(extension);
+	            
+	            // Try opening it
+	            try {
+	                OggFile ogg = new OggFile(new FileInputStream(file));
+	                OggPacketReader r = ogg.getPacketReader();
+
+	                // Ensure we can process the file
+	                int packets = 0;
+	                while (r.getNextPacket() != null && packets <= 2000) {
+	                    packets++;
+	                }
+	                assertTrue("Bogus packets found in " + filename, packets < 1750);
+	                
+	                // Check that it worked for the right reason
+	                if (isOgg) {
+                            assertTrue("No packets found in " + filename, packets >= 1);
+	                    validFiles ++;
+	                } else {
+	                    if (packets == 0) {
+	                        // Good, non-ogg file shouldn't have any
+	                    } else {
+	                        fail("Non Ogg file processed " + filename);
+	                    }
+	                }
+	            } catch (Exception e) {
+	                if (isOgg) {
+	                    fail("Error processing Ogg file " + filename + "\n" + e);
+	                } else {
+	                    // Not an Ogg file, so this is correct
+	                }
+	            }
+	        } else {
+	            // Not a test file, ignore
+	        }
+	    }
+	    
+	    assertTrue("Not enough files, found " + validFiles, validFiles >= 4);
 	}
 }
