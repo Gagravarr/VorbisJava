@@ -13,6 +13,7 @@
  */
 package org.gagravarr.opus;
 
+import org.gagravarr.ogg.HighLevelOggStreamPacket;
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
 
@@ -21,7 +22,7 @@ import org.gagravarr.ogg.OggPacket;
  *  and includes the Opus version, the simple audio characteristics 
  *  of the stream such as sample rate and number of channels etc.
  */
-public class OpusInfo extends OpusPacket {
+public class OpusInfo extends HighLevelOggStreamPacket implements OpusPacket {
     private byte version;
     private int majorVersion;
     private int minorVersion;

@@ -52,9 +52,8 @@ public class OpusPacketFactory extends HighLevelOggStreamPacket {
    /**
     * Creates the appropriate {@link OpusPacket}
     *  instance based on the type.
-    * TODO Refactor to return OpusPacket instead of HighLevelOggStreamPacket
     */
-   public static HighLevelOggStreamPacket create(OggPacket packet) {
+   public static OpusPacket create(OggPacket packet) {
        // Special header types detection
        if(isOpusSpecial(packet)) {
            byte type = packet.getData()[4];

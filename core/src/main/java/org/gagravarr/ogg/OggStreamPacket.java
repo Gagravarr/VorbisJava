@@ -11,17 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.gagravarr.opus;
-
-import org.gagravarr.ogg.IOUtils;
-import org.gagravarr.ogg.OggStreamPacket;
+package org.gagravarr.ogg;
 
 /**
- * Parent of all Opus packets
+ * A high level stream packet sat atop of an OggPacket.
+ * Userd for reading and writing new and existing OggPacket 
+ *  instances.
  */
-public interface OpusPacket extends OggStreamPacket {
-   public static final String MAGIC_HEADER_STR = "OpusHead";
-   public static final String MAGIC_TAGS_STR = "OpusTags";
-   public static final byte[] MAGIC_HEADER_BYTES = IOUtils.toUTF8Bytes(MAGIC_HEADER_STR);
-   public static final byte[] MAGIC_TAGS_BYTES   = IOUtils.toUTF8Bytes(MAGIC_TAGS_STR);
+public interface OggStreamPacket {
+    public byte[] getData();
+    public void setData(byte[] data);
+    public OggPacket write();
 }

@@ -20,7 +20,6 @@ import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.vorbis.VorbisComments;
 
-
 /**
  * This is a {@link VorbisComments} with a Flac metadata
  *  block header, rather than the usual vorbis one.
@@ -43,7 +42,7 @@ public class FlacTags extends VorbisComments {
     * Type plus three byte length
     */
    @Override
-   protected int getHeaderSize() {
+   public int getHeaderSize() {
       return 4;
    }
 
@@ -51,7 +50,7 @@ public class FlacTags extends VorbisComments {
     * Type plus three byte length
     */
    @Override
-   protected void populateMetadataHeader(byte[] b, int type, int dataLength) {
+   public void populateMetadataHeader(byte[] b, int type, int dataLength) {
       b[0] = FlacMetadataBlock.VORBIS_COMMENT;
       IOUtils.putInt3BE(b, 1, dataLength);
    }

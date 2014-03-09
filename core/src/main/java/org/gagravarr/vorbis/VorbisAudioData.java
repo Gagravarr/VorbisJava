@@ -13,12 +13,13 @@
  */
 package org.gagravarr.vorbis;
 
+import org.gagravarr.ogg.HighLevelOggStreamPacket;
 import org.gagravarr.ogg.OggPacket;
 
 /**
  * Raw, compressed audio data
  */
-public class VorbisAudioData extends VorbisPacket {
+public class VorbisAudioData extends HighLevelOggStreamPacket implements VorbisPacket {
 	private long granulePosition;
 	
 	public VorbisAudioData(OggPacket pkt) {
@@ -31,8 +32,11 @@ public class VorbisAudioData extends VorbisPacket {
 		granulePosition = -1;
 	}
 	
-	protected int getHeaderSize() {
-	   return 0;
+	public int getHeaderSize() {
+	    return 0;
+	}
+	public void populateMetadataHeader(byte[] b, int type, int dataLength) {
+	    VorbisPacketFactory.populateMetadataHeader(b, type, dataLength);
 	}
 
 	/**

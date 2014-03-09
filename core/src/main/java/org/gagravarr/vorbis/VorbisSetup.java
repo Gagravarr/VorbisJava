@@ -13,6 +13,7 @@
  */
 package org.gagravarr.vorbis;
 
+import org.gagravarr.ogg.HighLevelOggStreamPacket;
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
 
@@ -20,7 +21,7 @@ import org.gagravarr.ogg.OggPacket;
  * Includes extensive CODEC setup information as well as the 
  *  complete VQ and Huffman codebooks needed for decode
  */
-public class VorbisSetup extends VorbisPacket {
+public class VorbisSetup extends HighLevelOggStreamPacket implements VorbisPacket {
 	public VorbisSetup(OggPacket pkt) {
 		super(pkt);
 		
@@ -36,8 +37,11 @@ public class VorbisSetup extends VorbisPacket {
 		super();
 	}
 	
-   protected int getHeaderSize() {
+   public int getHeaderSize() {
       return HEADER_LENGTH_METADATA;
+   }
+   public void populateMetadataHeader(byte[] b, int type, int dataLength) {
+       VorbisPacketFactory.populateMetadataHeader(b, type, dataLength);
    }
 
 	// Example first bit of decoding

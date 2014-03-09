@@ -21,13 +21,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.gagravarr.ogg.HighLevelOggStreamPacket;
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
 
 /**
  * Holds encoder information and user specified tags
  */
-public class VorbisComments extends VorbisPacket {
+public class VorbisComments extends HighLevelOggStreamPacket implements VorbisPacket {
    public static final String KEY_ARTIST = "artist";
    public static final String KEY_ALBUM = "album";
    public static final String KEY_TITLE = "title";
@@ -81,8 +82,11 @@ public class VorbisComments extends VorbisPacket {
         vendor = "Gagravarr.org Java Vorbis Tools v0.3 20140309";
     }
 	
-    protected int getHeaderSize() {
+    public int getHeaderSize() {
         return HEADER_LENGTH_METADATA;
+    }
+    public void populateMetadataHeader(byte[] b, int type, int dataLength) {
+        VorbisPacketFactory.populateMetadataHeader(b, type, dataLength);
     }
 
 	public String getVendor() {

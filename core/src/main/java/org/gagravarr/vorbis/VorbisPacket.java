@@ -13,36 +13,30 @@
  */
 package org.gagravarr.vorbis;
 
-import org.gagravarr.ogg.HighLevelOggStreamPacket;
-import org.gagravarr.ogg.OggPacket;
+import org.gagravarr.ogg.OggStreamPacket;
 
 /**
  * Parent of all Vorbis packets
  */
-public abstract class VorbisPacket extends HighLevelOggStreamPacket {
+public interface VorbisPacket extends OggStreamPacket {
    public static final int TYPE_INFO = 1;
    public static final int TYPE_COMMENTS = 3;
    public static final int TYPE_SETUP = 5;
    
-   protected static final int HEADER_LENGTH_METADATA = 7;
-   protected static final int HEADER_LENGTH_AUDIO = 0;
+   public static final int HEADER_LENGTH_METADATA = 7;
+   public static final int HEADER_LENGTH_AUDIO = 0;
    
-   protected VorbisPacket(OggPacket oggPacket) {
-       super(oggPacket);
-   }
-   protected VorbisPacket() {
-       super();
-   }
-
    /**
     * How big is the header on this packet?
     * For Metadata packets it's normally 7 bytes,
     *  otherwise for audio packets there is no header.
     */
-   protected abstract int getHeaderSize();
+   public int getHeaderSize();
    
-   protected void populateMetadataHeader(byte[] b, int type, int dataLength) {
-       // TODO Refactor me
-       VorbisPacketFactory.populateMetadataHeader(b, type, dataLength);
-   }
+   /**
+    * Have the metadata header populated into the data,
+    *  normally used when writing out.
+    * See {@link VorbisPacketFactory#populateMetadataHeader(byte[], int, int)}
+    */
+   public void populateMetadataHeader(byte[] b, int type, int dataLength);
 }

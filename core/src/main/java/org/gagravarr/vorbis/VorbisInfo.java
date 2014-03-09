@@ -13,6 +13,7 @@
  */
 package org.gagravarr.vorbis;
 
+import org.gagravarr.ogg.HighLevelOggStreamPacket;
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
 
@@ -21,7 +22,7 @@ import org.gagravarr.ogg.OggPacket;
  *  Vorbis version, and the simple audio characteristics of the 
  *  stream such as sample rate and number of channels.
  */
-public class VorbisInfo extends VorbisPacket {
+public class VorbisInfo extends HighLevelOggStreamPacket implements VorbisPacket {
 	private int version;
 	private int channels;
 	private long rate;
@@ -58,11 +59,14 @@ public class VorbisInfo extends VorbisPacket {
 		}
 	}
 
-   protected int getHeaderSize() {
+   public int getHeaderSize() {
       return HEADER_LENGTH_METADATA;
    }
+   public void populateMetadataHeader(byte[] b, int type, int dataLength) {
+       VorbisPacketFactory.populateMetadataHeader(b, type, dataLength);
+   }
 
-	@Override
+    @Override
 	public OggPacket write() {
 		byte[] data = new byte[30];
 		populateMetadataHeader(data, 1, data.length);

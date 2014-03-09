@@ -23,7 +23,7 @@ import org.gagravarr.vorbis.VorbisComments;
  * This is a {@link VorbisComments} with an Opus metadata
  *  block header, rather than the usual vorbis one.
  */
-public class OpusTags extends VorbisComments {
+public class OpusTags extends VorbisComments implements OpusPacket {
    public OpusTags(OggPacket packet) {
       super(packet);
       
@@ -40,7 +40,7 @@ public class OpusTags extends VorbisComments {
     * 8 byte OpusTags
     */
    @Override
-   protected int getHeaderSize() {
+   public int getHeaderSize() {
       return 8;
    }
 
@@ -48,7 +48,7 @@ public class OpusTags extends VorbisComments {
     * Magic string
     */
    @Override
-   protected void populateMetadataHeader(byte[] b, int type, int dataLength) {
+   public void populateMetadataHeader(byte[] b, int type, int dataLength) {
        System.arraycopy(MAGIC_TAGS_BYTES, 0, b, 0, MAGIC_TAGS_BYTES.length);
    }
 }
