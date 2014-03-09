@@ -23,6 +23,7 @@ import org.apache.tika.metadata.XMPDM;
 import org.apache.tika.parser.AbstractParser;
 import org.apache.tika.sax.XHTMLContentHandler;
 import org.gagravarr.vorbis.VorbisComments;
+import org.gagravarr.vorbis.VorbisStyleComments;
 import org.xml.sax.SAXException;
 
 /**
@@ -45,7 +46,7 @@ public abstract class OggAudioParser extends AbstractParser {
     }
 
     protected static void extractComments(Metadata metadata, XHTMLContentHandler xhtml,
-            VorbisComments comments) throws TikaException, SAXException {
+            VorbisStyleComments comments) throws TikaException, SAXException {
         // Get the specific know comments
         metadata.set(TikaCoreProperties.TITLE, comments.getTitle());
         metadata.set(TikaCoreProperties.CREATOR, comments.getArtist());

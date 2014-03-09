@@ -19,14 +19,15 @@ import java.io.OutputStream;
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.vorbis.VorbisComments;
+import org.gagravarr.vorbis.VorbisStyleComments;
 
 /**
  * This is a {@link VorbisComments} with a Flac metadata
  *  block header, rather than the usual vorbis one.
  */
-public class FlacTags extends VorbisComments {
+public class FlacTags extends VorbisStyleComments {
    public FlacTags(OggPacket packet) {
-      super(packet);
+      super(packet, 4);
       
       // Verify the type
       byte type = getData()[0];
@@ -50,7 +51,7 @@ public class FlacTags extends VorbisComments {
     * Type plus three byte length
     */
    @Override
-   public void populateMetadataHeader(byte[] b, int type, int dataLength) {
+   public void populateMetadataHeader(byte[] b, int dataLength) {
       b[0] = FlacMetadataBlock.VORBIS_COMMENT;
       IOUtils.putInt3BE(b, 1, dataLength);
    }

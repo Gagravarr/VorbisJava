@@ -62,14 +62,14 @@ public class VorbisInfo extends HighLevelOggStreamPacket implements VorbisPacket
    public int getHeaderSize() {
       return HEADER_LENGTH_METADATA;
    }
-   public void populateMetadataHeader(byte[] b, int type, int dataLength) {
-       VorbisPacketFactory.populateMetadataHeader(b, type, dataLength);
+   public void populateMetadataHeader(byte[] b, int dataLength) {
+       VorbisPacketFactory.populateMetadataHeader(b, TYPE_INFO, dataLength);
    }
 
     @Override
 	public OggPacket write() {
 		byte[] data = new byte[30];
-		populateMetadataHeader(data, 1, data.length);
+		populateMetadataHeader(data, data.length);
 		
 		IOUtils.putInt4(data, 7, version);
 		data[11] = IOUtils.fromInt(channels);

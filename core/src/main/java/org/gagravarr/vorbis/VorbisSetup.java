@@ -40,8 +40,8 @@ public class VorbisSetup extends HighLevelOggStreamPacket implements VorbisPacke
    public int getHeaderSize() {
       return HEADER_LENGTH_METADATA;
    }
-   public void populateMetadataHeader(byte[] b, int type, int dataLength) {
-       VorbisPacketFactory.populateMetadataHeader(b, type, dataLength);
+   public void populateMetadataHeader(byte[] b, int dataLength) {
+       VorbisPacketFactory.populateMetadataHeader(b, TYPE_SETUP, dataLength);
    }
 
 	// Example first bit of decoding

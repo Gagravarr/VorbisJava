@@ -35,8 +35,8 @@ public class VorbisAudioData extends HighLevelOggStreamPacket implements VorbisP
 	public int getHeaderSize() {
 	    return 0;
 	}
-	public void populateMetadataHeader(byte[] b, int type, int dataLength) {
-	    VorbisPacketFactory.populateMetadataHeader(b, type, dataLength);
+	public void populateMetadataHeader(byte[] b, int dataLength) {
+	    throw new IllegalStateException("Audio Data packets don't have Metadata Headers");
 	}
 
 	/**

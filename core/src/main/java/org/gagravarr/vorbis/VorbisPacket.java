@@ -38,5 +38,5 @@ public interface VorbisPacket extends OggStreamPacket {
     *  normally used when writing out.
     * See {@link VorbisPacketFactory#populateMetadataHeader(byte[], int, int)}
     */
-   public void populateMetadataHeader(byte[] b, int type, int dataLength);
+   public void populateMetadataHeader(byte[] b, int dataLength);
 }
