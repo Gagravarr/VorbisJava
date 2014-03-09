@@ -30,6 +30,7 @@ import org.gagravarr.flac.FlacFirstOggPacket;
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
+import org.gagravarr.opus.OpusPacket;
 import org.gagravarr.vorbis.VorbisPacket;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -61,6 +62,7 @@ public class OggParser extends AbstractParser {
       // For tracking
       int streams = 0;
       int flacCount = 0;
+      int opusCount = 0;
       int vorbisCount = 0;
       List<Integer> sids = new ArrayList<Integer>();
       
@@ -78,6 +80,10 @@ public class OggParser extends AbstractParser {
                   // Vorbis Audio stream
                   vorbisCount++;
                }
+               if(OpusPacket.isOpusStream(p)) {
+                   // Opus Audio stream
+                   opusCount++;
+                }
                if(FlacFirstOggPacket.isFlacStream(p)) {
                   // FLAC-in-Ogg Audio stream
                   flacCount++;
@@ -89,6 +95,7 @@ public class OggParser extends AbstractParser {
       // Report what little we can do
       metadata.add("streams-total", Integer.toString(streams));
       metadata.add("streams-vorbis", Integer.toString(vorbisCount));
+      metadata.add("streams-opus", Integer.toString(opusCount));
       metadata.add("streams-flac", Integer.toString(flacCount));
    }
 }

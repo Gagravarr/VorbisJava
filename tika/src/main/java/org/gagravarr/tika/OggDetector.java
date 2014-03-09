@@ -40,7 +40,8 @@ public class OggDetector implements Detector {
    public static final MediaType OGG_GENERAL = MediaType.application("ogg");
    public static final MediaType OGG_AUDIO = MediaType.audio("ogg");
    public static final MediaType OGG_VORBIS = MediaType.audio("vorbis");
-   public static final MediaType OPUS_AUDIO = MediaType.audio("ogg; codecs=opus");
+   public static final MediaType OPUS_AUDIO = MediaType.audio("opus");
+   public static final MediaType OPUS_AUDIO_ALT = MediaType.audio("ogg; codecs=opus");
    public static final MediaType FLAC = MediaType.audio("x-flac");
    
    public MediaType detect(InputStream input, Metadata metadata)
