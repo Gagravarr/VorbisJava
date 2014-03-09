@@ -39,10 +39,10 @@
        https://github.com/Gagravarr/VorbisJava
     </url>
     <connection>
-       scm:git:git://github.com/Gagravarr/VorbisJava.git
+       scm:git:https://github.com/Gagravarr/VorbisJava.git
     </connection>
     <developerConnection>
-       scm:git:ssh://git@github.com/Gagravarr/VorbisJava.git
+       scm:git:https://gagravarr@github.com/Gagravarr/VorbisJava.git
     </developerConnection>
   </scm>
 
