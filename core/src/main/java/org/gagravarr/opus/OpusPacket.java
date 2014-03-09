@@ -72,8 +72,7 @@ public abstract class OpusPacket extends HighLevelOggStreamPacket {
     * Creates the appropriate {@link OpusPacket}
     *  instance based on the type.
     */
-/*
-   public static OpusPacket create(OggPacket packet) {
+   public static HighLevelOggStreamPacket create(OggPacket packet) {
        // Special header types detection
        if(isOpusSpecial(packet)) {
            byte type = packet.getData()[4];
@@ -82,9 +81,11 @@ public abstract class OpusPacket extends HighLevelOggStreamPacket {
                return new OpusInfo(packet);
            case (byte)'T': // OpusTags
                return new OpusTags(packet);
+           }
        }
 
-       return new OpusAudioData(packet);
+       // TODO
+       //return new OpusAudioData(packet);
+       return null;
    }
-*/
 }
