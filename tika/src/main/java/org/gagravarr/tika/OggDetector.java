@@ -42,7 +42,9 @@ public class OggDetector implements Detector {
    public static final MediaType OGG_VORBIS = MediaType.audio("vorbis");
    public static final MediaType OPUS_AUDIO = MediaType.audio("opus");
    public static final MediaType OPUS_AUDIO_ALT = MediaType.audio("ogg; codecs=opus");
-   public static final MediaType FLAC = MediaType.audio("x-flac");
+   
+   public static final MediaType NATIVE_FLAC = MediaType.audio("x-flac");
+   public static final MediaType OGG_FLAC = MediaType.audio("x-oggflac");
    
    public MediaType detect(InputStream input, Metadata metadata)
          throws IOException {
@@ -122,7 +124,7 @@ public class OggDetector implements Detector {
              return OPUS_AUDIO;
          } else if(flacCount == 1 && streams == 1) {
             // Single FLAC-in-Ogg stream, regular FLAC Audio file
-            return FLAC;
+            return OGG_FLAC;
          } else if(vorbisCount > 1 && vorbisCount == streams) {
             // Multiple Vorbis streams, multi-track Vorbis audio
             return OGG_VORBIS;
@@ -131,7 +133,7 @@ public class OggDetector implements Detector {
              return OPUS_AUDIO;
          } else if(flacCount > 1 && flacCount == streams) {
             // Multiple FLAC streams, multi-track FLAC audio
-            return FLAC;
+            return OGG_FLAC;
          } else if(streams > 0) {
             // Something else...
             // TODO Detect video

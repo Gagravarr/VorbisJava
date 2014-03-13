@@ -68,7 +68,7 @@ public class TestOggDetector extends TestCase {
                 d.detect(TikaInputStream.get(getTestOpusFile()), m)
         );
         assertEquals(
-                OggDetector.FLAC, 
+                OggDetector.OGG_FLAC,
                 d.detect(TikaInputStream.get(getTestFlacOggFile()), m)
         );
         assertEquals(
