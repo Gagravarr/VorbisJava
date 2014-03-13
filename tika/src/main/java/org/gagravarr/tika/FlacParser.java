@@ -13,9 +13,14 @@
  */
 package org.gagravarr.tika;
 
+import static org.gagravarr.tika.OggDetector.NATIVE_FLAC;
+import static org.gagravarr.tika.OggDetector.OGG_FLAC;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.tika.exception.TikaException;
@@ -31,23 +36,21 @@ import org.gagravarr.flac.FlacOggFile;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-/**
- * TODO Finish FLAC support then implement
- */
 public class FlacParser extends AbstractParser {
    private static final long serialVersionUID = -7546577301474546694L;
 
-   private static MediaType TYPE = MediaType.audio("x-flac");
-
+   private static List<MediaType> TYPES = Arrays.asList(new MediaType[] {
+           NATIVE_FLAC, OGG_FLAC
+   });
+     
    public Set<MediaType> getSupportedTypes(ParseContext context) {
-      return Collections.singleton(TYPE);
+       return new HashSet<MediaType>(TYPES);
    }
 
    public void parse(
          InputStream stream, ContentHandler handler,
          Metadata metadata, ParseContext context)
          throws IOException, TikaException, SAXException {
-      metadata.set(Metadata.CONTENT_TYPE, TYPE.toString());
       metadata.set(XMPDM.AUDIO_COMPRESSOR, "FLAC");
 
       // Open the FLAC file
@@ -63,6 +66,9 @@ public class FlacParser extends AbstractParser {
          FlacOggFile ogg = (FlacOggFile)flac;
          metadata.add("version", "Flac " + ogg.getFirstPacket().getMajorVersion() +
                                  "." + ogg.getFirstPacket().getMinorVersion());
+         metadata.set(Metadata.CONTENT_TYPE, OGG_FLAC.toString());
+      } else {
+          metadata.set(Metadata.CONTENT_TYPE, NATIVE_FLAC.toString());
       }
       
       // Extract any Vorbis comments
