@@ -32,6 +32,10 @@ import org.gagravarr.vorbis.VorbisPacketFactory;
 /**
  * Detector for identifying specific file types stored
  *  within an Ogg container.
+ * Xiph provide a fairly unhelpful guide to mimetypes at
+ *  https://wiki.xiph.org/index.php/MIME_Types_and_File_Extensions
+ *  but we try to use more specific ones, as given by the Tika
+ *  mimetypes xml file.
  */
 public class OggDetector implements Detector {
    private static final long serialVersionUID = 591382028699008553L;
@@ -85,6 +89,13 @@ public class OggDetector implements Detector {
          int opusCount = 0;
          int vorbisCount = 0;
          List<Integer> sids = new ArrayList<Integer>();
+
+         // TODO Track the following:
+         //  * Speex
+         //  * Ogg-PCM
+         //  * Theora
+         //  * Dirac
+         //  * Metadata, eg Ogg Skeleton or Annodex or CMML
          
          
          // Check the streams in turn
@@ -114,6 +125,11 @@ public class OggDetector implements Detector {
          
          // Tidy
          tis.reset();
+
+         // TODO See if we found any of the Ogg Metadata streams,
+         //  eg Ogg Skeleton or Annodex or CMML, and if so use them
+         //  to help identify the relationship between the different
+         //  streams and hence the type
          
          // Can we identify what it really is
          if(vorbisCount == 1 && streams == 1) {
