@@ -76,24 +76,25 @@ public class SpeexInfo extends HighLevelOggStreamPacket implements SpeexPacket {
 
     @Override
     public OggPacket write() {
-        byte[] data = new byte[72];
+        byte[] data = new byte[80];
+        System.arraycopy(MAGIC_HEADER_BYTES, 0, data, 0, 8);
         
-        IOUtils.putUTF8(data, 0, versionString);
-        IOUtils.putInt4(data, 20, versionId);
+        IOUtils.putUTF8(data, 8, versionString);
+        IOUtils.putInt4(data, 28, versionId);
         
-        IOUtils.putInt4(data, 24, data.length+8);
+        IOUtils.putInt4(data, 32, data.length);
         
-        IOUtils.putInt4(data, 28, rate);
-        IOUtils.putInt4(data, 32, mode);
-        IOUtils.putInt4(data, 36, modeBitstreamVersion);
-        IOUtils.putInt4(data, 40, channels);
-        IOUtils.putInt4(data, 44, bitrate);
-        IOUtils.putInt4(data, 48, frameSize);
-        IOUtils.putInt4(data, 52, vbr);
-        IOUtils.putInt4(data, 56, framesPerPacket);
-        IOUtils.putInt4(data, 60, extraHeaders);
-        IOUtils.putInt4(data, 64, reserved1);
-        IOUtils.putInt4(data, 68, reserved2);
+        IOUtils.putInt4(data, 36, rate);
+        IOUtils.putInt4(data, 40, mode);
+        IOUtils.putInt4(data, 44, modeBitstreamVersion);
+        IOUtils.putInt4(data, 48, channels);
+        IOUtils.putInt4(data, 52, bitrate);
+        IOUtils.putInt4(data, 56, frameSize);
+        IOUtils.putInt4(data, 60, vbr);
+        IOUtils.putInt4(data, 64, framesPerPacket);
+        IOUtils.putInt4(data, 68, extraHeaders);
+        IOUtils.putInt4(data, 72, reserved1);
+        IOUtils.putInt4(data, 76, reserved2);
         
         setData(data);
         return super.write();
