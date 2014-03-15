@@ -270,6 +270,17 @@ public class IOUtils {
 		}
 	}
 	/**
+	 * Strips off any null padding, if any, from the string
+	 */
+	public static String removeNullPadding(String str) {
+	    int idx = str.indexOf(0);
+	    if (idx == -1) {
+	        return str;
+	    }
+	    return str.substring(0, idx);
+	}
+	
+	/**
 	 * @return The length in BYTES
 	 */
 	public static int putUTF8(byte[] data, int offset, String str) {

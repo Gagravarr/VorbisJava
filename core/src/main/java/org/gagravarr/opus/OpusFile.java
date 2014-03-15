@@ -28,7 +28,7 @@ import org.gagravarr.ogg.OggPacketWriter;
 
 /**
  * This is a wrapper around an OggFile that lets you
- *  get at all the interesting bits
+ *  get at all the interesting bits of an Opus file.
  */
 public class OpusFile {
     private OggFile ogg;

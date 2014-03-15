@@ -28,7 +28,7 @@ import org.gagravarr.ogg.OggPacketWriter;
 
 /**
  * This is a wrapper around an OggFile that lets you
- *  get at all the interesting bits
+ *  get at all the interesting bits of a Vorbis file.
  */
 public class VorbisFile {
 	private OggFile ogg;
