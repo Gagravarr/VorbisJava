@@ -40,15 +40,31 @@ import org.gagravarr.vorbis.VorbisPacketFactory;
 public class OggDetector implements Detector {
    private static final long serialVersionUID = 591382028699008553L;
 
-   public static final MediaType OGG_VIDEO = MediaType.video("ogg");
+   // General types
    public static final MediaType OGG_GENERAL = MediaType.application("ogg");
+   public static final MediaType OGG_VIDEO = MediaType.video("ogg");
    public static final MediaType OGG_AUDIO = MediaType.audio("ogg");
+   
+   // Audio types
    public static final MediaType OGG_VORBIS = MediaType.audio("vorbis");
    public static final MediaType OPUS_AUDIO = MediaType.audio("opus");
    public static final MediaType OPUS_AUDIO_ALT = MediaType.audio("ogg; codecs=opus");
+   public static final MediaType SPEEX_AUDIO = MediaType.audio("soeex");
+   public static final MediaType SPEEX_AUDIO_ALT = MediaType.audio("ogg; codecs=speex");
+   public static final MediaType OGG_PCM = MediaType.audio("x-oggpcm");
    
    public static final MediaType NATIVE_FLAC = MediaType.audio("x-flac");
    public static final MediaType OGG_FLAC = MediaType.audio("x-oggflac");
+   
+   // Video types
+   public static final MediaType THEORA_VIDEO = MediaType.video("theora");
+   public static final MediaType DIRAC_VIDEO = MediaType.video("x-dirac");
+   public static final MediaType OGM_VIDEO = MediaType.video("x-ogm");
+   
+   public static final MediaType OGG_UVS = MediaType.video("x-ogguvs");
+   public static final MediaType OGG_YUV = MediaType.video("x-oggyuv");
+   public static final MediaType OGG_RGB = MediaType.video("x-oggrgb");
+   
    
    public MediaType detect(InputStream input, Metadata metadata)
          throws IOException {
