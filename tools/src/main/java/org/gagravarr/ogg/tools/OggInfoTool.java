@@ -30,74 +30,77 @@ import org.gagravarr.vorbis.VorbisPacketFactory;
  *  an Ogg File
  */
 public class OggInfoTool {
-	public static void main(String[] args) throws Exception {
-		if(args.length == 0) {
-			System.err.println("Use:");
-			System.err.println("   OggInfoTool <file> [file] [file]");
-			System.exit(1);
-		}
-		
-		for(String f : args) {
-			OggInfoTool info = new OggInfoTool(new File(f));
-			info.printStreamInfo();
-		}
-	}
-	
-	private File file;
-	private OggFile ogg;
-	public OggInfoTool(File f) throws FileNotFoundException {
-		if(! f.exists()) {
-			throw new FileNotFoundException(f.toString());
-		}
-		
-		file = f;
-		ogg = new OggFile( new FileInputStream(f) );
-	}
-	
-	public void printStreamInfo() throws IOException {
-		OggPacketReader r = ogg.getPacketReader();
-		
-		System.out.println("Processing file \"" + file.toString() + "\"");
-		
-		int pc = 0;
-		int streams = 0;
-		int lastSid = -1;
-		
-		OggPacket p;
-		while( (p = r.getNextPacket()) != null ) {
-			if(p.isBeginningOfStream()) {
-				streams++;
-				lastSid = p.getSid();
-				
-				System.out.println("");
-				System.out.println("New logical stream #"+streams + ", serial: " +
-						Integer.toHexString(p.getSid()) + " (" + p.getSid() + ")");
-				
-				if(p.getData() != null && p.getData().length > 10) {
-					if(VorbisPacketFactory.isVorbisStream(p)) {
-						System.out.println("\tVorbis Info detected");
-					}
-                                        if(OpusPacketFactory.isOpusStream(p)) {
-                                            System.out.println("\tOpus Info detected");
-                                    }
-					if(FlacFirstOggPacket.isFlacStream(p)) {
-						System.out.println("\tFLAC Info detected");
-					}
-				}
-			} else if(p.isEndOfStream()) {
-				System.out.println("Stream " + Integer.toHexString(p.getSid()) + 
-						" ended");
-			} else {
-				if(p.getSid() != lastSid) {
-					System.out.println("(" + pc + " packets of stream " +
-							Integer.toHexString(p.getSid()) + ")");
-					
-					lastSid = p.getSid();
-					pc = 0;
-				} else {
-					pc++;
-				}
-			}
-		}
-	}
+    public static void main(String[] args) throws Exception {
+        if(args.length == 0) {
+            System.err.println("Use:");
+            System.err.println("   OggInfoTool <file> [file] [file]");
+            System.exit(1);
+        }
+
+        for(String f : args) {
+            OggInfoTool info = new OggInfoTool(new File(f));
+            info.printStreamInfo();
+        }
+    }
+
+    private File file;
+    private OggFile ogg;
+    public OggInfoTool(File f) throws FileNotFoundException {
+        if(! f.exists()) {
+            throw new FileNotFoundException(f.toString());
+        }
+
+        file = f;
+        ogg = new OggFile( new FileInputStream(f) );
+    }
+
+    public void printStreamInfo() throws IOException {
+        OggPacketReader r = ogg.getPacketReader();
+
+        System.out.println("Processing file \"" + file.toString() + "\"");
+
+        int pc = 0;
+        int streams = 0;
+        int lastSid = -1;
+
+        // TODO Share logic with OggDetector
+        // TODO Detect more kinds of streams from this
+
+        OggPacket p;
+        while( (p = r.getNextPacket()) != null ) {
+            if(p.isBeginningOfStream()) {
+                streams++;
+                lastSid = p.getSid();
+
+                System.out.println("");
+                System.out.println("New logical stream #"+streams + ", serial: " +
+                                   Integer.toHexString(p.getSid()) + " (" + p.getSid() + ")");
+
+                if(p.getData() != null && p.getData().length > 10) {
+                    if(VorbisPacketFactory.isVorbisStream(p)) {
+                        System.out.println("\tVorbis Info detected");
+                    }
+                    if(OpusPacketFactory.isOpusStream(p)) {
+                        System.out.println("\tOpus Info detected");
+                    }
+                    if(FlacFirstOggPacket.isFlacStream(p)) {
+                        System.out.println("\tFLAC Info detected");
+                    }
+                }
+            } else if(p.isEndOfStream()) {
+                System.out.println("Stream " + Integer.toHexString(p.getSid()) + 
+                                   " ended");
+            } else {
+                if(p.getSid() != lastSid) {
+                    System.out.println("(" + pc + " packets of stream " +
+                                       Integer.toHexString(p.getSid()) + ")");
+
+                    lastSid = p.getSid();
+                    pc = 0;
+                } else {
+                    pc++;
+                }
+            }
+        }
+    }
 }
