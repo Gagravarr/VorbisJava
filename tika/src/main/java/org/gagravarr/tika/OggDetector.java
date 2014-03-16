@@ -233,4 +233,8 @@ public class OggDetector implements Detector {
    protected static boolean isKateStream(OggPacket p) {
        return IOUtils.byteRangeMatches(MAGIC_KATE, p.getData(), 0);
    }
+   protected static final byte[] MAGIC_ANNODEX2 = IOUtils.toUTF8Bytes("Annodex\0");
+   protected static boolean isAnnodex2Stream(OggPacket p) {
+       return IOUtils.byteRangeMatches(MAGIC_ANNODEX2, p.getData(), 0);
+   }
 }
