@@ -27,6 +27,7 @@ import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.opus.OpusPacketFactory;
+import org.gagravarr.speex.SpeexPacketFactory;
 import org.gagravarr.vorbis.VorbisPacketFactory;
 
 /**
@@ -65,7 +66,6 @@ public class OggDetector implements Detector {
    public static final MediaType OGG_YUV = MediaType.video("x-oggyuv");
    public static final MediaType OGG_RGB = MediaType.video("x-oggrgb");
    
-   
    public MediaType detect(InputStream input, Metadata metadata)
          throws IOException {
       // Check if we have access to the document
@@ -103,15 +103,15 @@ public class OggDetector implements Detector {
          int streams = 0;
          int flacCount = 0;
          int opusCount = 0;
+         int speexCount = 0;
          int vorbisCount = 0;
          List<Integer> sids = new ArrayList<Integer>();
 
          // TODO Track the following:
-         //  * Speex
          //  * Ogg-PCM
          //  * Theora
          //  * Dirac
-         //  * Metadata, eg Ogg Skeleton or Annodex or CMML
+         //  * Metadata, eg Ogg Skeleton or Annodex or CMML or Kate
          
          
          // Check the streams in turn
@@ -127,6 +127,10 @@ public class OggDetector implements Detector {
                      // Vorbis Audio stream
                      vorbisCount++;
                   }
+                  if(SpeexPacketFactory.isSpeexStream(p)) {
+                      // Speex Audio stream
+                      speexCount++;
+                   }
                   if(OpusPacketFactory.isOpusStream(p)) {
                       // Opus Audio stream
                       opusCount++;
@@ -151,6 +155,9 @@ public class OggDetector implements Detector {
          if(vorbisCount == 1 && streams == 1) {
             // Single Vorbis stream, regular Vorbis Audio file
             return OGG_VORBIS;
+         } else if(speexCount == 1 && streams == 1) {
+             // Single Speex stream, regular Speex Audio file
+             return SPEEX_AUDIO;
          } else if(opusCount == 1 && streams == 1) {
              // Single Opus stream, regular Opus Audio file
              return OPUS_AUDIO;
@@ -160,6 +167,9 @@ public class OggDetector implements Detector {
          } else if(vorbisCount > 1 && vorbisCount == streams) {
             // Multiple Vorbis streams, multi-track Vorbis audio
             return OGG_VORBIS;
+         } else if(speexCount > 1 && speexCount == streams) {
+             // Multiple Speex streams, multi-track Speex audio
+             return SPEEX_AUDIO;
          } else if(opusCount > 1 && vorbisCount == streams) {
              // Multiple Opus streams, multi-track Opus audio
              return OPUS_AUDIO;

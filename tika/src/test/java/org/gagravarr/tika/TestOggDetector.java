@@ -31,6 +31,9 @@ public class TestOggDetector extends TestCase {
     protected InputStream getTestVorbisFile() throws IOException {
         return this.getClass().getResourceAsStream("/testVORBIS.ogg");
     }
+    protected InputStream getTestSpeexFile() throws IOException {
+        return this.getClass().getResourceAsStream("/testSPEEX.spx");
+    }
     protected InputStream getTestOpusFile() throws IOException {
         return this.getClass().getResourceAsStream("/testOPUS.opus");
     }
@@ -62,6 +65,10 @@ public class TestOggDetector extends TestCase {
         assertEquals(
                 OggDetector.OGG_VORBIS, 
                 d.detect(TikaInputStream.get(getTestVorbisFile()), m)
+        );
+        assertEquals(
+                OggDetector.SPEEX_AUDIO, 
+                d.detect(TikaInputStream.get(getTestSpeexFile()), m)
         );
         assertEquals(
                 OggDetector.OPUS_AUDIO, 
