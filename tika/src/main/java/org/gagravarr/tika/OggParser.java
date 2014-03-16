@@ -66,6 +66,8 @@ public class OggParser extends AbstractParser {
       int vorbisCount = 0;
       List<Integer> sids = new ArrayList<Integer>();
       
+      // TODO Merge most of this logic with OggDetector, and
+      //  probably push it into Core to help OggInfoTool
       
       // Check the streams in turn
       OggPacketReader r = ogg.getPacketReader();

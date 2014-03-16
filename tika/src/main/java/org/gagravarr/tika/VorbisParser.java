@@ -66,7 +66,12 @@ public class VorbisParser extends OggAudioParser {
       
       // Extract any Vorbis comments
       extractComments(metadata, xhtml, vorbis.getComment());
-      
+
+      // TODO See if there's a Kate stream, and if there is,
+      //  return the lyrics etc from within there
+
+      // TODO Work out the song length, and return that
+
       // Finish
       xhtml.endDocument();
    }

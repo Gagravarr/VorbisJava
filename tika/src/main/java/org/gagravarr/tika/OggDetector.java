@@ -23,6 +23,7 @@ import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
 import org.gagravarr.flac.FlacFirstOggPacket;
+import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
@@ -112,8 +113,11 @@ public class OggDetector implements Detector {
          //  * Theora
          //  * Dirac
          //  * Metadata, eg Ogg Skeleton or Annodex or CMML or Kate
-         
-         
+         // (Most magic strings defined but not used)
+
+         // TODO Move this match code elsewhere, so OggParser and
+         // OggInfoTool can make use of it as well
+
          // Check the streams in turn
          OggPacketReader r = ogg.getPacketReader();
          OggPacket p;
@@ -187,5 +191,46 @@ public class OggDetector implements Detector {
       
       // Couldn't determine a more specific type
       return OGG_GENERAL;
+   }
+
+   // These methods provide first packet type detection for the
+   //  various Ogg-based formats we lack general support for
+   protected static final byte[] MAGIC_OGG_PCM = IOUtils.toUTF8Bytes("PCM     ");
+   protected static boolean isOggPCMStream(OggPacket p) {
+       return IOUtils.byteRangeMatches(MAGIC_OGG_PCM, p.getData(), 0);
+   }
+
+   protected static final byte[] MAGIC_THEORA = IOUtils.toUTF8Bytes("\u0080theora");
+   protected static boolean isTheoraStream(OggPacket p) {
+       return IOUtils.byteRangeMatches(MAGIC_THEORA, p.getData(), 0);
+   }
+   protected static final byte[] MAGIC_DIRAC = IOUtils.toUTF8Bytes("BBCD");
+   protected static boolean isDiracStream(OggPacket p) {
+       return IOUtils.byteRangeMatches(MAGIC_DIRAC, p.getData(), 0);
+   }
+   protected static final byte[] MAGIC_OGG_OGM = IOUtils.toUTF8Bytes("video");
+   protected static boolean isOggOGMStream(OggPacket p) {
+       return IOUtils.byteRangeMatches(MAGIC_OGG_OGM, p.getData(), 0);
+   }
+   protected static final byte[] MAGIC_OGG_UVS = IOUtils.toUTF8Bytes("UVS ");
+   protected static boolean isOggUVSStream(OggPacket p) {
+       return IOUtils.byteRangeMatches(MAGIC_OGG_UVS, p.getData(), 0);
+   }
+   protected static final byte[] MAGIC_OGG_YUV = IOUtils.toUTF8Bytes("\1YUV");
+   protected static boolean isOggYUVStream(OggPacket p) {
+       return IOUtils.byteRangeMatches(MAGIC_OGG_YUV, p.getData(), 0);
+   }
+   protected static final byte[] MAGIC_OGG_RGB = IOUtils.toUTF8Bytes("\1GBP");
+   protected static boolean isOggRGBStream(OggPacket p) {
+       return IOUtils.byteRangeMatches(MAGIC_OGG_RGB, p.getData(), 0);
+   }
+
+   protected static final byte[] MAGIC_CMML = IOUtils.toUTF8Bytes("CMML\0\0\0\0");
+   protected static boolean isCMMLStream(OggPacket p) {
+       return IOUtils.byteRangeMatches(MAGIC_CMML, p.getData(), 0);
+   }
+   protected static final byte[] MAGIC_KATE = IOUtils.toUTF8Bytes("kate\0\0\0");
+   protected static boolean isKateStream(OggPacket p) {
+       return IOUtils.byteRangeMatches(MAGIC_KATE, p.getData(), 0);
    }
 }
