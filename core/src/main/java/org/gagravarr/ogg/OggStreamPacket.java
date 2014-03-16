@@ -15,7 +15,7 @@ package org.gagravarr.ogg;
 
 /**
  * A high level stream packet sat atop of an OggPacket.
- * Userd for reading and writing new and existing OggPacket 
+ * Used for reading and writing new and existing OggPacket
  *  instances.
  */
 public interface OggStreamPacket {
