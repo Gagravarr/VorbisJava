@@ -52,8 +52,9 @@ public class OggStreamIdentifier {
    public static final String OGG_RGB = "video/x-oggrgb";
 
    // Metadata types
-   public static final String SKELETON = "TODO"; // TODO
-   // TODO Rest
+   public static final String SKELETON = "application/annodex";
+   public static final String CMML = "text/x-cmml";
+   public static final String KATE = "application/kate";
    
    public static String identifyType(OggPacket p) {
        if (! p.isBeginningOfStream()) {
@@ -67,7 +68,15 @@ public class OggStreamIdentifier {
                if (SkeletonPacketFactory.isSkeletonStream(p)) {
                    return SKELETON;
                }
-               // TODO Rest of the metadata
+               if (isAnnodex2Stream(p)) {
+                   return SKELETON;
+               }
+               if (isCMMLStream(p)) {
+                   return CMML;
+               }
+               if (isKateStream(p)) {
+                   return KATE;
+               }
 
                // Is it an Audio stream?
                if (VorbisPacketFactory.isVorbisStream(p)) {
@@ -111,8 +120,8 @@ public class OggStreamIdentifier {
                    return OGG_RGB;
                }
            }
-           // Couldn't determine a more specific type
-           return OGG_GENERAL;
+           // Couldn't determine what it is
+           return UNKNOWN;
        }
    }
 
@@ -123,7 +132,11 @@ public class OggStreamIdentifier {
        return IOUtils.byteRangeMatches(MAGIC_OGG_PCM, p.getData(), 0);
    }
 
-   protected static final byte[] MAGIC_THEORA = IOUtils.toUTF8Bytes("\u0080theora");
+   protected static final byte[] MAGIC_THEORA = new byte[7];
+   static {
+       MAGIC_THEORA[0] = (byte)0x80;
+       IOUtils.putUTF8(MAGIC_THEORA, 1, "theora");
+   }
    protected static boolean isTheoraStream(OggPacket p) {
        return IOUtils.byteRangeMatches(MAGIC_THEORA, p.getData(), 0);
    }
