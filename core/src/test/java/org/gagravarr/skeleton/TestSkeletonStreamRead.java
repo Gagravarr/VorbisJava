@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
+import org.gagravarr.ogg.OggStreamIdentifier;
 
 /**
  * Tests for reading a Skeleton Stream
@@ -35,53 +36,84 @@ public class TestSkeletonStreamRead extends TestCase {
         OggFile ogg = new OggFile(getTestFileV3());
         OggPacketReader r = ogg.getPacketReader();
         OggPacket p;
-        
-        int expectSid = 0x794f5545;
-        
+
+        int expectFishSid   = 0x794f5545;
+        int expectCMMLSid   = 0x2ea9944e;
+        int expectTheoraSid = 0x3aa5a330;
+
         // Should be the first stream
         p = r.getNextPacket();
         assertTrue(SkeletonPacketFactory.isSkeletonSpecial(p));
-        assertEquals(expectSid, p.getSid());
-        
+        assertEquals(expectFishSid, p.getSid());
+
         // Check the Fishead
         SkeletonFishead head = (SkeletonFishead)SkeletonPacketFactory.create(p);
         assertEquals(3, head.getVersionMajor());
         assertEquals(0, head.getVersionMinor());
-        
+
         assertEquals(1000, head.getPresentationTimeDenominator());
         assertEquals(0, head.getPresentationTimeNumerator());
         assertEquals(1000, head.getBaseTimeDenominator());
         assertEquals(0, head.getBaseTimeNumerator());
-        
+
         assertEquals(0, head.getUtc1());
         assertEquals(0, head.getUtc2());
         assertEquals(0, head.getUtc3());
-        
+
         // These two are zero as they're v4 only
         assertEquals(0, head.getContentOffset());
         assertEquals(0, head.getSegmentLength());
-        
-        
-        // Check the Fisbone
-        p = r.getNextPacketWithSid(expectSid);
-        SkeletonFisbone bone1 = (SkeletonFisbone)SkeletonPacketFactory.create(p);
-        // TODO Check the bone
 
-        
+
+        // Next two should be the first packets of the CMML and Theora
+        OggPacket cmml = r.getNextPacket();
+        OggPacket theora = r.getNextPacket();
+
+        assertEquals(expectCMMLSid, cmml.getSid());
+        assertEquals(OggStreamIdentifier.CMML, OggStreamIdentifier.identifyType(cmml));
+
+        assertEquals(expectTheoraSid, theora.getSid());
+        assertEquals(OggStreamIdentifier.THEORA_VIDEO, OggStreamIdentifier.identifyType(theora));
+
+
+        // Check the Fisbone
+        p = r.getNextPacketWithSid(expectFishSid);
+        SkeletonFisbone bone1 = (SkeletonFisbone)SkeletonPacketFactory.create(p);
+
+        assertEquals(expectCMMLSid, bone1.getSerialNumber());
+        assertEquals(3, bone1.getNumHeaderPackets());
+        assertEquals(1000, bone1.getGranulerateNumerator());
+        assertEquals(1, bone1.getGranulerateDenominator());
+        assertEquals(0, bone1.getBaseGranule());
+        assertEquals(0, bone1.getPreroll());
+        assertEquals(32, bone1.getGranuleShift());
+
+        // TODO Check message headers
+
+
         // Check the second bone
-        p = r.getNextPacketWithSid(expectSid);
+        p = r.getNextPacketWithSid(expectFishSid);
         SkeletonFisbone bone2 = (SkeletonFisbone)SkeletonPacketFactory.create(p);
-        // TODO Check the bone
-        
-        
+
+        assertEquals(expectTheoraSid, bone2.getSerialNumber());
+        assertEquals(3, bone2.getNumHeaderPackets());
+        assertEquals(30000299, bone2.getGranulerateNumerator());
+        assertEquals(1000000, bone2.getGranulerateDenominator());
+        assertEquals(0, bone2.getBaseGranule());
+        assertEquals(0, bone2.getPreroll());
+        assertEquals(6, bone2.getGranuleShift());
+
+        // TODO Check message headers
+
+
         // We have a single key frame 
-        p = r.getNextPacketWithSid(expectSid);
+        p = r.getNextPacketWithSid(expectFishSid);
         SkeletonKeyFramePacket kf = (SkeletonKeyFramePacket)SkeletonPacketFactory.create(p);
         // TODO Check the frame
-        
+
         
         // And that's it
-        p = r.getNextPacketWithSid(expectSid);
+        p = r.getNextPacketWithSid(expectFishSid);
         assertNull(p);
     }
 }
