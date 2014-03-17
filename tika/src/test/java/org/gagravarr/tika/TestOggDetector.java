@@ -14,39 +14,14 @@
 package org.gagravarr.tika;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-
-import junit.framework.TestCase;
 
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
+import org.gagravarr.ogg.AbstractIdentificationTest;
 
-public class TestOggDetector extends TestCase {
-    protected InputStream getTestOggFile() throws IOException {
-        return this.getClass().getResourceAsStream("/testBoundaries.ogg");
-    }
-    protected InputStream getTestVorbisFile() throws IOException {
-        return this.getClass().getResourceAsStream("/testVORBIS.ogg");
-    }
-    protected InputStream getTestSpeexFile() throws IOException {
-        return this.getClass().getResourceAsStream("/testSPEEX.spx");
-    }
-    protected InputStream getTestOpusFile() throws IOException {
-        return this.getClass().getResourceAsStream("/testOPUS.opus");
-    }
-    protected InputStream getTestFlacOggFile() throws IOException {
-        return this.getClass().getResourceAsStream("/testFLAC.oga");
-    }
-    protected InputStream getTestFlacNativeFile() throws IOException {
-        return this.getClass().getResourceAsStream("/testFLAC.flac");
-    }
-    protected InputStream getDummy() throws IOException {
-        return new ByteArrayInputStream(new byte[] { 0,1,2,3,4,5,6,7 });
-    }
-
+public class TestOggDetector extends AbstractIdentificationTest {
     public void testDetect() throws IOException {
         OggDetector d = new OggDetector();
         Metadata m = new Metadata();
