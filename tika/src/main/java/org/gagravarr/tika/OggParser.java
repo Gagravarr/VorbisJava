@@ -17,8 +17,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.tika.exception.TikaException;
@@ -26,26 +28,34 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.AbstractParser;
 import org.apache.tika.parser.ParseContext;
-import org.gagravarr.flac.FlacFirstOggPacket;
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
-import org.gagravarr.opus.OpusPacketFactory;
-import org.gagravarr.vorbis.VorbisPacketFactory;
+import org.gagravarr.ogg.OggStreamIdentifier;
+import org.gagravarr.ogg.OggStreamIdentifier.OggStreamType;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 /**
- * General parser for non audio OGG files.
+ * General parser for Ogg files where we don't know what 
+ *  the specific kind is.
  * 
- * We provide a detector which should help specialise Audio OGG
- *  files to their appropriate types, so we just handle the rest
+ * We provide a detector which should help specialise the more
+ *  common kinds of Ogg files, based on their streams, to their
+ *  appropriate types. This just handles the rest, as best we can.
  */
 public class OggParser extends AbstractParser {
    private static final long serialVersionUID = -5686095376587813226L;
 
    private static List<MediaType> TYPES = Arrays.asList(new MediaType[] {
-         OggDetector.OGG_GENERAL, OggDetector.OGG_VIDEO 
+         // General ones, where we'll never be able to help
+         OggDetector.OGG_GENERAL, OggDetector.OGG_AUDIO,
+         OggDetector.OGG_VIDEO, 
+         // Ones we lack a proper parser for
+         OggDetector.THEORA_VIDEO, OggDetector.DIRAC_VIDEO,
+         OggDetector.OGM_VIDEO, OggDetector.OGG_UVS,
+         OggDetector.OGG_YUV, OggDetector.OGG_RGB,
+         OggDetector.OGG_PCM
    });
    
    public Set<MediaType> getSupportedTypes(ParseContext context) {
@@ -59,45 +69,40 @@ public class OggParser extends AbstractParser {
       // Process the file straight through once
       OggFile ogg = new OggFile(stream);
       
-      // For tracking
-      int streams = 0;
-      int flacCount = 0;
-      int opusCount = 0;
-      int vorbisCount = 0;
+      // To track the streams we find
+      Map<OggStreamType, Integer> streams = 
+              new HashMap<OggStreamType, Integer>();
       List<Integer> sids = new ArrayList<Integer>();
-      
-      // TODO Merge most of this logic with OggDetector, and
-      //  probably push it into Core to help OggInfoTool
+      int totalStreams = 0;
       
       // Check the streams in turn
       OggPacketReader r = ogg.getPacketReader();
       OggPacket p;
       while( (p = r.getNextPacket()) != null ) {
-         if(p.isBeginningOfStream()) {
-            streams++;
+         if (p.isBeginningOfStream()) {
+            totalStreams++;
             sids.add(p.getSid());
             
-            if(p.getData() != null && p.getData().length > 10) {
-               if(VorbisPacketFactory.isVorbisStream(p)) {
-                  // Vorbis Audio stream
-                  vorbisCount++;
-               }
-               if(OpusPacketFactory.isOpusStream(p)) {
-                   // Opus Audio stream
-                   opusCount++;
-                }
-               if(FlacFirstOggPacket.isFlacStream(p)) {
-                  // FLAC-in-Ogg Audio stream
-                  flacCount++;
-               }
+            OggStreamType type = OggStreamIdentifier.identifyType(p);
+            Integer prevValue = streams.get(type);
+            if (prevValue == null) {
+                prevValue = 0;
             }
+            streams.put(type, (prevValue+1));
          }
       }
       
       // Report what little we can do
-      metadata.add("streams-total", Integer.toString(streams));
-      metadata.add("streams-vorbis", Integer.toString(vorbisCount));
-      metadata.add("streams-opus", Integer.toString(opusCount));
-      metadata.add("streams-flac", Integer.toString(flacCount));
+      metadata.add("streams-total", Integer.toString(totalStreams));
+      for (OggStreamType type : streams.keySet()) {
+          String key = type.mimetype.substring(type.mimetype.indexOf('/')+1);
+          if (key.startsWith("x-")) {
+              key = key.substring(2);
+          }
+          if (type == OggStreamIdentifier.UNKNOWN) {
+              key = "unknown";
+          }
+          metadata.add("streams-" + key, Integer.toString(streams.get(type)));
+      }
    }
 }

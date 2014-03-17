@@ -89,7 +89,7 @@ public class TestSkeletonStreamRead extends TestCase {
         assertEquals(32, bone1.getGranuleShift());
 
         assertEquals(1, bone1.getMessageHeaders().size());
-        assertEquals(OggStreamIdentifier.CMML, bone1.getContentType());
+        assertEquals(OggStreamIdentifier.CMML.mimetype, bone1.getContentType());
 
 
         // Check the second bone
@@ -105,7 +105,7 @@ public class TestSkeletonStreamRead extends TestCase {
         assertEquals(6, bone2.getGranuleShift());
 
         assertEquals(1, bone2.getMessageHeaders().size());
-        assertEquals(OggStreamIdentifier.THEORA_VIDEO_ALT, bone2.getContentType());
+        assertEquals(OggStreamIdentifier.THEORA_VIDEO_ALT.mimetype, bone2.getContentType());
 
 
         // We have a single key frame, that's empty
