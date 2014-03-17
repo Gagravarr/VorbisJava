@@ -23,6 +23,7 @@ import org.gagravarr.vorbis.VorbisPacketFactory;
  * Detector for identifying the kind of data stored in a given stream.
  * This is normally used on the first packet in a stream, to work out 
  *  the type, if recognised.
+ * TODO Provide a description too
  */
 public class OggStreamIdentifier {
    // General types

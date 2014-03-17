@@ -17,17 +17,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.gagravarr.flac.FlacFirstOggPacket;
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
-import org.gagravarr.opus.OpusPacketFactory;
-import org.gagravarr.vorbis.VorbisPacketFactory;
+import org.gagravarr.ogg.OggStreamIdentifier;
 
 /**
- * Prints out information on the Steams within
- *  an Ogg File
+ * Prints out information on the Steams within an Ogg File.
+ * This is a bit more low level than something like ogg-info or
+ *  oggz-info
  */
 public class OggInfoTool {
     public static void main(String[] args) throws Exception {
@@ -63,8 +64,7 @@ public class OggInfoTool {
         int streams = 0;
         int lastSid = -1;
 
-        // TODO Share logic with OggDetector
-        // TODO Detect more kinds of streams from this
+        Map<Integer, String> streamTypes = new HashMap<Integer, String>();
 
         OggPacket p;
         while( (p = r.getNextPacket()) != null ) {
@@ -76,20 +76,19 @@ public class OggInfoTool {
                 System.out.println("New logical stream #"+streams + ", serial: " +
                                    Integer.toHexString(p.getSid()) + " (" + p.getSid() + ")");
 
-                if(p.getData() != null && p.getData().length > 10) {
-                    if(VorbisPacketFactory.isVorbisStream(p)) {
-                        System.out.println("\tVorbis Info detected");
-                    }
-                    if(OpusPacketFactory.isOpusStream(p)) {
-                        System.out.println("\tOpus Info detected");
-                    }
-                    if(FlacFirstOggPacket.isFlacStream(p)) {
-                        System.out.println("\tFLAC Info detected");
-                    }
+                String type = OggStreamIdentifier.identifyType(p);
+
+                // TODO Proper descriptions
+                String desc = type.substring(type.indexOf('/') + 1);
+                if (desc.startsWith("x-")) {
+                    desc = desc.substring(2);
                 }
+                streamTypes.put(lastSid, desc);
+
+                System.out.println("\t"+desc+" detected ("+type+")");
             } else if(p.isEndOfStream()) {
                 System.out.println("Stream " + Integer.toHexString(p.getSid()) + 
-                                   " ended");
+                                   " of " + streamTypes.get(p.getSid()) + " ended");
             } else {
                 if(p.getSid() != lastSid) {
                     System.out.println("(" + pc + " packets of stream " +
