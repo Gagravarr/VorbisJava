@@ -119,6 +119,7 @@ public class SkeletonFisbone extends HighLevelOggStreamPacket implements Skeleto
         data[48] = granuleShift;
         // Next 3 are zero padding
 
+        // Finally the message headers
         System.arraycopy(headers, 0, data, 52, headers.length);
 
         setData(data);

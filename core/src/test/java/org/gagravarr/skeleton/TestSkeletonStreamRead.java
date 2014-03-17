@@ -108,12 +108,12 @@ public class TestSkeletonStreamRead extends TestCase {
         assertEquals(OggStreamIdentifier.THEORA_VIDEO_ALT, bone2.getContentType());
 
 
-        // We have a single key frame 
+        // We have a single key frame, that's empty
         p = r.getNextPacketWithSid(expectFishSid);
         SkeletonKeyFramePacket kf = (SkeletonKeyFramePacket)SkeletonPacketFactory.create(p);
-        // TODO Check the frame
+        assertEquals(0, kf.getData().length);
 
-        
+
         // And that's it
         p = r.getNextPacketWithSid(expectFishSid);
         assertNull(p);
