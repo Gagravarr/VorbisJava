@@ -45,6 +45,7 @@ public class OggStreamIdentifier {
    
    // Video types
    public static final String THEORA_VIDEO = "video/theora";
+   public static final String THEORA_VIDEO_ALT = "video/x-theora";
    public static final String DIRAC_VIDEO = "video/x-dirac";
    public static final String OGM_VIDEO = "video/x-ogm";
    

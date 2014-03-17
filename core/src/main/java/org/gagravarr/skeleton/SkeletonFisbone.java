@@ -13,9 +13,14 @@
  */
 package org.gagravarr.skeleton;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
+
 import org.gagravarr.ogg.HighLevelOggStreamPacket;
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
+import org.gagravarr.ogg.OggStreamIdentifier;
 
 /**
  * The Fisbone (note - no h) provides details about
@@ -23,6 +28,7 @@ import org.gagravarr.ogg.OggPacket;
  */
 public class SkeletonFisbone extends HighLevelOggStreamPacket implements SkeletonPacket {
     private static final int MESSAGE_HEADER_OFFSET = 52 - MAGIC_FISBONE_BYTES.length;
+    private static final String HEADER_CONTENT_TYPE = "Content-Type";
 
     private int messageHeaderOffset;
     private int serialNumber;
@@ -33,11 +39,13 @@ public class SkeletonFisbone extends HighLevelOggStreamPacket implements Skeleto
     private int preroll;
     private byte granuleShift;
 
-    // TODO Message Headers
+    private String contentType;
+    private Map<String,String> messageHeaders = new HashMap<String, String>();
 
     public SkeletonFisbone() {
         super();
         messageHeaderOffset = MESSAGE_HEADER_OFFSET;
+        contentType = OggStreamIdentifier.UNKNOWN;
     }
 
     public SkeletonFisbone(OggPacket pkt) {
@@ -64,13 +72,39 @@ public class SkeletonFisbone extends HighLevelOggStreamPacket implements Skeleto
         granuleShift = data[48];
         // Next 3 are padding
 
-        // TODO Message headers from 52+
+        // Rest should be the message headers, in html/mime style
+        String headers = IOUtils.getUTF8(data, 52, data.length-52);
+        if (! headers.contains(HEADER_CONTENT_TYPE)) {
+            throw new IllegalArgumentException("No Content Type header found in " + headers);
+        }
+        StringTokenizer st = new StringTokenizer(headers, "\r\n");
+        while (st.hasMoreElements()) {
+            String line = st.nextToken();
+            int splitAt = line.indexOf(": ");
+            String k = line.substring(0, splitAt);
+            String v = line.substring(splitAt+2);
+            messageHeaders.put(k, v);
+
+            if (HEADER_CONTENT_TYPE.equals(k)) {
+                contentType = v;
+            }
+        }
     }
 
     @Override
     public OggPacket write() {
-        // TODO How to work out how big message headers are?
-        int size = 52;
+        // Encode the message headers first
+        StringBuffer headersStr = new StringBuffer();
+        for (String k : messageHeaders.keySet()) {
+            headersStr.append(k);
+            headersStr.append(": ");
+            headersStr.append(messageHeaders.get(k));
+            headersStr.append("\r\n");
+        }
+        byte[] headers = IOUtils.toUTF8Bytes(headersStr.toString());
+
+        // Now calculate the size
+        int size = 52 + headers.length;
 
         byte[] data = new byte[size];
         System.arraycopy(MAGIC_FISBONE_BYTES, 0, data, 0, 8);
@@ -85,7 +119,7 @@ public class SkeletonFisbone extends HighLevelOggStreamPacket implements Skeleto
         data[48] = granuleShift;
         // Next 3 are zero padding
 
-        // TODO Message Headers from 52+
+        System.arraycopy(headers, 0, data, 52, headers.length);
 
         setData(data);
         return super.write();
@@ -138,5 +172,17 @@ public class SkeletonFisbone extends HighLevelOggStreamPacket implements Skeleto
     }
     public void setGranuleShift(byte granuleShift) {
         this.granuleShift = granuleShift;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+        messageHeaders.put(HEADER_CONTENT_TYPE, contentType);
+    }
+
+    public Map<String, String> getMessageHeaders() {
+        return messageHeaders;
     }
 }

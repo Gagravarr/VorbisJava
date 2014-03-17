@@ -88,7 +88,8 @@ public class TestSkeletonStreamRead extends TestCase {
         assertEquals(0, bone1.getPreroll());
         assertEquals(32, bone1.getGranuleShift());
 
-        // TODO Check message headers
+        assertEquals(1, bone1.getMessageHeaders().size());
+        assertEquals(OggStreamIdentifier.CMML, bone1.getContentType());
 
 
         // Check the second bone
@@ -103,7 +104,8 @@ public class TestSkeletonStreamRead extends TestCase {
         assertEquals(0, bone2.getPreroll());
         assertEquals(6, bone2.getGranuleShift());
 
-        // TODO Check message headers
+        assertEquals(1, bone2.getMessageHeaders().size());
+        assertEquals(OggStreamIdentifier.THEORA_VIDEO_ALT, bone2.getContentType());
 
 
         // We have a single key frame 
