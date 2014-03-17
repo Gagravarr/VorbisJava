@@ -45,7 +45,7 @@ public class SkeletonFisbone extends HighLevelOggStreamPacket implements Skeleto
     public SkeletonFisbone() {
         super();
         messageHeaderOffset = MESSAGE_HEADER_OFFSET;
-        contentType = OggStreamIdentifier.UNKNOWN;
+        contentType = OggStreamIdentifier.UNKNOWN.mimetype;
     }
 
     public SkeletonFisbone(OggPacket pkt) {

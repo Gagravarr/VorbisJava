@@ -14,6 +14,7 @@
 package org.gagravarr.ogg;
 
 import org.gagravarr.flac.FlacFirstOggPacket;
+import org.gagravarr.ogg.OggStreamIdentifier.OggStreamType.Kind;
 import org.gagravarr.opus.OpusPacketFactory;
 import org.gagravarr.skeleton.SkeletonPacketFactory;
 import org.gagravarr.speex.SpeexPacketFactory;
@@ -23,42 +24,77 @@ import org.gagravarr.vorbis.VorbisPacketFactory;
  * Detector for identifying the kind of data stored in a given stream.
  * This is normally used on the first packet in a stream, to work out 
  *  the type, if recognised.
- * TODO Provide a description too
+ * Note - the mime types and descriptions should be kept roughly in sync
+ *  with those in Apache Tika
  */
 public class OggStreamIdentifier {
+   public static class OggStreamType {
+       public final String mimetype;
+       public final String description;
+       public final Kind kind;
+       public enum Kind { GENERAL, AUDIO, VIDEO, METADATA };
+       protected OggStreamType(String mimetype, String description, Kind kind) {
+           this.mimetype = mimetype;
+           this.description = description;
+           this.kind = kind;
+       }
+   }
+
    // General types
-   public static final String OGG_GENERAL = "application/ogg";
-   public static final String OGG_VIDEO = "video/ogg";
-   public static final String OGG_AUDIO = "audio/ogg";
-   public static final String UNKNOWN = "application/octet-stream";
+   public static final OggStreamType OGG_GENERAL = new OggStreamType(
+                                     "application/ogg", "Ogg", Kind.GENERAL);
+   public static final OggStreamType OGG_VIDEO = new OggStreamType(
+                                     "video/ogg", "Ogg Video", Kind.VIDEO);
+   public static final OggStreamType OGG_AUDIO = new OggStreamType(
+                                     "audio/ogg", "Ogg Audio", Kind.AUDIO);
+   public static final OggStreamType UNKNOWN = new OggStreamType(
+                                     "application/octet-stream", "Unknown", Kind.GENERAL);
    
    // Audio types
-   public static final String OGG_VORBIS = "audio/vorbis";
-   public static final String OPUS_AUDIO = "audio/opus";
-   public static final String OPUS_AUDIO_ALT = "audio/ogg; codecs=opus";
-   public static final String SPEEX_AUDIO = "audio/speex";
-   public static final String SPEEX_AUDIO_ALT = "audio/ogg; codecs=speex";
-   public static final String OGG_PCM = "audio/x-oggpcm";
+   public static final OggStreamType OGG_VORBIS = new OggStreamType(
+                                     "audio/vorbis", "Vorbis", Kind.AUDIO);
+   public static final OggStreamType OPUS_AUDIO = new OggStreamType(
+                                     "audio/opus", "Opus", Kind.AUDIO);
+   public static final OggStreamType OPUS_AUDIO_ALT = new OggStreamType(
+                                     "audio/ogg; codecs=opus", "Opus", Kind.AUDIO);
+   public static final OggStreamType SPEEX_AUDIO = new OggStreamType(
+                                     "audio/speex", "Speex", Kind.AUDIO);
+   public static final OggStreamType SPEEX_AUDIO_ALT = new OggStreamType(
+                                     "audio/ogg; codecs=speex", "Speex", Kind.AUDIO);
+   public static final OggStreamType OGG_PCM = new OggStreamType(
+                                     "audio/x-oggpcm", "Ogg PCM", Kind.AUDIO);
    
-   public static final String NATIVE_FLAC = "audio/x-flac";
-   public static final String OGG_FLAC = "audio/x-oggflac";
+   public static final OggStreamType NATIVE_FLAC = new OggStreamType(
+                                     "audio/x-flac", "FLAC", Kind.AUDIO);
+   public static final OggStreamType OGG_FLAC = new OggStreamType(
+                                     "audio/x-oggflac", "FLAC", Kind.AUDIO);
    
    // Video types
-   public static final String THEORA_VIDEO = "video/theora";
-   public static final String THEORA_VIDEO_ALT = "video/x-theora";
-   public static final String DIRAC_VIDEO = "video/x-dirac";
-   public static final String OGM_VIDEO = "video/x-ogm";
+   public static final OggStreamType THEORA_VIDEO = new OggStreamType(
+                                     "video/theora", "Thora", Kind.VIDEO);
+   public static final OggStreamType THEORA_VIDEO_ALT = new OggStreamType(
+                                     "video/x-theora", "Theora", Kind.VIDEO);
+   public static final OggStreamType DIRAC_VIDEO = new OggStreamType(
+                                     "video/x-dirac", "Dirac", Kind.VIDEO);
+   public static final OggStreamType OGM_VIDEO = new OggStreamType(
+                                     "video/x-ogm", "Ogg OGM", Kind.VIDEO);
    
-   public static final String OGG_UVS = "video/x-ogguvs";
-   public static final String OGG_YUV = "video/x-oggyuv";
-   public static final String OGG_RGB = "video/x-oggrgb";
+   public static final OggStreamType OGG_UVS = new OggStreamType(
+                                     "video/x-ogguvs", "Ogg UVS", Kind.VIDEO);
+   public static final OggStreamType OGG_YUV = new OggStreamType(
+                                     "video/x-oggyuv", "Ogg YUV", Kind.VIDEO);
+   public static final OggStreamType OGG_RGB = new OggStreamType(
+                                     "video/x-oggrgb", "Ogg RGB", Kind.VIDEO);
 
    // Metadata types
-   public static final String SKELETON = "application/annodex";
-   public static final String CMML = "text/x-cmml";
-   public static final String KATE = "application/kate";
+   public static final OggStreamType SKELETON = new OggStreamType(
+                                     "application/annodex", "Skeleton Annodex", Kind.METADATA);
+   public static final OggStreamType CMML = new OggStreamType(
+                                    "text/x-cmml", "CMML", Kind.METADATA);
+   public static final OggStreamType KATE = new OggStreamType(
+                                     "application/kate", "Kate", Kind.METADATA);
    
-   public static String identifyType(OggPacket p) {
+   public static OggStreamType identifyType(OggPacket p) {
        if (! p.isBeginningOfStream()) {
            // All streams so far can be identified from their first packet
            // Very few can be identified past about their 2nd or 3rd

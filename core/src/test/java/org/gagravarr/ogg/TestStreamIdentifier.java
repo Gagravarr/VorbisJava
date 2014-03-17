@@ -17,6 +17,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.gagravarr.ogg.OggStreamIdentifier.OggStreamType;
+
 import junit.framework.TestCase;
 
 /**
@@ -144,6 +146,10 @@ public class TestStreamIdentifier extends TestCase {
             throws IOException {
         OggPacket p = ogg.getPacketReader().getNextPacket();
         assertNotNull(p);
-        assertEquals(expectedType, OggStreamIdentifier.identifyType(p));
+        assertEquals(expectedType, OggStreamIdentifier.identifyType(p).mimetype);
+    }
+    public static void assertTypeOfFirstStream(OggStreamType type, OggFile ogg)
+            throws IOException {
+        assertTypeOfFirstStream(type.mimetype, ogg);
     }
 }

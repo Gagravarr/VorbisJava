@@ -24,6 +24,7 @@ import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.ogg.OggStreamIdentifier;
+import org.gagravarr.ogg.OggStreamIdentifier.OggStreamType;
 
 /**
  * Prints out information on the Steams within an Ogg File.
@@ -76,16 +77,10 @@ public class OggInfoTool {
                 System.out.println("New logical stream #"+streams + ", serial: " +
                                    Integer.toHexString(p.getSid()) + " (" + p.getSid() + ")");
 
-                String type = OggStreamIdentifier.identifyType(p);
+                OggStreamType type = OggStreamIdentifier.identifyType(p);
+                streamTypes.put(lastSid, type.description);
 
-                // TODO Proper descriptions
-                String desc = type.substring(type.indexOf('/') + 1);
-                if (desc.startsWith("x-")) {
-                    desc = desc.substring(2);
-                }
-                streamTypes.put(lastSid, desc);
-
-                System.out.println("\t"+desc+" detected ("+type+")");
+                System.out.println("\t"+type.description+" detected ("+type.mimetype+")");
             } else if(p.isEndOfStream()) {
                 System.out.println("Stream " + Integer.toHexString(p.getSid()) + 
                                    " of " + streamTypes.get(p.getSid()) + " ended");
