@@ -23,8 +23,13 @@ import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
 import org.gagravarr.ogg.AbstractIdentificationTest;
+import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggFile;
+import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketWriter;
+import org.gagravarr.ogg.OggStreamIdentifier;
+import org.gagravarr.opus.OpusInfo;
+import org.gagravarr.speex.SpeexInfo;
 import org.gagravarr.vorbis.VorbisInfo;
 
 public class TestOggDetector extends AbstractIdentificationTest {
@@ -87,7 +92,34 @@ public class TestOggDetector extends AbstractIdentificationTest {
                 VorbisParser.OGG_VORBIS,
                 d.detect(TikaInputStream.get(getDoubleVorbis()), m)
         );
+        // Two Opus Streams counts as still opus
+        assertEquals(
+                OpusParser.OPUS_AUDIO,
+                d.detect(TikaInputStream.get(getDoubleOpus()), m)
+        );
+        // Three different audio streams is just general audio
+        assertEquals(
+                OggDetector.OGG_AUDIO,
+                d.detect(TikaInputStream.get(getVorbisOpusSpeex()), m)
+        );
+        // Double theora is theora
+        assertEquals(
+                OggParser.THEORA_VIDEO,
+                d.detect(TikaInputStream.get(getDoubleTheora()), m)
+        );
+        // Theora plus two differnt audio streams is theora
+        assertEquals(
+                OggParser.THEORA_VIDEO,
+                d.detect(TikaInputStream.get(getTheoraVorbisOpus()), m)
+        );
+        // Theora plus Dirac plus Audio is just general videp
+        assertEquals(
+                OggDetector.OGG_VIDEO,
+                d.detect(TikaInputStream.get(getTheoraDiracOpus()), m)
+        );
 
+
+        // Non-Ogg files
 
         // It won't detect native FLAC files however
         assertEquals(
@@ -118,15 +150,94 @@ public class TestOggDetector extends AbstractIdentificationTest {
         return new ByteArrayInputStream(out.toByteArray());
     }
     protected InputStream getDoubleOpus() throws IOException {
-        return null; // TODO
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        OggFile ogg = new OggFile(out);
+
+        OggPacketWriter w1 = ogg.getPacketWriter();
+        OggPacketWriter w2 = ogg.getPacketWriter();
+        w1.bufferPacket(new OpusInfo().write(), true);
+        w2.bufferPacket(new OpusInfo().write(), true);
+        w1.close();
+        w2.close();
+        ogg.close();
+
+        return new ByteArrayInputStream(out.toByteArray());
     }
     protected InputStream getVorbisOpusSpeex() throws IOException {
-        return null; // TODO
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        OggFile ogg = new OggFile(out);
+
+        OggPacketWriter w1 = ogg.getPacketWriter();
+        OggPacketWriter w2 = ogg.getPacketWriter();
+        OggPacketWriter w3 = ogg.getPacketWriter();
+        w1.bufferPacket(new VorbisInfo().write(), true);
+        w2.bufferPacket(new OpusInfo().write(), true);
+        w3.bufferPacket(new SpeexInfo().write(), true);
+        w1.close();
+        w2.close();
+        w3.close();
+        ogg.close();
+
+        return new ByteArrayInputStream(out.toByteArray());
+    }
+
+    protected OggPacket fakeTheoraPacket() {
+        byte[] data = new byte[80];
+        data[0] = (byte)0x80;
+        IOUtils.putUTF8(data, 1, "theora");
+        return new OggPacket(data);
+    }
+    protected OggPacket fakeDiracPacket() {
+        byte[] data = new byte[80];
+        IOUtils.putUTF8(data, 0, "BBCD");
+        return new OggPacket(data);
     }
     protected InputStream getDoubleTheora() throws IOException {
-        return null; // TODO
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        OggFile ogg = new OggFile(out);
+
+        OggPacketWriter w1 = ogg.getPacketWriter();
+        OggPacketWriter w2 = ogg.getPacketWriter();
+        w1.bufferPacket(fakeTheoraPacket(), true);
+        w2.bufferPacket(fakeTheoraPacket(), true);
+        w1.close();
+        w2.close();
+        ogg.close();
+
+        return new ByteArrayInputStream(out.toByteArray());
     }
     protected InputStream getTheoraVorbisOpus() throws IOException {
-        return null; // TODO
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        OggFile ogg = new OggFile(out);
+
+        OggPacketWriter w1 = ogg.getPacketWriter();
+        OggPacketWriter w2 = ogg.getPacketWriter();
+        OggPacketWriter w3 = ogg.getPacketWriter();
+        w1.bufferPacket(fakeTheoraPacket(), true);
+        w2.bufferPacket(new VorbisInfo().write(), true);
+        w3.bufferPacket(new OpusInfo().write(), true);
+        w1.close();
+        w2.close();
+        w3.close();
+        ogg.close();
+
+        return new ByteArrayInputStream(out.toByteArray());
+    }
+    protected InputStream getTheoraDiracOpus() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        OggFile ogg = new OggFile(out);
+
+        OggPacketWriter w1 = ogg.getPacketWriter();
+        OggPacketWriter w2 = ogg.getPacketWriter();
+        OggPacketWriter w3 = ogg.getPacketWriter();
+        w1.bufferPacket(fakeTheoraPacket(), true);
+        w2.bufferPacket(fakeDiracPacket(), true);
+        w3.bufferPacket(new OpusInfo().write(), true);
+        w1.close();
+        w2.close();
+        w3.close();
+        ogg.close();
+
+        return new ByteArrayInputStream(out.toByteArray());
     }
 }
