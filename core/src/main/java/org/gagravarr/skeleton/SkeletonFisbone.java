@@ -24,7 +24,9 @@ import org.gagravarr.ogg.OggStreamIdentifier;
 
 /**
  * The Fisbone (note - no h) provides details about
- *  what the other streams in the file are
+ *  what the other streams in the file are.
+ * See http://wiki.xiph.org/SkeletonHeaders for a list of
+ *  the suggested "Message Headers", and what they mean.
  */
 public class SkeletonFisbone extends HighLevelOggStreamPacket implements SkeletonPacket {
     private static final int MESSAGE_HEADER_OFFSET = 52 - MAGIC_FISBONE_BYTES.length;
@@ -183,6 +185,12 @@ public class SkeletonFisbone extends HighLevelOggStreamPacket implements Skeleto
         messageHeaders.put(HEADER_CONTENT_TYPE, contentType);
     }
 
+    /**
+     * Provides read and write access to the Message Headers,
+     *  which are used to describe the stream.
+     * http://wiki.xiph.org/SkeletonHeaders provides documentation
+     *  on the common headers, and the meaning of their values.
+     */
     public Map<String, String> getMessageHeaders() {
         return messageHeaders;
     }
