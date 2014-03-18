@@ -32,25 +32,25 @@ public class TestOggDetector extends AbstractIdentificationTest {
                 d.detect(new BufferedInputStream(getTestOggFile()), m)
         );
         assertEquals(
-                OggDetector.OGG_VORBIS, 
+                VorbisParser.OGG_VORBIS, 
                 d.detect(TikaInputStream.get(getTestVorbisFile()), m)
         );
 
         // Various Ogg based formats
         assertEquals(
-                OggDetector.OGG_VORBIS, 
+                VorbisParser.OGG_VORBIS, 
                 d.detect(TikaInputStream.get(getTestVorbisFile()), m)
         );
         assertEquals(
-                OggDetector.SPEEX_AUDIO, 
+                SpeexParser.SPEEX_AUDIO, 
                 d.detect(TikaInputStream.get(getTestSpeexFile()), m)
         );
         assertEquals(
-                OggDetector.OPUS_AUDIO, 
+                OpusParser.OPUS_AUDIO, 
                 d.detect(TikaInputStream.get(getTestOpusFile()), m)
         );
         assertEquals(
-                OggDetector.OGG_FLAC,
+                FlacParser.OGG_FLAC,
                 d.detect(TikaInputStream.get(getTestFlacOggFile()), m)
         );
         assertEquals(
