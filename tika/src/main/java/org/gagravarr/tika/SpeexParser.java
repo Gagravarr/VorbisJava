@@ -27,6 +27,7 @@ import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.XHTMLContentHandler;
 import org.gagravarr.ogg.OggFile;
+import org.gagravarr.ogg.OggStreamIdentifier;
 import org.gagravarr.speex.SpeexFile;
 import org.gagravarr.speex.SpeexInfo;
 import org.xml.sax.ContentHandler;
@@ -38,8 +39,13 @@ import org.xml.sax.SAXException;
 public class SpeexParser extends OggAudioParser {
    private static final long serialVersionUID = 5904981674814527529L;
 
+   protected static final MediaType OPUS_AUDIO =
+           MediaType.parse(OggStreamIdentifier.OPUS_AUDIO.mimetype);
+   protected static final MediaType OPUS_AUDIO_ALT =
+           MediaType.parse(OggStreamIdentifier.OPUS_AUDIO_ALT.mimetype);
+
    private static List<MediaType> TYPES = Arrays.asList(new MediaType[] {
-         OggDetector.OPUS_AUDIO, OggDetector.OPUS_AUDIO_ALT
+           OPUS_AUDIO, OPUS_AUDIO_ALT
    });
    
    public Set<MediaType> getSupportedTypes(ParseContext context) {
@@ -50,7 +56,7 @@ public class SpeexParser extends OggAudioParser {
          InputStream stream, ContentHandler handler,
          Metadata metadata, ParseContext context)
          throws IOException, TikaException, SAXException {
-      metadata.set(Metadata.CONTENT_TYPE, OggDetector.OPUS_AUDIO.toString());
+      metadata.set(Metadata.CONTENT_TYPE, OPUS_AUDIO.toString());
       metadata.set(XMPDM.AUDIO_COMPRESSOR, "Speex");
 
       // Open the process the files

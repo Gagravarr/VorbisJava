@@ -27,6 +27,7 @@ import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.XHTMLContentHandler;
 import org.gagravarr.ogg.OggFile;
+import org.gagravarr.ogg.OggStreamIdentifier;
 import org.gagravarr.vorbis.VorbisFile;
 import org.gagravarr.vorbis.VorbisInfo;
 import org.xml.sax.ContentHandler;
@@ -38,10 +39,13 @@ import org.xml.sax.SAXException;
 public class VorbisParser extends OggAudioParser {
    private static final long serialVersionUID = 5904981674814527529L;
 
+   protected static final MediaType OGG_VORBIS =
+           MediaType.parse(OggStreamIdentifier.OGG_VORBIS.mimetype);
+
    private static List<MediaType> TYPES = Arrays.asList(new MediaType[] {
-         OggDetector.OGG_AUDIO, OggDetector.OGG_VORBIS 
+           OGG_VORBIS
    });
-   
+
    public Set<MediaType> getSupportedTypes(ParseContext context) {
       return new HashSet<MediaType>(TYPES);
    }
@@ -50,7 +54,7 @@ public class VorbisParser extends OggAudioParser {
          InputStream stream, ContentHandler handler,
          Metadata metadata, ParseContext context)
          throws IOException, TikaException, SAXException {
-      metadata.set(Metadata.CONTENT_TYPE, OggDetector.OGG_VORBIS.toString());
+      metadata.set(Metadata.CONTENT_TYPE, OGG_VORBIS.toString());
       metadata.set(XMPDM.AUDIO_COMPRESSOR, "Vorbis");
 
       // Open the process the files
