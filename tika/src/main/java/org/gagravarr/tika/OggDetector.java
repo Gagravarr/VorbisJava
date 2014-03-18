@@ -17,8 +17,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.tika.detect.Detector;
 import org.apache.tika.io.TikaInputStream;
@@ -44,6 +46,8 @@ public class OggDetector implements Detector {
    private static final long serialVersionUID = 591382028699008553L;
 
    public static final MediaType OGG_GENERAL = MediaType.application("ogg");
+   protected static final MediaType OGG_AUDIO = MediaType.audio("ogg");
+   protected static final MediaType OGG_VIDEO = MediaType.video("ogg");
 
    public MediaType detect(InputStream input, Metadata metadata)
          throws IOException {
@@ -166,32 +170,48 @@ public class OggDetector implements Detector {
          // Is it a single video stream, with zero or more audio streams?
          int videoCount = 0;
          int audioCount = 0;
-         OggStreamType videoType = null;
+         Set<OggStreamType> audioTypes = new HashSet<OggStreamType>();
+         Set<OggStreamType> videoTypes = new HashSet<OggStreamType>();
          for (OggStreamType type : streams.keySet()) {
              if (type.kind == OggStreamType.Kind.VIDEO) {
-                 videoType = type;
                  videoCount += streams.get(type);
+                 videoTypes.add(type);
              }
              if (type.kind == OggStreamType.Kind.AUDIO) {
                  audioCount += streams.get(type);
+                 audioTypes.add(type);
              }
          }
          if (videoCount == 1) {
              // Report it as the video type, not the audio within that
-             return toMediaType(videoType);
+             return toMediaType( videoTypes.iterator().next() );
          }
 
 
          // Is it multiple audio streams, with no video?
          if (videoCount == 0 && audioCount > 1) {
              // Are they all the same audio kind?
-             // TODO
+             if (audioTypes.size() == 1) {
+                 // All the same kind, report it as that
+                 return toMediaType( audioTypes.iterator().next() );
+             } else {
+                 // Mixture of audio types, report as general audio
+                 return OGG_AUDIO;
+             }
          }
 
          // Is it multiple video streams?
          if (videoCount > 1) {
              // Are they all the same video kind?
-             // TODO
+             if (videoTypes.size() == 1) {
+                 // All the same kind, report it as that video
+                 // (Don't mention the audio in it, if any)
+                 return toMediaType( videoTypes.iterator().next() );
+             } else {
+                 // Mixture of video types, possibly with audio, report
+                 // it as general video as the best we can do
+                 return OGG_VIDEO;
+             }
          }
 
          // If we get here, then we can't work out what it is

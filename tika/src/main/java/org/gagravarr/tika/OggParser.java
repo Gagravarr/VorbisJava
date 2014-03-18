@@ -48,10 +48,8 @@ public class OggParser extends AbstractParser {
    private static final long serialVersionUID = -5686095376587813226L;
 
    protected static final MediaType OGG_GENERAL = OggDetector.OGG_GENERAL;
-   protected static final MediaType OGG_AUDIO =
-           MediaType.parse(OggStreamIdentifier.OGG_AUDIO.mimetype);
-   protected static final MediaType OGG_VIDEO =
-           MediaType.parse(OggStreamIdentifier.OGG_VIDEO.mimetype);
+   protected static final MediaType OGG_AUDIO = OggDetector.OGG_AUDIO;
+   protected static final MediaType OGG_VIDEO = OggDetector.OGG_VIDEO;
 
    protected static final MediaType THEORA_VIDEO =
            MediaType.parse(OggStreamIdentifier.THEORA_VIDEO.mimetype);

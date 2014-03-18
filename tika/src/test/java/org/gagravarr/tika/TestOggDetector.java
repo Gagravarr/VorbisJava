@@ -14,12 +14,18 @@
 package org.gagravarr.tika;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
 import org.gagravarr.ogg.AbstractIdentificationTest;
+import org.gagravarr.ogg.OggFile;
+import org.gagravarr.ogg.OggPacketWriter;
+import org.gagravarr.vorbis.VorbisInfo;
 
 public class TestOggDetector extends AbstractIdentificationTest {
     public void testDetect() throws IOException {
@@ -32,21 +38,21 @@ public class TestOggDetector extends AbstractIdentificationTest {
                 d.detect(new BufferedInputStream(getTestOggFile()), m)
         );
         assertEquals(
-                VorbisParser.OGG_VORBIS, 
+                VorbisParser.OGG_VORBIS,
                 d.detect(TikaInputStream.get(getTestVorbisFile()), m)
         );
 
-        // Various Ogg based formats
+        // Various Ogg Audio based formats
         assertEquals(
-                VorbisParser.OGG_VORBIS, 
+                VorbisParser.OGG_VORBIS,
                 d.detect(TikaInputStream.get(getTestVorbisFile()), m)
         );
         assertEquals(
-                SpeexParser.SPEEX_AUDIO, 
+                SpeexParser.SPEEX_AUDIO,
                 d.detect(TikaInputStream.get(getTestSpeexFile()), m)
         );
         assertEquals(
-                OpusParser.OPUS_AUDIO, 
+                OpusParser.OPUS_AUDIO,
                 d.detect(TikaInputStream.get(getTestOpusFile()), m)
         );
         assertEquals(
@@ -58,7 +64,30 @@ public class TestOggDetector extends AbstractIdentificationTest {
                 d.detect(TikaInputStream.get(getTestOggFile()), m)
         );
 
-        // TODO Video
+        // Various Ogg Video based formats
+        assertEquals(
+                OggParser.THEORA_VIDEO,
+                d.detect(TikaInputStream.get(getTestTheoraFile()), m)
+        );
+        assertEquals(
+                OggParser.THEORA_VIDEO,
+                d.detect(TikaInputStream.get(getTestTheoraSkeletonFile()), m)
+        );
+        assertEquals(
+                OggParser.THEORA_VIDEO,
+                d.detect(TikaInputStream.get(getTestTheoraSkeletonCMMLFile()), m)
+        );
+        // TODO More video formats
+
+
+        // Files with a mixture of things
+
+        // Two Vorbis Streams counts as still vorbis
+        assertEquals(
+                VorbisParser.OGG_VORBIS,
+                d.detect(TikaInputStream.get(getDoubleVorbis()), m)
+        );
+
 
         // It won't detect native FLAC files however
         assertEquals(
@@ -71,5 +100,33 @@ public class TestOggDetector extends AbstractIdentificationTest {
                 MediaType.OCTET_STREAM, 
                 d.detect(TikaInputStream.get(getDummy()), m)
         );
+    }
+
+    // These fake up mixed streams
+    protected InputStream getDoubleVorbis() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        OggFile ogg = new OggFile(out);
+
+        OggPacketWriter w1 = ogg.getPacketWriter();
+        OggPacketWriter w2 = ogg.getPacketWriter();
+        w1.bufferPacket(new VorbisInfo().write(), true);
+        w2.bufferPacket(new VorbisInfo().write(), true);
+        w1.close();
+        w2.close();
+        ogg.close();
+
+        return new ByteArrayInputStream(out.toByteArray());
+    }
+    protected InputStream getDoubleOpus() throws IOException {
+        return null; // TODO
+    }
+    protected InputStream getVorbisOpusSpeex() throws IOException {
+        return null; // TODO
+    }
+    protected InputStream getDoubleTheora() throws IOException {
+        return null; // TODO
+    }
+    protected InputStream getTheoraVorbisOpus() throws IOException {
+        return null; // TODO
     }
 }
