@@ -13,9 +13,6 @@
  */
 package org.gagravarr.tika;
 
-import static org.gagravarr.tika.OggDetector.NATIVE_FLAC;
-import static org.gagravarr.tika.OggDetector.OGG_FLAC;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -33,16 +30,22 @@ import org.apache.tika.sax.XHTMLContentHandler;
 import org.gagravarr.flac.FlacFile;
 import org.gagravarr.flac.FlacInfo;
 import org.gagravarr.flac.FlacOggFile;
+import org.gagravarr.ogg.OggStreamIdentifier;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 public class FlacParser extends AbstractParser {
    private static final long serialVersionUID = -7546577301474546694L;
 
+   protected static final MediaType NATIVE_FLAC =
+           MediaType.parse(OggStreamIdentifier.NATIVE_FLAC.mimetype);
+   protected static final MediaType OGG_FLAC =
+           MediaType.parse(OggStreamIdentifier.OGG_FLAC.mimetype);
+
    private static List<MediaType> TYPES = Arrays.asList(new MediaType[] {
            NATIVE_FLAC, OGG_FLAC
    });
-     
+
    public Set<MediaType> getSupportedTypes(ParseContext context) {
        return new HashSet<MediaType>(TYPES);
    }
