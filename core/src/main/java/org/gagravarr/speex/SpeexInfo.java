@@ -39,7 +39,7 @@ public class SpeexInfo extends HighLevelOggStreamPacket implements SpeexPacket {
     
     public SpeexInfo() {
         super();
-        versionString = "Gagravarr Ogg v0.3";
+        versionString = "Gagravarr Ogg v0.4";
         versionId = 1;
     }
 
