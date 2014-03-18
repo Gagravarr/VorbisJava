@@ -15,5 +15,8 @@
 /tika/target/
 /tools/target/
 
+# Skip where we put test files not cleared for inclusion
+/DO_NOT_COMMIT/
+
 # Skip the eclipse static includes
 /lib/
