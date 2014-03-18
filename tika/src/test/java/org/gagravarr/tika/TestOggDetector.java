@@ -27,7 +27,6 @@ import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketWriter;
-import org.gagravarr.ogg.OggStreamIdentifier;
 import org.gagravarr.opus.OpusInfo;
 import org.gagravarr.speex.SpeexInfo;
 import org.gagravarr.vorbis.VorbisInfo;

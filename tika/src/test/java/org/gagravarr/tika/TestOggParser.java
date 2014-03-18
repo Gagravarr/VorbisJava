@@ -30,6 +30,8 @@ public class TestOggParser extends AbstractIdentificationTest {
         m = new Metadata();
         parser.parse(getTestVorbisFile(), handler, m, context);
         assertEquals("1", m.get("streams-total"));
+        assertEquals("1", m.get("streams-audio"));
+
         assertEquals("1", m.get("streams-vorbis"));
         assertEquals(null, m.get("streams-theora"));
         
@@ -37,6 +39,8 @@ public class TestOggParser extends AbstractIdentificationTest {
         m = new Metadata();
         parser.parse(getTestOpusFile(), handler, m, context);
         assertEquals("1", m.get("streams-total"));
+        assertEquals("1", m.get("streams-audio"));
+
         assertEquals("1", m.get("streams-opus"));
         assertEquals(null, m.get("streams-theora"));
     }
@@ -46,6 +50,9 @@ public class TestOggParser extends AbstractIdentificationTest {
         m = new Metadata();
         parser.parse(getTestTheoraSkeletonFile(), handler, m, context);
         assertEquals("2", m.get("streams-total"));
+        assertEquals("1", m.get("streams-video"));
+        assertEquals("1", m.get("streams-metadata"));
+
         assertEquals("1", m.get("streams-theora"));
         assertEquals("1", m.get("streams-annodex"));
         assertEquals(null, m.get("streams-vorbis"));
@@ -54,6 +61,9 @@ public class TestOggParser extends AbstractIdentificationTest {
         m = new Metadata();
         parser.parse(getTestTheoraSkeletonCMMLFile(), handler, m, context);
         assertEquals("3", m.get("streams-total"));
+        assertEquals("1", m.get("streams-video"));
+        assertEquals("2", m.get("streams-metadata"));
+
         assertEquals("1", m.get("streams-theora"));
         assertEquals("1", m.get("streams-annodex"));
         assertEquals("1", m.get("streams-cmml"));
@@ -65,6 +75,7 @@ public class TestOggParser extends AbstractIdentificationTest {
         m = new Metadata();
         parser.parse(getTestOggFile(), handler, m, context);
         assertEquals("1", m.get("streams-total"));
+        assertEquals("1", m.get("streams-general"));
         assertEquals("1", m.get("streams-unknown"));
         
         // Flac Native - Not Ogg

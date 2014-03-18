@@ -91,6 +91,8 @@ public class OggParser extends AbstractParser {
       // To track the streams we find
       Map<OggStreamType, Integer> streams = 
               new HashMap<OggStreamType, Integer>();
+      Map<OggStreamType.Kind, Integer> streamKinds =
+              new HashMap<OggStreamType.Kind, Integer>();
       List<Integer> sids = new ArrayList<Integer>();
       int totalStreams = 0;
       
@@ -101,13 +103,19 @@ public class OggParser extends AbstractParser {
          if (p.isBeginningOfStream()) {
             totalStreams++;
             sids.add(p.getSid());
-            
+
             OggStreamType type = OggStreamIdentifier.identifyType(p);
             Integer prevValue = streams.get(type);
             if (prevValue == null) {
                 prevValue = 0;
             }
             streams.put(type, (prevValue+1));
+
+            prevValue = streamKinds.get(type.kind);
+            if (prevValue == null) {
+                prevValue = 0;
+            }
+            streamKinds.put(type.kind, (prevValue+1));
          }
       }
       
@@ -122,6 +130,10 @@ public class OggParser extends AbstractParser {
               key = "unknown";
           }
           metadata.add("streams-" + key, Integer.toString(streams.get(type)));
+      }
+      for (OggStreamType.Kind kind : streamKinds.keySet()) {
+          String key = kind.name().toLowerCase();
+          metadata.add("streams-" + key, Integer.toString(streamKinds.get(kind)));
       }
    }
 }
