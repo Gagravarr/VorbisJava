@@ -47,21 +47,42 @@ import org.xml.sax.SAXException;
 public class OggParser extends AbstractParser {
    private static final long serialVersionUID = -5686095376587813226L;
 
+   protected static final MediaType OGG_GENERAL = OggDetector.OGG_GENERAL;
+   protected static final MediaType OGG_AUDIO =
+           MediaType.parse(OggStreamIdentifier.OGG_AUDIO.mimetype);
+   protected static final MediaType OGG_VIDEO =
+           MediaType.parse(OggStreamIdentifier.OGG_VIDEO.mimetype);
+
+   protected static final MediaType THEORA_VIDEO =
+           MediaType.parse(OggStreamIdentifier.THEORA_VIDEO.mimetype);
+   protected static final MediaType DIRAC_VIDEO =
+           MediaType.parse(OggStreamIdentifier.DIRAC_VIDEO.mimetype);
+   protected static final MediaType OGM_VIDEO =
+           MediaType.parse(OggStreamIdentifier.OGM_VIDEO.mimetype);
+   protected static final MediaType OGG_UVS =
+           MediaType.parse(OggStreamIdentifier.OGG_UVS.mimetype);
+   protected static final MediaType OGG_YUV =
+           MediaType.parse(OggStreamIdentifier.OGG_YUV.mimetype);
+   protected static final MediaType OGG_RGB =
+           MediaType.parse(OggStreamIdentifier.OGG_RGB.mimetype);
+   protected static final MediaType OGG_PCM =
+           MediaType.parse(OggStreamIdentifier.OGG_PCM.mimetype);
+
    private static List<MediaType> TYPES = Arrays.asList(new MediaType[] {
-         // General ones, where we'll never be able to help
-         OggDetector.OGG_GENERAL, OggDetector.OGG_AUDIO,
-         OggDetector.OGG_VIDEO, 
-         // Ones we lack a proper parser for
-         OggDetector.THEORA_VIDEO, OggDetector.DIRAC_VIDEO,
-         OggDetector.OGM_VIDEO, OggDetector.OGG_UVS,
-         OggDetector.OGG_YUV, OggDetector.OGG_RGB,
-         OggDetector.OGG_PCM
+         // General ones, which didn't fit a specific pattern (eg 2*Opus+2*Vorbis,
+         //  Unknown audio codec, unknown video codec etc). We can't do much
+         //  for these
+         OGG_GENERAL, OGG_AUDIO, OGG_VIDEO,
+         // Ones we lack a proper parser for, but may be able to support
+         //  better in the future with a dedicated parser
+         THEORA_VIDEO, DIRAC_VIDEO, OGM_VIDEO,
+         OGG_UVS, OGG_YUV,  OGG_RGB, OGG_PCM
    });
-   
+
    public Set<MediaType> getSupportedTypes(ParseContext context) {
       return new HashSet<MediaType>(TYPES);
    }
-   
+
    public void parse(
          InputStream stream, ContentHandler handler,
          Metadata metadata, ParseContext context)
