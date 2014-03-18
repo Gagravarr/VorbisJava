@@ -2,12 +2,14 @@
            -----------------------------
 
 This library is a pure Java, Apache v2 licensed project for working with
-Ogg, Vorbis, FLAC and Opus files
+Ogg, Vorbis, FLAC, Opus and Speex files
 
 Currently, support for the Ogg container is fairly complete, offering
 the ability to read, write, add and change streams within an Ogg file.
 It should be possible to use the Ogg parts as a basis for dealing with
-any multimedia data stored in an Ogg container.
+any multimedia data stored in an Ogg container. There is basic support for
+Skeleton Annodex streams, which provide metadata on top of Ogg files about
+the streams, but it isn't fully integrated.
 
 Support for the Vorbis audio format so far concentrates on metadata.
 It is possible to retrieve and change metadata (such as sampling rates,
@@ -16,10 +18,11 @@ user comments etc), and tools are provided to query and alter these
 decoding or encoding audio data. Contributions for these areas would
 be welcomed!
 
-Opus support is slightly less than that of Vorbis, covering retrieving
-of metadata (such as sampling rates, user comments etc). However, basic
-Opus audio frame support is outstanding, and there are no tools for it.
-Contributions to expand it most appreciated!
+Opus and Speex support is slightly less than that of Vorbis, covering 
+retrieving of metadata (such as sampling rates, user comments etc). However, 
+basic Opus or Speex audio frame support is outstanding. Tooling exists
+for querying and changing metadata for Opus only. Contributions to expand 
+Opus or Speex support are most appreciated!
 
 Very limited support is also included for FLAC comments (user metadata),
 which use the same scheme as Vorbis. FLAC-native and FLAC-in-Ogg files
@@ -63,18 +66,20 @@ included.
 Apache Tika
 -----------
 Included in the tika module are Parser and Detector plugins for
-Apache Tika for Ogg based file formats (current Ogg, Vorbis, Opus
-and FLAC).
+Apache Tika for Ogg based file formats. Currently, parsers are only available
+for the Audio formats (Vorbis, Opus, Speex, Flac), but a basic stream info
+outputting parser exists for other Ogg types. Detection should handle all
+the well known Ogg formats (Audio and Video).
 
-These include appropriate service registry entries for Tika to allow
-these plugins to be automatically loaded by Tika. Simply ensure that the
-tika module, and the core module are present on the Tika classpath and 
+The parsers and detector include appropriate service registry entries for Tika 
+to allow these plugins to be automatically loaded by Tika. Simply ensure that 
+the tika module, and the core module are present on the Tika classpath and 
 they will be used.
 
 
 Getting Started
 ---------------
-There are four main classes that you can start with, depending on the
+There are five main classes that you can start with, depending on the
 kind of file you have, and your interests. These are:
 
   org.gagravarr.ogg.OggFile
