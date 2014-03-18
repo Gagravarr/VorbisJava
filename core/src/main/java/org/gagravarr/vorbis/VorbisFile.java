@@ -73,6 +73,9 @@ public class VorbisFile {
 				}
 			}
 		}
+		if (p == null) {
+		    throw new IllegalArgumentException("Supplied File is not Vorbis");
+		}
 		
 		// First three packets are required to be info, comments, setup
 		info = (VorbisInfo)VorbisPacketFactory.create( p );
