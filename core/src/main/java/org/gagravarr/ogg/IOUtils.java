@@ -111,17 +111,20 @@ public class IOUtils {
    public static int getInt(int i0, int i1) {
       return (i1 << 8) + (i0 << 0);
    }
-	public static long getInt(int i0, int i1, int i2) {
-        return (i2 << 16) + (i1 << 8) + (i0 << 0);
-	}
-	public static long getInt(int i0, int i1, int i2, int i3) {
-        return (i3 << 24) + (i2 << 16) + (i1 << 8) + (i0 << 0);
-	}
-	public static long getInt(int i0, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-        return (long)(i7 << 56) + (long)(i6 << 48) + 
-               (long)(i5 << 40) + (long)(i4 << 32) +
-               (i3 << 24) + (i2 << 16) + (i1 << 8) + (i0 << 0);
-	}
+   public static long getInt(int i0, int i1, int i2) {
+       return (i2 << 16) + (i1 << 8) + (i0 << 0);
+   }
+   public static long getInt(int i0, int i1, int i2, int i3) {
+       return (i3 << 24) + (i2 << 16) + (i1 << 8) + (i0 << 0);
+   }
+   public static long getInt(int i0, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+       // Special check for all 0xff, to avoid overflowing long
+       if (i0 == 255 && i1 == 255 && i3 == 255 && i4 == 255 && i5 == 255 && i6 == 255 && i7 == 255) return -1l;
+       // Otherwise normal convert
+       return (long)(i7 << 56) + (long)(i6 << 48) +
+              (long)(i5 << 40) + (long)(i4 << 32) +
+              (i3 << 24) + (i2 << 16) + (i1 << 8) + (i0 << 0);
+   }
 	
 	
    public static int getInt2BE(byte[] data) {

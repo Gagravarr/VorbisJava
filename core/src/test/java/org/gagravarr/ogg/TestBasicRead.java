@@ -13,6 +13,7 @@
  */
 package org.gagravarr.ogg;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,12 +30,16 @@ import org.gagravarr.ogg.OggPage.OggPacketIterator;
  * Test that we can open a file and read packets from it
  */
 public class TestBasicRead extends TestCase {
-        protected static final String testOggFile = "/testVORBIS.ogg";
-        
+        protected static final String testVorbisFile = "/testVORBIS.ogg";
+        protected static final String testFlacOggFile = "/testFLAC.oga";
+
 	private InputStream getTestFile() throws IOException {
-		return this.getClass().getResourceAsStream(testOggFile);
+		return this.getClass().getResourceAsStream(testVorbisFile);
 	}
-	
+	private InputStream getAltTestFile() throws IOException {
+            return this.getClass().getResourceAsStream(testFlacOggFile);
+	}
+
 	public void testOpen() throws IOException {
 		OggFile ogg = new OggFile(getTestFile());
 		OggPacketReader r = ogg.getPacketReader();
@@ -368,10 +373,98 @@ public class TestBasicRead extends TestCase {
 		assertTrue( page.isChecksumValid() );
 	}
 	
+	/**
+	 * Issue-5 - Certain pages are giving "invalid checksum" warnings
+	 */
+        public void testCRCProblem() throws IOException {
+            InputStream inp = getAltTestFile();
+
+            // Skip to page 1
+            assertEquals((int)'O', inp.read());
+            assertEquals((int)'g', inp.read());
+            assertEquals((int)'g', inp.read());
+            assertEquals((int)'S', inp.read());
+
+            // Check page 1
+            OggPage page = new OggPage(inp);
+            assertEquals( 0x41aacbc9, page.getChecksum() );
+            assertTrue( page.isChecksumValid() );
+
+            // Move on to page 2
+            assertEquals((int)'O', inp.read());
+            assertEquals((int)'g', inp.read());
+            assertEquals((int)'g', inp.read());
+            assertEquals((int)'S', inp.read());
+
+            // Check page 2
+            page = new OggPage(inp);
+            assertEquals( 0x5dda5a9b, page.getChecksum() );
+            assertTrue( page.isChecksumValid() );
+
+            // Move on to page 3
+            assertEquals((int)'O', inp.read());
+            assertEquals((int)'g', inp.read());
+            assertEquals((int)'g', inp.read());
+            assertEquals((int)'S', inp.read());
+
+            // Check page 3
+            page = new OggPage(inp);
+            assertEquals( 0x652c44eb, page.getChecksum() );
+            assertTrue( page.isChecksumValid() );
+
+            // Page 3 is standalone
+            assertEquals(false, page.isContinuation());
+            assertEquals(false, page.hasContinuation());
+
+
+            // Buffer, so we can re-read it
+            BufferedInputStream binp = new BufferedInputStream(inp, 5000);
+            binp.mark(5000);
+
+            // Move on to page 4
+            assertEquals((int)'O', binp.read());
+            assertEquals((int)'g', binp.read());
+            assertEquals((int)'g', binp.read());
+            assertEquals((int)'S', binp.read());
+
+            // Check page 4, which is a big page
+            page = new OggPage(binp);
+            assertEquals( 0x8dff7da8, page.getChecksum() );
+
+            // Page 4 carries on
+            assertEquals(false, page.isContinuation());
+            assertEquals(true, page.hasContinuation());
+
+            // Ensure that page 4 is as we expect it to be
+            assertEquals(4379, page.getPageSize());
+            assertEquals(44, page.getHeader().length);
+            assertEquals(4335, page.getDataSize());
+            assertEquals(17, page.getNumLVs());
+
+            assertEquals(-1, page.getGranulePosition());
+            assertEquals(0x6e630f49, page.getSid());
+            assertEquals(3, page.getSequenceNumber());
+
+            // Wind back, and get the real header
+            binp.reset();
+            byte[] realHeader = new byte[44];
+            IOUtils.readFully(binp, realHeader);
+            byte[] calcHeader = page.getHeader();
+
+            // Compare the two, other than the checksums
+            for (int i=0; i<realHeader.length; i++) {
+                if (i == 22) i += 4;
+                assertEquals("Wrong value at " + i, realHeader[i], calcHeader[i]);
+            }
+
+            // Finally check the checksum
+            assertTrue( page.isChecksumValid() );
+        }
+
         // Which file extensions aren't actually Ogg files
 	protected static final List<String> NON_OGG_EXTENSIONS =
 	        Arrays.asList(new String[] { "flac" });
-	
+
 	/**
 	 * Ensures that we can read all of the ogg-based files in
 	 *  the Test Resources directory, and correctly fail on
@@ -379,7 +472,7 @@ public class TestBasicRead extends TestCase {
 	 */
 	public void testManyFormats() throws IOException {
 	    // Get the directory holding our test files
-	    File testFilesDir = new File(getClass().getResource(testOggFile).getFile()).getParentFile();
+	    File testFilesDir = new File(getClass().getResource(testVorbisFile).getFile()).getParentFile();
 
 	    // Check each one
 	    int validFiles = 0;
