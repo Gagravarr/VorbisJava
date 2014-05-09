@@ -1,7 +1,7 @@
-Version 0.6 (In Progress)
+Version 0.7 (In Progress)
  (No changes yet)
 
-Version 0.5 (2014-05-09)
+Version 0.6 (2014-05-09)
  * Tika audio parsers extraction of audio length
  * Fixed CRC warning on all-255 checksums
 
