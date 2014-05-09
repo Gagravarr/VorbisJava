@@ -52,6 +52,12 @@ public abstract class AbstractIdentificationTest extends TestCase {
     protected static InputStream getTestTheoraSkeletonCMMLFile() throws IOException {
         return AbstractIdentificationTest.class.getResourceAsStream("/testTheoraSkeletonCMML.ogg");
     }
+    protected static InputStream getTestKateFile() throws IOException {
+        return AbstractIdentificationTest.class.getResourceAsStream("/testKate.ogx");
+    }
+    protected static InputStream getTestKateVorbisFile() throws IOException {
+        return AbstractIdentificationTest.class.getResourceAsStream("/testKateVORBIS.ogg");
+    }
     protected static InputStream getDummy() throws IOException {
         return new ByteArrayInputStream(new byte[] { 0,1,2,3,4,5,6,7 });
     }

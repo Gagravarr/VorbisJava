@@ -51,6 +51,9 @@ public class OggParser extends AbstractParser {
    protected static final MediaType OGG_AUDIO = OggDetector.OGG_AUDIO;
    protected static final MediaType OGG_VIDEO = OggDetector.OGG_VIDEO;
 
+   protected static final MediaType KATE =
+           MediaType.parse(OggStreamIdentifier.KATE.mimetype);
+   
    protected static final MediaType THEORA_VIDEO =
            MediaType.parse(OggStreamIdentifier.THEORA_VIDEO.mimetype);
    protected static final MediaType DIRAC_VIDEO =
@@ -74,7 +77,8 @@ public class OggParser extends AbstractParser {
          // Ones we lack a proper parser for, but may be able to support
          //  better in the future with a dedicated parser
          THEORA_VIDEO, DIRAC_VIDEO, OGM_VIDEO,
-         OGG_UVS, OGG_YUV,  OGG_RGB, OGG_PCM
+         OGG_UVS, OGG_YUV,  OGG_RGB, OGG_PCM,
+         KATE
    });
 
    public Set<MediaType> getSupportedTypes(ParseContext context) {

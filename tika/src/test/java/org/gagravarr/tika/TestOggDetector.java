@@ -83,7 +83,13 @@ public class TestOggDetector extends AbstractIdentificationTest {
         );
         // TODO More video formats
 
+        // Kate-only stream
+        assertEquals(
+                OggParser.KATE,
+                d.detect(TikaInputStream.get(getTestKateFile()), m)
+        );
 
+        
         // Files with a mixture of things
 
         // Two Vorbis Streams counts as still vorbis
@@ -111,10 +117,15 @@ public class TestOggDetector extends AbstractIdentificationTest {
                 OggParser.THEORA_VIDEO,
                 d.detect(TikaInputStream.get(getTheoraVorbisOpus()), m)
         );
-        // Theora plus Dirac plus Audio is just general videp
+        // Theora plus Dirac plus Audio is just general video
         assertEquals(
                 OggDetector.OGG_VIDEO,
                 d.detect(TikaInputStream.get(getTheoraDiracOpus()), m)
+        );
+        // Kate + Audio is that audio
+        assertEquals(
+                VorbisParser.OGG_VORBIS,
+                d.detect(TikaInputStream.get(getTestKateVorbisFile()), m)
         );
 
 

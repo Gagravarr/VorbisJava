@@ -38,6 +38,9 @@ public class OggStreamIdentifier {
            this.description = description;
            this.kind = kind;
        }
+       public String toString() {
+           return kind + " - " + description + " as " + mimetype;
+       }
    }
 
    // General types
@@ -203,7 +206,12 @@ public class OggStreamIdentifier {
    protected static boolean isCMMLStream(OggPacket p) {
        return IOUtils.byteRangeMatches(MAGIC_CMML, p.getData(), 0);
    }
-   protected static final byte[] MAGIC_KATE = IOUtils.toUTF8Bytes("kate\0\0\0");
+   protected static final byte[] MAGIC_KATE = new byte[8];
+   static {
+       MAGIC_KATE[0] = (byte)0x80;
+       IOUtils.putUTF8(MAGIC_KATE, 1, "kate");
+       // Remaining 3 bytes are all zero
+   }
    protected static boolean isKateStream(OggPacket p) {
        return IOUtils.byteRangeMatches(MAGIC_KATE, p.getData(), 0);
    }

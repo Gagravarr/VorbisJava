@@ -170,6 +170,7 @@ public class OggDetector implements Detector {
          // Is it a single video stream, with zero or more audio streams?
          int videoCount = 0;
          int audioCount = 0;
+         int kateCount = 0;
          Set<OggStreamType> audioTypes = new HashSet<OggStreamType>();
          Set<OggStreamType> videoTypes = new HashSet<OggStreamType>();
          for (OggStreamType type : streams.keySet()) {
@@ -177,9 +178,12 @@ public class OggDetector implements Detector {
                  videoCount += streams.get(type);
                  videoTypes.add(type);
              }
-             if (type.kind == OggStreamType.Kind.AUDIO) {
+             else if (type.kind == OggStreamType.Kind.AUDIO) {
                  audioCount += streams.get(type);
                  audioTypes.add(type);
+             }
+             else if (type == OggStreamIdentifier.KATE) {
+                 kateCount++;
              }
          }
          if (videoCount == 1) {
@@ -212,6 +216,11 @@ public class OggDetector implements Detector {
                  // it as general video as the best we can do
                  return OGG_VIDEO;
              }
+         }
+         
+         // Is it only Kate streams, but no video nor audio?
+         if (kateCount > 0) {
+             return toMediaType(OggStreamIdentifier.KATE);
          }
 
          // If we get here, then we can't work out what it is
