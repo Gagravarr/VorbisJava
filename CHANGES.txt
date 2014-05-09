@@ -1,5 +1,24 @@
-Version 0.2 (Unreleased)
- 
+Version 0.6 (In Progress)
+ (No changes yet)
+
+Version 0.5 (2014-05-09)
+ * Tika audio parsers extraction of audio length
+ * Fixed CRC warning on all-255 checksums
+
+Version 0.4 (2014-03-18)
+ * Improved Tika detection
+ * Improved Tika parser metadata for general types
+ * OggStreamIdentifier to make stream type detection cleaner
+ * Basic Fisbone / Skeleton read support
+ * Speex support at a similar level to Vorbis
+ * Comment tools for all supported audio formats
+
+Version 0.3 (2014-03-09)
+ * Opus support at a similar level to Vorbis
+
+Version 0.2 (2012-08-02)
+ * Update to Tika 1.2
+ * Fixed dependency scopes
 
 Version 0.1 (2012-01-26)
  * Initial Version

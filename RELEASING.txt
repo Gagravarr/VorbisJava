@@ -1,0 +1,14 @@
+Before the release:
+ * Update the version strings and dates in the files which embed them:
+   core/src/main/java/org/gagravarr/speex/SpeexInfo.java
+   core/src/main/java/org/gagravarr/vorbis/VorbisStyleComments.java
+ * Ensure the CHANGES file is up-to-date
+ * Try running Apache Tika with a manual build of the new version, and
+   ensure all Tika tests pass
+
+To release:
+ * Follow the Sonatype Guide
+https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7a.DeploySnapshotsandStageReleaseswithMaven
+
+After the release:
+ * Upgrade the dependency in Apache Tika
