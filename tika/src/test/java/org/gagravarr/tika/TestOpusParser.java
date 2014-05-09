@@ -62,6 +62,7 @@ public class TestOpusParser extends TestCase {
         assertEquals("Test Comment", metadata.get(XMPDM.LOG_COMMENT));
         assertEquals(null, metadata.get(XMPDM.RELEASE_DATE));
         assertEquals(null, metadata.get(XMPDM.TRACK_NUMBER));
+        assertEquals("0.03", metadata.get(XMPDM.DURATION));
 
         assertEquals("libopus 0.9.14", metadata.get("vendor"));
         assertEquals("Opus 0.1", metadata.get("version"));
@@ -71,5 +72,6 @@ public class TestOpusParser extends TestCase {
         assertTrue(content.contains("Test Title"));
         assertTrue(content.contains("Test Artist"));
         assertTrue(content.contains("Test Comment"));
+        assertTrue(content.contains("00:00:00.03"));
     }
 }

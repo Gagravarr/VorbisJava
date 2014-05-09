@@ -13,8 +13,11 @@
  */
 package org.gagravarr.tika;
 
+import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
@@ -22,6 +25,8 @@ import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.metadata.XMPDM;
 import org.apache.tika.parser.AbstractParser;
 import org.apache.tika.sax.XHTMLContentHandler;
+import org.gagravarr.ogg.OggAudioStream;
+import org.gagravarr.ogg.OggStreamAudioData;
 import org.gagravarr.vorbis.VorbisComments;
 import org.gagravarr.vorbis.VorbisStyleComments;
 import org.xml.sax.SAXException;
@@ -32,7 +37,8 @@ import org.xml.sax.SAXException;
  */
 public abstract class OggAudioParser extends AbstractParser {
     private static final long serialVersionUID = 5168743829615945633L;
-    
+    private static final DecimalFormat DURATION_FORMAT = new DecimalFormat("0.0#");
+
     protected static void extractChannelInfo(Metadata metadata, int channelCount) {
         if(channelCount == 1) {
             metadata.set(XMPDM.AUDIO_CHANNEL_TYPE, "Mono"); 
@@ -93,5 +99,34 @@ public abstract class OggAudioParser extends AbstractParser {
             xhtml.element("p", comment);
         }
         xhtml.element("p", comments.getGenre());
+    }
+
+    protected void extractDuration(Metadata metadata, XHTMLContentHandler xhtml,
+            long sampleRate, OggAudioStream audio) throws IOException, SAXException {
+        // Skip to the last Audio Frame with a Granule
+        long lastGranule = -1;
+        OggStreamAudioData data;
+        while ((data = audio.getNextAudioPacket()) != null) {
+            if (data.getGranulePosition() > lastGranule) {
+                lastGranule = data.getGranulePosition();
+            }
+        }
+
+        // Calculate the duration from that
+        if (lastGranule > 0) {
+            double duration = (double)lastGranule / sampleRate;
+
+            // Save as metadata to the nearest .01 seconds
+            metadata.add(XMPDM.DURATION, DURATION_FORMAT.format(duration));
+
+            // Output as Hours / Minutes / Seconds / Parts
+            long hours = TimeUnit.SECONDS.toHours((long)duration);
+            long mins = TimeUnit.SECONDS.toMinutes((long)duration) - (hours*60);
+            double secs = duration - (((hours*60)+mins)*60);
+
+            String durationStr = 
+                    String.format("%02d:%02d:%05.2f", hours, mins, secs);
+            xhtml.element("p", durationStr.toString());
+        }
     }
 }
