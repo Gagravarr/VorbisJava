@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gagravarr.ogg.OggAudioStream;
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
@@ -30,7 +31,7 @@ import org.gagravarr.ogg.OggPacketWriter;
  * This is a wrapper around an OggFile that lets you
  *  get at all the interesting bits of a Vorbis file.
  */
-public class VorbisFile {
+public class VorbisFile implements OggAudioStream {
 	private OggFile ogg;
 	private OggPacketReader r;
 	private OggPacketWriter w;
