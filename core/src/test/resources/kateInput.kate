@@ -1,0 +1,5 @@
+kate {
+  event { 00:00:00 --> 00:00:01 "We Begin!" } 
+  event { 00:00:05 --> 00:00:10 "This is a text" } 
+  event { 00:00:10 --> 00:00:12 "Tada! The end" } 
+} 
