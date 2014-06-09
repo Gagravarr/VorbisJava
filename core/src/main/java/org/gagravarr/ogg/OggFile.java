@@ -13,6 +13,7 @@
  */
 package org.gagravarr.ogg;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -25,7 +26,7 @@ import java.util.Set;
  * This class takes care of reading and writing
  *  files using the Ogg container format.
  */
-public class OggFile {
+public class OggFile implements Closeable {
 	private InputStream inp;
 	private OutputStream out;
 	private boolean writing = true;

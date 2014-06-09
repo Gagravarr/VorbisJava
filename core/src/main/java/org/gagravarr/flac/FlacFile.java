@@ -14,6 +14,7 @@
 package org.gagravarr.flac;
 
 import java.io.BufferedInputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,7 +29,7 @@ import org.gagravarr.ogg.OggFile;
  * This wrapper lets you work with FLAC files,
  *  whether they're Ogg or Native framed.
  */
-public abstract class FlacFile {
+public abstract class FlacFile implements Closeable {
     protected FlacInfo info;
     protected FlacTags tags;
     protected List<FlacMetadataBlock> otherMetadata;

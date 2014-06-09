@@ -13,6 +13,7 @@
  */
 package org.gagravarr.opus;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -31,7 +32,7 @@ import org.gagravarr.ogg.OggPacketWriter;
  * This is a wrapper around an OggFile that lets you
  *  get at all the interesting bits of an Opus file.
  */
-public class OpusFile implements OggAudioStream {
+public class OpusFile implements OggAudioStream, Closeable {
     private OggFile ogg;
     private OggPacketReader r;
     private OggPacketWriter w;

@@ -13,6 +13,7 @@
  */
 package org.gagravarr.vorbis;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -31,7 +32,7 @@ import org.gagravarr.ogg.OggPacketWriter;
  * This is a wrapper around an OggFile that lets you
  *  get at all the interesting bits of a Vorbis file.
  */
-public class VorbisFile implements OggAudioStream {
+public class VorbisFile implements OggAudioStream, Closeable {
 	private OggFile ogg;
 	private OggPacketReader r;
 	private OggPacketWriter w;

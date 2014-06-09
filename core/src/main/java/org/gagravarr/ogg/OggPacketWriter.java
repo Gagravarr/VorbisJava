@@ -13,10 +13,11 @@
  */
 package org.gagravarr.ogg;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class OggPacketWriter {
+public class OggPacketWriter implements Closeable {
 	private boolean closed = false;
 	private boolean doneFirstPacket = false;
 	private OggFile file;
