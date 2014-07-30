@@ -22,6 +22,7 @@ import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.Office;
 import org.apache.tika.metadata.TikaCoreProperties;
+import org.apache.tika.metadata.XMP;
 import org.apache.tika.metadata.XMPDM;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.BodyContentHandler;
@@ -64,6 +65,7 @@ public class TestSpeexParser extends TestCase {
         assertEquals("1", metadata.get(XMPDM.TRACK_NUMBER));
         assertEquals("0.02", metadata.get(XMPDM.DURATION));
 
+        assertEquals("Encoded with Speex 1.2rc1", metadata.get(XMP.CREATOR_TOOL));
         assertEquals("Encoded with Speex 1.2rc1", metadata.get("vendor"));
         assertEquals("Speex 1 - 1.2rc1", metadata.get("version"));
 

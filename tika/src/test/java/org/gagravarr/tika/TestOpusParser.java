@@ -22,6 +22,7 @@ import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.Office;
 import org.apache.tika.metadata.TikaCoreProperties;
+import org.apache.tika.metadata.XMP;
 import org.apache.tika.metadata.XMPDM;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.BodyContentHandler;
@@ -64,6 +65,7 @@ public class TestOpusParser extends TestCase {
         assertEquals(null, metadata.get(XMPDM.TRACK_NUMBER));
         assertEquals("0.03", metadata.get(XMPDM.DURATION));
 
+        assertEquals("libopus 0.9.14", metadata.get(XMP.CREATOR_TOOL));
         assertEquals("libopus 0.9.14", metadata.get("vendor"));
         assertEquals("Opus 0.1", metadata.get("version"));
 

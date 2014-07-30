@@ -22,6 +22,7 @@ import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.Office;
 import org.apache.tika.metadata.TikaCoreProperties;
+import org.apache.tika.metadata.XMP;
 import org.apache.tika.metadata.XMPDM;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.BodyContentHandler;
@@ -72,6 +73,7 @@ public class TestFlacParser extends TestCase {
         assertEquals("2010-01-26", metadata.get(XMPDM.RELEASE_DATE));
         assertEquals("1", metadata.get(XMPDM.TRACK_NUMBER));
 
+        assertEquals("reference libFLAC 1.2.1 20070917", metadata.get(XMP.CREATOR_TOOL));
         assertEquals("reference libFLAC 1.2.1 20070917", metadata.get("vendor"));
         if (hasVersion) {
             assertEquals("Flac 1.0", metadata.get("version"));

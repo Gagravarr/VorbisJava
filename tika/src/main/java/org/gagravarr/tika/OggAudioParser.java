@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.TikaCoreProperties;
+import org.apache.tika.metadata.XMP;
 import org.apache.tika.metadata.XMPDM;
 import org.apache.tika.parser.AbstractParser;
 import org.apache.tika.sax.XHTMLContentHandler;
@@ -60,6 +61,7 @@ public abstract class OggAudioParser extends AbstractParser {
         metadata.set(XMPDM.ALBUM, comments.getAlbum());
         metadata.set(XMPDM.GENRE, comments.getGenre());
         metadata.set(XMPDM.RELEASE_DATE, comments.getDate());
+        metadata.add(XMP.CREATOR_TOOL, comments.getVendor());
         metadata.add("vendor", comments.getVendor());
 
         for(String comment : comments.getComments("comment")) {

@@ -22,6 +22,7 @@ import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.Office;
 import org.apache.tika.metadata.TikaCoreProperties;
+import org.apache.tika.metadata.XMP;
 import org.apache.tika.metadata.XMPDM;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.BodyContentHandler;
@@ -64,6 +65,7 @@ public class TestVorbisParser extends TestCase {
         assertEquals("1", metadata.get(XMPDM.TRACK_NUMBER));
         assertEquals("0.02", metadata.get(XMPDM.DURATION));
 
+        assertEquals("Xiph.Org libVorbis I 20070622", metadata.get(XMP.CREATOR_TOOL));
         assertEquals("Xiph.Org libVorbis I 20070622", metadata.get("vendor"));
         assertEquals("Vorbis 0", metadata.get("version"));
 
