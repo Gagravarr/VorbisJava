@@ -107,11 +107,20 @@ public class SkeletonInfoTool {
             
             // TODO Output the head info
             
-            // Output the bone
-            SkeletonFisbone bone = (SkeletonFisbone)(skel.packets.get(1));
-            System.out.println(" - Message Headers:");
-            for (String key : bone.getMessageHeaders().keySet()) {
-                System.out.println("  * " + key + " = " + bone.getMessageHeaders().get(key));
+            // Output the bones
+            int bones = 0;
+            for (SkeletonPacket sp : skel.packets) {
+                if (sp instanceof SkeletonFisbone) {
+                    SkeletonFisbone bone = (SkeletonFisbone)sp;
+                    System.out.print(" * Bone " + (++bones));
+                    
+                    // TODO Output the other bits of hte bone
+                    
+                    System.out.println(" - Message Headers:");
+                    for (String key : bone.getMessageHeaders().keySet()) {
+                        System.out.println("  * " + key + " = " + bone.getMessageHeaders().get(key));
+                    }
+                }
             }
             
             // TODO Output something of the key frame(s)
