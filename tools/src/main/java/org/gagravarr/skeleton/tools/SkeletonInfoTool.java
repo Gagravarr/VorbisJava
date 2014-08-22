@@ -24,6 +24,7 @@ import java.util.Map;
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
+import org.gagravarr.skeleton.SkeletonFisbone;
 import org.gagravarr.skeleton.SkeletonPacket;
 import org.gagravarr.skeleton.SkeletonPacketFactory;
 
@@ -103,7 +104,17 @@ public class SkeletonInfoTool {
         for (SkeletonStream skel : skeletons) {
             System.out.println();
             System.out.println("Skeleton at " + skel.streamNumber + " with serial " + skel.sid);
-            // TODO Output the details
+            
+            // TODO Output the head info
+            
+            // Output the bone
+            SkeletonFisbone bone = (SkeletonFisbone)(skel.packets.get(1));
+            System.out.println(" - Message Headers:");
+            for (String key : bone.getMessageHeaders().keySet()) {
+                System.out.println("  * " + key + " = " + bone.getMessageHeaders().get(key));
+            }
+            
+            // TODO Output something of the key frame(s)
         }
         if (skeletons.isEmpty()) {
             System.out.println();
