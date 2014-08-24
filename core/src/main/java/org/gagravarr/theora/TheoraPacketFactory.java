@@ -91,7 +91,6 @@ public class TheoraPacketFactory extends HighLevelOggStreamPacket {
             }
         }
 
-//       return new TheoraVideoData(packet);
-        return null;
+        return new TheoraVideoData(packet);
     }
 }
