@@ -18,6 +18,7 @@ import org.gagravarr.ogg.OggStreamIdentifier.OggStreamType.Kind;
 import org.gagravarr.opus.OpusPacketFactory;
 import org.gagravarr.skeleton.SkeletonPacketFactory;
 import org.gagravarr.speex.SpeexPacketFactory;
+import org.gagravarr.theora.TheoraPacketFactory;
 import org.gagravarr.vorbis.VorbisPacketFactory;
 
 /**
@@ -142,7 +143,7 @@ public class OggStreamIdentifier {
                }
 
                // Is it a video stream?
-               if (isTheoraStream(p)) {
+               if (TheoraPacketFactory.isTheoraStream(p)) {
                    return THEORA_VIDEO;
                }
                if (isDiracStream(p)) {
@@ -173,14 +174,6 @@ public class OggStreamIdentifier {
        return IOUtils.byteRangeMatches(MAGIC_OGG_PCM, p.getData(), 0);
    }
 
-   protected static final byte[] MAGIC_THEORA = new byte[7];
-   static {
-       MAGIC_THEORA[0] = (byte)0x80;
-       IOUtils.putUTF8(MAGIC_THEORA, 1, "theora");
-   }
-   protected static boolean isTheoraStream(OggPacket p) {
-       return IOUtils.byteRangeMatches(MAGIC_THEORA, p.getData(), 0);
-   }
    protected static final byte[] MAGIC_DIRAC = IOUtils.toUTF8Bytes("BBCD");
    protected static boolean isDiracStream(OggPacket p) {
        return IOUtils.byteRangeMatches(MAGIC_DIRAC, p.getData(), 0);
