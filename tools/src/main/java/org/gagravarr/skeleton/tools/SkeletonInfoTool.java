@@ -109,7 +109,7 @@ public class SkeletonInfoTool {
             // Output the head info
             SkeletonFishead head = (SkeletonFishead)skel.packets.get(0);
             System.out.println(" - Skeleton version: " + head.getVersion());
-            System.out.println(" - Created at: ?????"); // TODO
+            System.out.println(" - Created at: " + head.getUtc());
 
             // Output the bones
             int bones = 0;
@@ -118,7 +118,7 @@ public class SkeletonInfoTool {
                     SkeletonFisbone bone = (SkeletonFisbone)sp;
                     System.out.print(" * Bone " + (++bones));
 
-                    // TODO Output the other bits of hte bone
+                    // TODO Output the other bits of the bone
 
                     System.out.println(" - Message Headers:");
                     for (String key : bone.getMessageHeaders().keySet()) {

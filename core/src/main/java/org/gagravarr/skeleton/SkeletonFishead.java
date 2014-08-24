@@ -13,6 +13,9 @@
  */
 package org.gagravarr.skeleton;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.gagravarr.ogg.HighLevelOggStreamPacket;
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
@@ -28,9 +31,7 @@ public class SkeletonFishead extends HighLevelOggStreamPacket implements Skeleto
     private long presentationTimeDenominator;
     private long baseTimeNumerator;
     private long baseTimeDenominator;
-    private long utc1; // ???
-    private long utc2; // ???
-    private long utc3; // ???
+    private String utc;
     private long segmentLength; // v4 only
     private long contentOffset; // v4 only
     
@@ -60,9 +61,14 @@ public class SkeletonFishead extends HighLevelOggStreamPacket implements Skeleto
         presentationTimeDenominator = IOUtils.getInt8(data, 20);
         baseTimeNumerator   = IOUtils.getInt8(data, 28);
         baseTimeDenominator = IOUtils.getInt8(data, 36);
-        utc1 = IOUtils.getInt8(data, 44);
-        utc2 = IOUtils.getInt8(data, 52);
-        utc3 = IOUtils.getInt4(data, 60);
+
+        // UTC is either all-null, or an ISO-8601 date string
+        if (data[44] == 0 && data[45] == 0) {
+            // Treat as empty
+            utc = null;
+        } else {
+            utc = IOUtils.getUTF8(data, 44, 20);
+        }
 
         if (versionMajor == 4) {
             segmentLength = IOUtils.getInt8(data, 64);
@@ -87,9 +93,11 @@ public class SkeletonFishead extends HighLevelOggStreamPacket implements Skeleto
         IOUtils.putInt8(data, 28, baseTimeNumerator);
         IOUtils.putInt8(data, 36, baseTimeDenominator);
 
-        IOUtils.putInt8(data, 44, utc1);
-        IOUtils.putInt8(data, 52, utc2);
-        IOUtils.putInt4(data, 60, utc3);
+        if (utc != null) {
+            IOUtils.putUTF8(data, 44, utc);
+        } else {
+            // Leave as all zeros
+        }
 
         if (versionMajor == 4) {
             IOUtils.putInt8(data, 64, segmentLength);
@@ -146,29 +154,29 @@ public class SkeletonFishead extends HighLevelOggStreamPacket implements Skeleto
         this.baseTimeDenominator = baseTimeDenominator;
     }
 
-    public long getUtc1() {
-        return utc1;
+    /**
+     * Returns the ISO-8601 UTC time of the file,
+     *  YYYYMMDDTHHMMSS.sssZ, or null if unset
+     */
+    public String getUtc() {
+        return utc;
     }
-    public void setUtc1(long utc1) {
-        this.utc1 = utc1;
+    /**
+     * Sets the ISO-8601 UTC time of the file, which
+     *  must be YYYYMMDDTHHMMSS.sssZ or null
+     */
+    public void setUtc(String utc) {
+        if (utc == null) {
+            this.utc = null;
+        } else {
+            if (utc.length() != 20) {
+                throw new IllegalArgumentException("Must be of the form YYYYMMDDTHHMMSS.sssZ");
+            }
+        }
     }
-
-    public long getUtc2() {
-        return utc2;
-    }
-    public void setUtc2(long utc2) {
-        this.utc2 = utc2;
-    }
-
-    public long getUtc3() {
-        return utc3;
-    }
-    public void setUtc3(long utc3) {
-        this.utc3 = utc3;
-    }
-
-    public void getUtc() {
-        return null; // TODO
+    public void setUtc(Date utcDate) {
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        this.utc = fmt.format(utcDate);
     }
 
     public long getSegmentLength() {
