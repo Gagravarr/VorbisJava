@@ -61,11 +61,11 @@ public class TheoraPacketFactory extends HighLevelOggStreamPacket {
            type == (byte)TYPE_SETUP) {
             byte[] d = packet.getData();
             if(d[1] == (byte)'t' &&
-                    d[2] == (byte)'h' &&
-                    d[3] == (byte)'e' &&
-                    d[4] == (byte)'o' &&
-                    d[5] == (byte)'r' &&
-                    d[6] == (byte)'a') {
+               d[2] == (byte)'h' &&
+               d[3] == (byte)'e' &&
+               d[4] == (byte)'o' &&
+               d[5] == (byte)'r' &&
+               d[6] == (byte)'a') {
                 return true;
             }
         }
@@ -83,9 +83,9 @@ public class TheoraPacketFactory extends HighLevelOggStreamPacket {
         if(isTheoraSpecial(packet)) {
             switch(type) {
             case (byte)TYPE_IDENTIFICATION:
-                //return new TheoraInfo(packet);
+                return new TheoraInfo(packet);
             case (byte)TYPE_COMMENTS:
-                //return new TheoraComments(packet);
+                return new TheoraComments(packet);
             case (byte)TYPE_SETUP:
                 //return new TheoraSetup(packet);
             }

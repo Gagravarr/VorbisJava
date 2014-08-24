@@ -14,11 +14,65 @@
 package org.gagravarr.theora;
 
 import org.gagravarr.ogg.HighLevelOggStreamPacket;
+import org.gagravarr.ogg.IOUtils;
+import org.gagravarr.ogg.OggPacket;
 
 /**
  * The identification header identifies the bitstream as Theora, 
  *  and includes the Theora version, the ?????
  */
 public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket {
-    // TODO Implement
+    private int majorVersion;
+    private int minorVersion;
+    private int revisionVersion;
+    private int frameWidthMB;
+    private int frameHeightMB;
+    // TODO Do the rest
+
+    public TheoraInfo() {
+        super();
+        majorVersion = 3;
+        minorVersion = 2;
+        revisionVersion = 1;
+    }
+
+    public TheoraInfo(OggPacket pkt) {
+        super(pkt);
+
+        // Parse
+        byte[] data = getData();
+
+        majorVersion = (int)data[8];
+        minorVersion = (int)data[9];
+        revisionVersion = (int)data[10];
+        if (majorVersion != 3) {
+            throw new IllegalArgumentException("Unsupported Theora version " + getVersion() + " detected");
+        }
+
+        frameWidthMB  = IOUtils.getInt2(data, 11);
+        frameHeightMB = IOUtils.getInt2(data, 13);
+
+        // TODO The rest
+    }
+
+    @Override
+    public OggPacket write() {
+        // TODO Implement
+        return null;
+    }
+
+    public String getVersion() {
+        return majorVersion + "." + minorVersion + "." + revisionVersion;
+    }
+    public int getMajorVersion() {
+        return majorVersion;
+    }
+    public int getMinorVersion() {
+        return minorVersion;
+    }
+    public int getRevisionVersion() {
+        return revisionVersion;
+    }
+
+    // TODO The rest
 }
