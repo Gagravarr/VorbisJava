@@ -55,10 +55,7 @@ public class TestSkeletonStreamRead extends TestCase {
         assertEquals(0, head.getPresentationTimeNumerator());
         assertEquals(1000, head.getBaseTimeDenominator());
         assertEquals(0, head.getBaseTimeNumerator());
-
-        assertEquals(0, head.getUtc1());
-        assertEquals(0, head.getUtc2());
-        assertEquals(0, head.getUtc3());
+        assertEquals(null, head.getUtc());
 
         // These two are zero as they're v4 only
         assertEquals(0, head.getContentOffset());

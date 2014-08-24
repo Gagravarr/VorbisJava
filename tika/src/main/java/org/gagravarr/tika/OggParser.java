@@ -122,8 +122,8 @@ public class OggParser extends AbstractParser {
             streamKinds.put(type.kind, (prevValue+1));
          }
       }
-      
-      // Report what little we can do
+
+      // Report about the streams, which is all we really can do
       metadata.add("streams-total", Integer.toString(totalStreams));
       for (OggStreamType type : streams.keySet()) {
           String key = type.mimetype.substring(type.mimetype.indexOf('/')+1);
@@ -139,5 +139,8 @@ public class OggParser extends AbstractParser {
           String key = kind.name().toLowerCase();
           metadata.add("streams-" + key, Integer.toString(streamKinds.get(kind)));
       }
+
+      // If we found a skeleton stream, report the relations between the streams
+      // TODO
    }
 }
