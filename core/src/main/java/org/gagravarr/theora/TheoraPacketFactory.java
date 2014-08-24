@@ -87,7 +87,7 @@ public class TheoraPacketFactory extends HighLevelOggStreamPacket {
             case (byte)TYPE_COMMENTS:
                 return new TheoraComments(packet);
             case (byte)TYPE_SETUP:
-                //return new TheoraSetup(packet);
+                return new TheoraSetup(packet);
             }
         }
 
