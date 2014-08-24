@@ -114,6 +114,10 @@ public class SkeletonFishead extends HighLevelOggStreamPacket implements Skeleto
         this.versionMinor = versionMinor;
     }
 
+    public String getVersion() {
+        return versionMajor + "." + versionMinor;
+    }
+
     public long getPresentationTimeNumerator() {
         return presentationTimeNumerator;
     }
@@ -161,6 +165,10 @@ public class SkeletonFishead extends HighLevelOggStreamPacket implements Skeleto
     }
     public void setUtc3(long utc3) {
         this.utc3 = utc3;
+    }
+
+    public void getUtc() {
+        return null; // TODO
     }
 
     public long getSegmentLength() {
