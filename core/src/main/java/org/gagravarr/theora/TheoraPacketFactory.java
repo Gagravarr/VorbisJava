@@ -13,10 +13,13 @@
  */
 package org.gagravarr.theora;
 
-
 import org.gagravarr.ogg.HighLevelOggStreamPacket;
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
+
+import static org.gagravarr.theora.TheoraPacket.TYPE_IDENTIFICATION;
+import static org.gagravarr.theora.TheoraPacket.TYPE_COMMENTS;
+import static org.gagravarr.theora.TheoraPacket.TYPE_SETUP;
 
 /**
  * Identifies the right kind of {@link TheoraPacket} for a given
@@ -52,8 +55,10 @@ public class TheoraPacketFactory extends HighLevelOggStreamPacket {
     protected static boolean isTheoraSpecial(OggPacket packet) {
         byte type = packet.getData()[0];
 
-        // Ensure "theora" on the special types
-        if(type >= (byte)0x80 && type <= (byte)0x82) {
+        // Ensure it's the right special type, then theora
+        if(type == (byte)TYPE_IDENTIFICATION ||
+           type == (byte)TYPE_COMMENTS ||
+           type == (byte)TYPE_SETUP) {
             byte[] d = packet.getData();
             if(d[1] == (byte)'t' &&
                     d[2] == (byte)'h' &&
@@ -72,11 +77,18 @@ public class TheoraPacketFactory extends HighLevelOggStreamPacket {
      *  instance based on the type.
      */
     public static TheoraPacket create(OggPacket packet) {
+        byte type = packet.getData()[0];
+
         // Special header types detection
         if(isTheoraSpecial(packet)) {
-            byte type = packet.getData()[0];
-            // TODO Identify and return
-            return null;
+            switch(type) {
+            case (byte)TYPE_IDENTIFICATION:
+                //return new TheoraInfo(packet);
+            case (byte)TYPE_COMMENTS:
+                //return new TheoraComments(packet);
+            case (byte)TYPE_SETUP:
+                //return new TheoraSetup(packet);
+            }
         }
 
 //       return new TheoraVideoData(packet);

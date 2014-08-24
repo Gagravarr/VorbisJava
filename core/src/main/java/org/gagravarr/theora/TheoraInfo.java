@@ -13,13 +13,12 @@
  */
 package org.gagravarr.theora;
 
-import org.gagravarr.ogg.OggStreamPacket;
+import org.gagravarr.ogg.HighLevelOggStreamPacket;
 
 /**
- * Parent of all Theora (video) packets
+ * The identification header identifies the bitstream as Theora, 
+ *  and includes the Theora version, the ?????
  */
-public interface TheoraPacket extends OggStreamPacket {
-    public static final int TYPE_IDENTIFICATION = 0x80;
-    public static final int TYPE_COMMENTS = 0x81;
-    public static final int TYPE_SETUP = 0x82;
+public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket {
+    // TODO Implement
 }

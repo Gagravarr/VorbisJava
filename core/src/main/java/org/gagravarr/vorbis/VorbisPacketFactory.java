@@ -15,6 +15,9 @@ package org.gagravarr.vorbis;
 
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
+import static org.gagravarr.vorbis.VorbisPacket.TYPE_COMMENTS;
+import static org.gagravarr.vorbis.VorbisPacket.TYPE_INFO;
+import static org.gagravarr.vorbis.VorbisPacket.TYPE_SETUP;
 
 /**
  * Identifies the right kind of {@link VorbisPacket} for a given
@@ -76,11 +79,11 @@ public class VorbisPacketFactory {
         // Special header types detection
         if(isVorbisSpecial(packet)) {
             switch(type) {
-            case VorbisPacket.TYPE_INFO:
+            case TYPE_INFO:
                 return new VorbisInfo(packet);
-            case VorbisPacket.TYPE_COMMENTS:
+            case TYPE_COMMENTS:
                 return new VorbisComments(packet);
-            case VorbisPacket.TYPE_SETUP:
+            case TYPE_SETUP:
                 return new VorbisSetup(packet);
             }
         }
