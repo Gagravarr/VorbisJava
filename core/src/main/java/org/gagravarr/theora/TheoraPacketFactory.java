@@ -53,13 +53,13 @@ public class TheoraPacketFactory extends HighLevelOggStreamPacket {
     }
 
     protected static boolean isTheoraSpecial(OggPacket packet) {
-        byte type = packet.getData()[0];
+        byte[] d = packet.getData();
+        byte type = d[0];
 
         // Ensure it's the right special type, then theora
         if(type == (byte)TYPE_IDENTIFICATION ||
            type == (byte)TYPE_COMMENTS ||
            type == (byte)TYPE_SETUP) {
-            byte[] d = packet.getData();
             if(d[1] == (byte)'t' &&
                d[2] == (byte)'h' &&
                d[3] == (byte)'e' &&

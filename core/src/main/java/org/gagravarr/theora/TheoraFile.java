@@ -81,6 +81,7 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
                 } catch(IllegalArgumentException e) {
                     // Not an theora stream, don't worry
                     // TODO Is it a soundtrack though?
+System.err.println(e); // TODO Temporary measure
                 }
             }
         }

@@ -63,9 +63,9 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
         // Parse
         byte[] data = getData();
 
-        majorVersion = (int)data[8];
-        minorVersion = (int)data[9];
-        revisionVersion = (int)data[10];
+        majorVersion = (int)data[7];
+        minorVersion = (int)data[8];
+        revisionVersion = (int)data[9];
         if (majorVersion != 3) {
             throw new IllegalArgumentException("Unsupported Theora version " + getVersion() + " detected");
         }
