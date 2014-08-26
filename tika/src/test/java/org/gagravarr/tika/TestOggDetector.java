@@ -70,15 +70,15 @@ public class TestOggDetector extends AbstractIdentificationTest {
 
         // Various Ogg Video based formats
         assertEquals(
-                OggParser.THEORA_VIDEO,
+                TheoraParser.THEORA_VIDEO,
                 d.detect(TikaInputStream.get(getTestTheoraFile()), m)
         );
         assertEquals(
-                OggParser.THEORA_VIDEO,
+                TheoraParser.THEORA_VIDEO,
                 d.detect(TikaInputStream.get(getTestTheoraSkeletonFile()), m)
         );
         assertEquals(
-                OggParser.THEORA_VIDEO,
+                TheoraParser.THEORA_VIDEO,
                 d.detect(TikaInputStream.get(getTestTheoraSkeletonCMMLFile()), m)
         );
         // TODO More video formats
@@ -109,12 +109,12 @@ public class TestOggDetector extends AbstractIdentificationTest {
         );
         // Double theora is theora
         assertEquals(
-                OggParser.THEORA_VIDEO,
+                TheoraParser.THEORA_VIDEO,
                 d.detect(TikaInputStream.get(getDoubleTheora()), m)
         );
         // Theora plus two differnt audio streams is theora
         assertEquals(
-                OggParser.THEORA_VIDEO,
+                TheoraParser.THEORA_VIDEO,
                 d.detect(TikaInputStream.get(getTheoraVorbisOpus()), m)
         );
         // Theora plus Dirac plus Audio is just general video
