@@ -65,7 +65,7 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
         this.ogg = ogg;
     }
     /**
-     * Loads a Opus File from the given packet reader.
+     * Loads a Theora File from the given packet reader.
      * TODO Support soundtracks
      */
     public TheoraFile(OggPacketReader r) throws IOException {

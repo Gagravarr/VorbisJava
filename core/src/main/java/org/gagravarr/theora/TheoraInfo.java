@@ -25,9 +25,12 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
     private int majorVersion;
     private int minorVersion;
     private int revisionVersion;
+
     private int frameWidthMB;
     private int frameHeightMB;
-    // TODO Do the rest
+    private long frameNumSuperBlocks;
+    private long frameNumBlocks;
+    private long frameNumMacroBlocks;
 
     public TheoraInfo() {
         super();
@@ -51,14 +54,33 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
 
         frameWidthMB  = IOUtils.getInt2(data, 11);
         frameHeightMB = IOUtils.getInt2(data, 13);
+        frameNumSuperBlocks = IOUtils.getInt4(data, 15);
+        frameNumBlocks      = IOUtils.getInt4(data, 19);
+        frameNumMacroBlocks = IOUtils.getInt4(data, 23);
 
         // TODO The rest
     }
 
     @Override
     public OggPacket write() {
-        // TODO Implement
-        return null;
+        byte[] data = new byte[30]; // Is this right?
+        TheoraPacketFactory.populateMetadataHeader(data, TYPE_IDENTIFICATION, data.length);
+
+        data[8] = IOUtils.fromInt(majorVersion);
+        data[9] = IOUtils.fromInt(minorVersion);
+        data[10] = IOUtils.fromInt(revisionVersion);
+        IOUtils.putInt2(data, 11, frameWidthMB);
+        IOUtils.putInt2(data, 13, frameHeightMB);
+        IOUtils.putInt4(data, 15, frameNumSuperBlocks);
+        IOUtils.putInt4(data, 19, frameNumBlocks);
+        IOUtils.putInt4(data, 23, frameNumMacroBlocks);
+
+        // TODO The rest
+
+        data[29] = 1;
+
+        setData(data);
+        return super.write();
     }
 
     public String getVersion() {
@@ -74,5 +96,54 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
         return revisionVersion;
     }
 
-    // TODO The rest
+    /**
+     * The width of a frame, in Macro Blocks
+     */
+    public int getFrameWidthMB() {
+        return frameWidthMB;
+    }
+    public void setFrameWidthMB(int frameWidthMB) {
+        this.frameWidthMB = frameWidthMB;
+    }
+
+    /**
+     * The height of a frame, in Macro Blocks
+     */
+    public int getFrameHeightMB() {
+        return frameHeightMB;
+    }
+    public void setFrameHeightMB(int frameHeightMB) {
+        this.frameHeightMB = frameHeightMB;
+    }
+
+    /**
+     * The number of super blocks in a frame
+     */
+    public long getFrameNumSuperBlocks() {
+        return frameNumSuperBlocks;
+    }
+    public void setFrameNumSuperBlocks(long frameNumSuperBlocks) {
+        this.frameNumSuperBlocks = frameNumSuperBlocks;
+    }
+
+    /**
+     * The number of blocks in a frame
+     */
+    public long getFrameNumBlocks() {
+        return frameNumBlocks;
+    }
+    public void setFrameNumBlocks(long frameNumBlocks) {
+        this.frameNumBlocks = frameNumBlocks;
+    }
+
+    /**
+     * The number of marco blocks in a frame
+     */
+    public long getFrameNumMacroBlocks() {
+        return frameNumMacroBlocks;
+    }
+    public void setFrameNumMacroBlocks(long frameNumMacroBlocks) {
+        this.frameNumMacroBlocks = frameNumMacroBlocks;
+    }
+
 }
