@@ -21,14 +21,14 @@ import org.gagravarr.vorbis.VorbisStyleComments;
 
 /**
  * This is a {@link VorbisComments} with an Theora metadata
- *  block header, rather than the usual vorbis one.
+ *  block header, rather than the usual Vorbis one.
  */
 public class TheoraComments extends VorbisStyleComments implements TheoraPacket {
    public TheoraComments(OggPacket packet) {
-      super(packet, 8);
+      super(packet, 7);
       
       // Verify the type
-      if (getData()[0] != TYPE_COMMENTS) {
+      if (getData()[0] != (byte)TYPE_COMMENTS) {
           throw new IllegalArgumentException("Invalid type, not a Theora Commetns");
       }
    }

@@ -39,14 +39,23 @@ public class TestTheoraFileRead extends TestCase {
         OggFile ogg = new OggFile(getTheoraVorbisFile());
         TheoraFile vf = new TheoraFile(ogg);
 
+        // Check the Info
         assertEquals("3.2.1", vf.getInfo().getVersion());
         assertEquals(3, vf.getInfo().getMajorVersion());
         assertEquals(2, vf.getInfo().getMinorVersion());
         assertEquals(1, vf.getInfo().getRevisionVersion());
-
         // TODO Test the rest of the info
 
-        // TODO Test the comments
+        // Check the Comments
+        assertEquals(
+                "Xiph.Org libtheora 1.1 20090822 (Thusnelda)",
+                vf.getComments().getVendor()
+        );
+        assertEquals(
+                "ffmpeg2theora-0.27",
+                vf.getComments().getComments("ENCODER").get(0)
+        );
+        // TODO Test the rest of the comments
 
         // TODO Test the setup
 

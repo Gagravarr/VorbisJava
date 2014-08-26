@@ -27,8 +27,8 @@ import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
 
 /**
- * General class for all Vorbis-style commends/tags, as used
- *  by things like Vorbis, Opus and FLAC
+ * General class for all Vorbis-style comments/tags, as used
+ *  by things like Vorbis, Opus and FLAC.
  */
 public abstract class VorbisStyleComments extends HighLevelOggStreamPacket {
    public static final String KEY_ARTIST = "artist";
@@ -37,7 +37,7 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket {
    public static final String KEY_GENRE = "genre";
    public static final String KEY_TRACKNUMBER = "tracknumber";
    public static final String KEY_DATE = "date";
-   
+
    private String vendor;
    private Map<String, List<String>> comments =
            new HashMap<String, List<String>>();
@@ -46,15 +46,15 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket {
        super(pkt);
        byte[] d = pkt.getData();
        
-       int vlen = (int)IOUtils.getInt4(d, dataBeginsAt);
+       int vlen = getInt4(d, dataBeginsAt);
        vendor = IOUtils.getUTF8(d, dataBeginsAt+4, vlen);
 
        int offset = dataBeginsAt + 4 + vlen;
-       int numComments = (int)IOUtils.getInt4(d, offset);
+       int numComments = getInt4(d, offset);
        offset += 4;
 
        for(int i=0; i<numComments; i++) {
-           int len = (int)IOUtils.getInt4(d, offset);
+           int len = getInt4(d, offset);
            offset += 4;
            String c = IOUtils.getUTF8(d, offset, len);
            offset += len;
@@ -234,6 +234,10 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket {
    protected abstract int getHeaderSize();
    protected abstract void populateMetadataHeader(byte[] data, int packetLength);
    protected abstract void populateMetadataFooter(OutputStream out);
+
+   protected int getInt4(byte[] d, int offset) {
+       return (int)IOUtils.getInt4(d, offset);
+   }
 
    @Override
    public OggPacket write() {

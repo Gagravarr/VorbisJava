@@ -55,7 +55,7 @@ public class TestTheoraParser extends TestCase {
             );
 
             // Check basic metadata
-            assertEquals(TheoraParser.THEORA_VIDEO, metadata.get(Metadata.CONTENT_TYPE));
+            assertEquals(TheoraParser.THEORA_VIDEO.toString(), metadata.get(Metadata.CONTENT_TYPE));
             assertEquals("Theora 3.2.1", metadata.get("version"));
 
             // Check text
