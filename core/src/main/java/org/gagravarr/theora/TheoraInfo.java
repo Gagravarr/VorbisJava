@@ -19,7 +19,7 @@ import org.gagravarr.ogg.OggPacket;
 
 /**
  * The identification header identifies the bitstream as Theora, 
- *  and includes the Theora version, the ?????
+ *  and includes the Theora version, the frame details, the ?????
  */
 public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket {
     private int majorVersion;
@@ -31,6 +31,14 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
     private long frameNumSuperBlocks;
     private long frameNumBlocks;
     private long frameNumMacroBlocks;
+
+    private long pictureRegionWidth;
+    private long pictureRegionHeight;
+    private int pictureRegionXOffset;
+    private int pictureRegionYOffset;
+
+    private long frameRateNumerator;
+    private long frameRateDenominator;
 
     public TheoraInfo() {
         super();
@@ -52,13 +60,25 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
             throw new IllegalArgumentException("Unsupported Theora version " + getVersion() + " detected");
         }
 
+        // TODO Replace this with bit-nibbling code, so it
+        //  actually works correctly for everything
         frameWidthMB  = IOUtils.getInt2(data, 11);
         frameHeightMB = IOUtils.getInt2(data, 13);
-        frameNumSuperBlocks = IOUtils.getInt4(data, 15);
-        frameNumBlocks      = IOUtils.getInt4(data, 19);
-        frameNumMacroBlocks = IOUtils.getInt4(data, 23);
 
         // TODO The rest
+        // frameWidthMB @ 16
+        // frameHeightMB @ 16
+        // frameNumSuperBlocks @ 32
+        // frameNumBlocks      @ 36
+        // frameNumMacroBlocks @ 32
+        //
+        // pictureRegionWidth   @ 20
+        // pictureRegionHeight  @ 20
+        // pictureRegionXOffset @ 8
+        // pictureRegionYOffset @ 8
+        //
+        // frameRateNumerator   @ 32
+        // frameRateDenominator @ 32
     }
 
     @Override
@@ -69,15 +89,15 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
         data[8] = IOUtils.fromInt(majorVersion);
         data[9] = IOUtils.fromInt(minorVersion);
         data[10] = IOUtils.fromInt(revisionVersion);
+
+        // TODO Replace this with bit-stuffing code, so it's correct
         IOUtils.putInt2(data, 11, frameWidthMB);
         IOUtils.putInt2(data, 13, frameHeightMB);
         IOUtils.putInt4(data, 15, frameNumSuperBlocks);
-        IOUtils.putInt4(data, 19, frameNumBlocks);
-        IOUtils.putInt4(data, 23, frameNumMacroBlocks);
+        IOUtils.putInt4(data, 19, frameNumBlocks); // Wrong!
+        IOUtils.putInt4(data, 23, frameNumMacroBlocks); // Wrong!
 
         // TODO The rest
-
-        data[29] = 1;
 
         setData(data);
         return super.write();
@@ -146,4 +166,63 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
         this.frameNumMacroBlocks = frameNumMacroBlocks;
     }
 
+    /**
+     * The width of the picture region, in pixels
+     */
+    public long getPictureRegionWidth() {
+        return pictureRegionWidth;
+    }
+    public void setPictureRegionWidth(long pictureRegionWidth) {
+        this.pictureRegionWidth = pictureRegionWidth;
+    }
+
+    /**
+     * The height of the picture region, in pixels
+     */
+    public long getPictureRegionHeight() {
+        return pictureRegionHeight;
+    }
+    public void setPictureRegionHeight(long pictureRegionHeight) {
+        this.pictureRegionHeight = pictureRegionHeight;
+    }
+
+    /**
+     * The x offset to the start of the picture region, in pixels
+     */
+    public int getPictureRegionXOffset() {
+        return pictureRegionXOffset;
+    }
+    public void setPictureRegionXOffset(int pictureRegionXOffset) {
+        this.pictureRegionXOffset = pictureRegionXOffset;
+    }
+
+    /**
+     * The y offset to the start of the picture region, in pixels
+     */
+    public int getPictureRegionYOffset() {
+        return pictureRegionYOffset;
+    }
+    public void setPictureRegionYOffset(int pictureRegionYOffset) {
+        this.pictureRegionYOffset = pictureRegionYOffset;
+    }
+
+    /**
+     * The frame rate numerator
+     */
+    public long getFrameRateNumerator() {
+        return frameRateNumerator;
+    }
+    public void setFrameRateNumerator(long frameRateNumerator) {
+        this.frameRateNumerator = frameRateNumerator;
+    }
+
+    /**
+     * The frame rate denominator
+     */
+    public long getFrameRateDenominator() {
+        return frameRateDenominator;
+    }
+    public void setFrameRateDenominator(long frameRateDenominator) {
+        this.frameRateDenominator = frameRateDenominator;
+    }
 }
