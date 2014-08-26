@@ -40,6 +40,16 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
     private long frameRateNumerator;
     private long frameRateDenominator;
 
+    private long pixelAspectNumerator;
+    private long pixelAspectDenomerator;
+
+    private int colourSpace;
+    private int pixelFormat;
+
+    private long nominalBitrate;
+    private int qualityHint;
+    private int keyFrameNumberGranuleShift;
+
     public TheoraInfo() {
         super();
         majorVersion = 3;
@@ -79,6 +89,18 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
         //
         // frameRateNumerator   @ 32
         // frameRateDenominator @ 32
+        //
+        // pixelAspectNumerator   @ 24
+        // pixelAspectDenomerator @ 24
+        //
+        // colourSpace @ 8
+        // pixelFormat @ 2
+        //
+        // nominalBitrate @ 24
+        // qualityHint    @ 6
+        // keyFrameNumberGranuleShift @ 5
+        //
+        // (padding)
     }
 
     @Override
@@ -224,5 +246,78 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
     }
     public void setFrameRateDenominator(long frameRateDenominator) {
         this.frameRateDenominator = frameRateDenominator;
+    }
+
+    /**
+     * Pixel aspect ratio numerator
+     */
+    public long getPixelAspectNumerator() {
+        return pixelAspectNumerator;
+    }
+    public void setPixelAspectNumerator(long pixelAspectNumerator) {
+        this.pixelAspectNumerator = pixelAspectNumerator;
+    }
+
+    /**
+     * Pixel aspect ratio denomerator
+     */
+    public long getPixelAspectDenomerator() {
+        return pixelAspectDenomerator;
+    }
+    public void setPixelAspectDenomerator(long pixelAspectDenomerator) {
+        this.pixelAspectDenomerator = pixelAspectDenomerator;
+    }
+
+    /**
+     * Colour space, from the indexed list
+     */
+    public int getColourSpace() {
+        return colourSpace;
+    }
+    public void setColourSpace(int colourSpace) {
+        this.colourSpace = colourSpace;
+    }
+
+    /**
+     * ????
+     */
+    public int getPixelFormat() {
+        return pixelFormat;
+    }
+    public void setPixelFormat(int pixelFormat) {
+        this.pixelFormat = pixelFormat;
+    }
+
+    /**
+     * Nominal bitrate, in bits per second, or zero if the
+     *  encoder couldn't guess
+     */
+    public long getNominalBitrate() {
+        return nominalBitrate;
+    }
+    public void setNominalBitrate(long nominalBitrate) {
+        this.nominalBitrate = nominalBitrate;
+    }
+
+    /**
+     * Quality hint - higher is better
+     */
+    public int getQualityHint() {
+        return qualityHint;
+    }
+    public void setQualityHint(int qualityHint) {
+        this.qualityHint = qualityHint;
+    }
+
+    /**
+     * Shift for splitting the granule position between
+     *  the frame number of the last frame, and the number
+     *  of frames since then
+     */
+    public int getKeyFrameNumberGranuleShift() {
+        return keyFrameNumberGranuleShift;
+    }
+    public void setKeyFrameNumberGranuleShift(int keyFrameNumberGranuleShift) {
+        this.keyFrameNumberGranuleShift = keyFrameNumberGranuleShift;
     }
 }
