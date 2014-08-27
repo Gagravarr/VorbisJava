@@ -16,7 +16,7 @@ package org.gagravarr.ogg;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 /**
  * Utilities for working with IO streams, such
@@ -27,6 +27,8 @@ import java.io.UnsupportedEncodingException;
  *  work in Big Endian format.
  */
 public class IOUtils {
+    protected static final Charset UTF8 = Charset.forName("UTF-8");
+
     public static void readFully(InputStream inp, byte[] destination) throws IOException {
         readFully(inp, destination, 0, destination.length);
     }
@@ -266,11 +268,7 @@ public class IOUtils {
     * @param length The length in BYTES
     */
    public static String getUTF8(byte[] data, int offset, int length) {
-       try {
-           return new String(data, offset, length, "UTF-8");
-       } catch(UnsupportedEncodingException e) {
-           throw new RuntimeException("Broken JVM, UTF-8 not found", e);
-       }
+       return new String(data, offset, length, UTF8);
    }
    /**
     * Strips off any null padding, if any, from the string
@@ -295,35 +293,23 @@ public class IOUtils {
     * @return The length in BYTES
     */
    public static byte[] toUTF8Bytes(String str) {
-       try {
-           return str.getBytes("UTF-8");
-       } catch(UnsupportedEncodingException e) {
-           throw new RuntimeException("Broken JVM, UTF-8 not found", e);
-       }
+       return str.getBytes(UTF8);
    }
    /**
     * Writes the string out as UTF-8
     */
    public static void writeUTF8(OutputStream out, String str) throws IOException {
-       try {
-           byte[] s = str.getBytes("UTF-8");
-           out.write(s);
-       } catch(UnsupportedEncodingException e) {
-           throw new RuntimeException("Broken JVM, UTF-8 not found", e);
-       }
+       byte[] s = str.getBytes(UTF8);
+       out.write(s);
    }
    /**
     * Writes out a 4 byte integer of the length (in bytes!) of the
     *  String, followed by the String (as UTF-8)
     */
    public static void writeUTF8WithLength(OutputStream out, String str) throws IOException {
-       try {
-           byte[] s = str.getBytes("UTF-8");
-           writeInt4(out, s.length);
-           out.write(s);
-       } catch(UnsupportedEncodingException e) {
-           throw new RuntimeException("Broken JVM, UTF-8 not found", e);
-       }
+       byte[] s = str.getBytes(UTF8);
+       writeInt4(out, s.length);
+       out.write(s);
    }
 
    /**
