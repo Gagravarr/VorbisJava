@@ -24,6 +24,9 @@ import org.gagravarr.ogg.OggFile;
  * Tests for reading things using TheoraFile
  */
 public class TestTheoraFileRead extends TestCase {
+    private InputStream getTheoraFile() throws IOException {
+        return this.getClass().getResourceAsStream("/testTheora.ogg");
+    }
     private InputStream getTheoraVorbisFile() throws IOException {
         return this.getClass().getResourceAsStream("/testTheoraVORBIS.ogg");
     }
@@ -36,6 +39,60 @@ public class TestTheoraFileRead extends TestCase {
     // TODO Finish the other test files and use them
 
     public void testReadBasics() throws IOException {
+        OggFile ogg = new OggFile(getTheoraFile());
+        TheoraFile vf = new TheoraFile(ogg);
+
+        // Check the Info
+        assertEquals("3.2.0", vf.getInfo().getVersion());
+        assertEquals(3, vf.getInfo().getMajorVersion());
+        assertEquals(2, vf.getInfo().getMinorVersion());
+        assertEquals(0, vf.getInfo().getRevisionVersion());
+
+        assertEquals(20, vf.getInfo().getFrameWidthMB());
+        assertEquals(15, vf.getInfo().getFrameHeightMB());
+        assertEquals(320, vf.getInfo().getFrameWidth());
+        assertEquals(240, vf.getInfo().getFrameHeight());
+        assertEquals(320, vf.getInfo().getPictureRegionWidth());
+        assertEquals(240, vf.getInfo().getPictureRegionHeight());
+        assertEquals(0, vf.getInfo().getPictureRegionXOffset());
+        assertEquals(0, vf.getInfo().getPictureRegionYOffset());
+
+        assertEquals(0x01c9c4ab, vf.getInfo().getFrameRateNumerator());
+        assertEquals(1000000, vf.getInfo().getFrameRateDenominator());
+        assertEquals(0, vf.getInfo().getPixelAspectNumerator());
+        assertEquals(0, vf.getInfo().getPixelAspectDenomerator());
+
+        assertEquals(0, vf.getInfo().getColourSpace());
+        assertEquals(0, vf.getInfo().getNominalBitrate());
+        assertEquals(44, vf.getInfo().getQualityHint());
+        assertEquals(6, vf.getInfo().getKeyFrameNumberGranuleShift());
+        assertEquals(0, vf.getInfo().getPixelFormat());
+
+        // Check the Comments
+        assertEquals(
+                "Xiph.Org libTheora I 20040317 3 2 0",
+                vf.getComments().getVendor()
+        );
+        assertEquals(0, vf.getComments().getAllComments().size());
+
+        // TODO Test the setup
+
+        // Has a handful of video frames
+        TheoraVideoData vd = null;
+
+//        vd = vf.getNextVideoPacket();
+//        assertNotNull( vd );
+//        assertEquals(0x3c0, vd.getGranulePosition());
+
+//        vd = vf.getNextVideoPacket();
+//        assertNotNull( vd );
+//        assertEquals(0x3c0, vd.getGranulePosition());
+
+//        vd = vf.getNextVideoPacket();
+        assertNull( vd );
+    }
+
+    public void testReadWithVorbisAudio() throws IOException {
         OggFile ogg = new OggFile(getTheoraVorbisFile());
         TheoraFile vf = new TheoraFile(ogg);
 
@@ -44,7 +101,26 @@ public class TestTheoraFileRead extends TestCase {
         assertEquals(3, vf.getInfo().getMajorVersion());
         assertEquals(2, vf.getInfo().getMinorVersion());
         assertEquals(1, vf.getInfo().getRevisionVersion());
-        // TODO Test the rest of the info
+
+        assertEquals(40, vf.getInfo().getFrameWidthMB());
+        assertEquals(30, vf.getInfo().getFrameHeightMB());
+        assertEquals(640, vf.getInfo().getFrameWidth());
+        assertEquals(480, vf.getInfo().getFrameHeight());
+        assertEquals(640, vf.getInfo().getPictureRegionWidth());
+        assertEquals(480, vf.getInfo().getPictureRegionHeight());
+        assertEquals(0, vf.getInfo().getPictureRegionXOffset());
+        assertEquals(0, vf.getInfo().getPictureRegionYOffset());
+
+        assertEquals(1, vf.getInfo().getFrameRateNumerator());
+        assertEquals(1, vf.getInfo().getFrameRateDenominator());
+        assertEquals(0, vf.getInfo().getPixelAspectNumerator());
+        assertEquals(0, vf.getInfo().getPixelAspectDenomerator());
+
+        assertEquals(0, vf.getInfo().getColourSpace());
+        assertEquals(0, vf.getInfo().getNominalBitrate());
+        assertEquals(38, vf.getInfo().getQualityHint());
+        assertEquals(6, vf.getInfo().getKeyFrameNumberGranuleShift());
+        assertEquals(0, vf.getInfo().getPixelFormat());
 
         // Check the Comments
         assertEquals(
@@ -74,12 +150,10 @@ public class TestTheoraFileRead extends TestCase {
         assertNull( vd );
     }
 
-    public void testReadWithVorbisAudio() throws IOException {
-        // TODO
-    }
     public void testReadWithOpusAudio() throws IOException {
         // TODO
     }
+
     public void testReadWithSkeleton() throws IOException {
         // TODO
     }

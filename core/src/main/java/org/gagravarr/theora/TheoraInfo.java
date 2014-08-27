@@ -19,7 +19,8 @@ import org.gagravarr.ogg.OggPacket;
 
 /**
  * The identification header identifies the bitstream as Theora, 
- *  and includes the Theora version, the frame details, the ?????
+ *  and includes the Theora version, the frame details, the picture
+ *  region details and similar.
  */
 public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket {
     private int majorVersion;
@@ -70,37 +71,28 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
             throw new IllegalArgumentException("Unsupported Theora version " + getVersion() + " detected");
         }
 
-        // TODO Replace this with bit-nibbling code, so it
-        //  actually works correctly for everything
-        frameWidthMB  = IOUtils.getInt2(data, 11);
-        frameHeightMB = IOUtils.getInt2(data, 13);
+        frameWidthMB  = IOUtils.getInt2BE(data, 10);
+        frameHeightMB = IOUtils.getInt2BE(data, 12);
 
-        // TODO The rest
-        // frameWidthMB @ 16
-        // frameHeightMB @ 16
-        // frameNumSuperBlocks @ 32
-        // frameNumBlocks      @ 36
-        // frameNumMacroBlocks @ 32
-        //
-        // pictureRegionWidth   @ 20
-        // pictureRegionHeight  @ 20
-        // pictureRegionXOffset @ 8
-        // pictureRegionYOffset @ 8
-        //
-        // frameRateNumerator   @ 32
-        // frameRateDenominator @ 32
-        //
-        // pixelAspectNumerator   @ 24
-        // pixelAspectDenomerator @ 24
-        //
-        // colourSpace @ 8
-        // pixelFormat @ 2
-        //
-        // nominalBitrate @ 24
-        // qualityHint    @ 6
-        // keyFrameNumberGranuleShift @ 5
-        //
-        // (padding)
+        pictureRegionWidth  = IOUtils.getInt3BE(data, 14);
+        pictureRegionHeight = IOUtils.getInt3BE(data, 17);
+        pictureRegionXOffset = (int)data[20];
+        pictureRegionYOffset = (int)data[21];
+
+        frameRateNumerator   = IOUtils.getInt4BE(data, 22);
+        frameRateDenominator = IOUtils.getInt4BE(data, 26);
+
+        pixelAspectNumerator   = IOUtils.getInt3BE(data, 30);
+        pixelAspectDenomerator = IOUtils.getInt3BE(data, 33);
+
+        colourSpace = (int)data[36];
+        nominalBitrate = IOUtils.getInt3BE(data, 37);
+
+        // Last two bytes are complicated...
+        int lastTwo = IOUtils.getInt2BE(data, 40);
+        qualityHint = (lastTwo >> 10); // 6 bits
+        keyFrameNumberGranuleShift = (lastTwo >> 5) & 31; // 5 bits
+        pixelFormat = (lastTwo >> 3) & 3; // 2 bits
     }
 
     @Override
@@ -112,13 +104,12 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
         data[9] = IOUtils.fromInt(minorVersion);
         data[10] = IOUtils.fromInt(revisionVersion);
 
-        // TODO Replace this with bit-stuffing code, so it's correct
+        // TODO Do this properly
         IOUtils.putInt2(data, 11, frameWidthMB);
         IOUtils.putInt2(data, 13, frameHeightMB);
         IOUtils.putInt4(data, 15, frameNumSuperBlocks);
         IOUtils.putInt4(data, 19, frameNumBlocks); // Wrong!
         IOUtils.putInt4(data, 23, frameNumMacroBlocks); // Wrong!
-
         // TODO The rest
 
         setData(data);
@@ -136,6 +127,19 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
     }
     public int getRevisionVersion() {
         return revisionVersion;
+    }
+
+    /**
+     * The width of a frame, in Pixels
+     */
+    public int getFrameWidth() {
+        return frameWidthMB << 4;
+    }
+    /**
+     * The height of a frame, in Pixels
+     */
+    public int getFrameHeight() {
+        return frameHeightMB << 4;
     }
 
     /**
