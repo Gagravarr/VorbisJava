@@ -94,6 +94,19 @@ public class IOUtils {
        return getInt(b0, b1, b2, b3);
    }
 
+   public static long getInt5(byte[] data) {
+       return getInt5(data, 0);
+   }
+   public static long getInt5(byte[] data, int offset) {
+       int i=offset;
+       int b0 = data[i++] & 0xFF;
+       int b1 = data[i++] & 0xFF;
+       int b2 = data[i++] & 0xFF;
+       int b3 = data[i++] & 0xFF;
+       int b4 = data[i++] & 0xFF;
+       return getInt(b0, b1, b2, b3, b4);
+   }
+
    public static long getInt8(byte[] data) {
        return getInt8(data, 0);
    }
@@ -118,6 +131,9 @@ public class IOUtils {
    }
    public static long getInt(int i0, int i1, int i2, int i3) {
        return (i3 << 24) + (i2 << 16) + (i1 << 8) + (i0 << 0);
+   }
+   public static long getInt(int i0, int i1, int i2, int i3, int i4) {
+       return (i4 << 32) + (i3 << 24) + (i2 << 16) + (i1 << 8) + (i0 << 0);
    }
    public static long getInt(int i0, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
        // Special check for all 0xff, to avoid overflowing long
@@ -207,6 +223,20 @@ public class IOUtils {
        data[i++] = (byte)((v >>>  8) & 0xFF);
        data[i++] = (byte)((v >>> 16) & 0xFF);
        data[i++] = (byte)((v >>> 24) & 0xFF);
+   }
+
+   public static void writeInt5(OutputStream out, long v) throws IOException {
+       byte[] b5 = new byte[5];
+       putInt5(b5, 0, v);
+       out.write(b5);
+   }
+   public static void putInt5(byte[] data, int offset, long v) {
+       int i = offset;
+       data[i++] = (byte)((v >>>  0) & 0xFF);
+       data[i++] = (byte)((v >>>  8) & 0xFF);
+       data[i++] = (byte)((v >>> 16) & 0xFF);
+       data[i++] = (byte)((v >>> 24) & 0xFF);
+       data[i++] = (byte)((v >>> 32) & 0xFF);
    }
 
    public static void writeInt8(OutputStream out, long v) throws IOException {
