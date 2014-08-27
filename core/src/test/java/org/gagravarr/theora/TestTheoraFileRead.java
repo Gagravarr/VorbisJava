@@ -131,7 +131,7 @@ public class TestTheoraFileRead extends TestCase {
                 "ffmpeg2theora-0.27",
                 vf.getComments().getComments("ENCODER").get(0)
         );
-        // TODO Test the rest of the comments
+        assertEquals(2, vf.getComments().getAllComments().size());
 
         // TODO Test the setup
 

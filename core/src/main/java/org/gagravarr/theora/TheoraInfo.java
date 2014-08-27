@@ -97,20 +97,34 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
 
     @Override
     public OggPacket write() {
-        byte[] data = new byte[30]; // Is this right?
+        byte[] data = new byte[42];
         TheoraPacketFactory.populateMetadataHeader(data, TYPE_IDENTIFICATION, data.length);
 
-        data[8] = IOUtils.fromInt(majorVersion);
-        data[9] = IOUtils.fromInt(minorVersion);
-        data[10] = IOUtils.fromInt(revisionVersion);
+        data[7] = IOUtils.fromInt(majorVersion);
+        data[8] = IOUtils.fromInt(minorVersion);
+        data[9] = IOUtils.fromInt(revisionVersion);
 
-        // TODO Do this properly
-        IOUtils.putInt2(data, 11, frameWidthMB);
-        IOUtils.putInt2(data, 13, frameHeightMB);
-        IOUtils.putInt4(data, 15, frameNumSuperBlocks);
-        IOUtils.putInt4(data, 19, frameNumBlocks); // Wrong!
-        IOUtils.putInt4(data, 23, frameNumMacroBlocks); // Wrong!
-        // TODO The rest
+        IOUtils.putInt2BE(data, 10, frameWidthMB);
+        IOUtils.putInt2BE(data, 12, frameHeightMB);
+        IOUtils.putInt3BE(data, 14, pictureRegionWidth);
+        IOUtils.putInt3BE(data, 17, pictureRegionHeight);
+        data[20] = IOUtils.fromInt(pictureRegionXOffset);
+        data[21] = IOUtils.fromInt(pictureRegionYOffset);
+
+        IOUtils.putInt4BE(data, 22, frameRateNumerator);
+        IOUtils.putInt4BE(data, 26, frameRateDenominator);
+
+        IOUtils.putInt3BE(data, 30, pixelAspectNumerator);
+        IOUtils.putInt3BE(data, 33, pixelAspectDenomerator);
+
+        data[36] = IOUtils.fromInt(colourSpace);
+        IOUtils.putInt3BE(data, 37, nominalBitrate);
+
+        // Last two bytes are complicated...
+        int lastTwo = ((qualityHint << 6) + keyFrameNumberGranuleShift);
+        lastTwo = ((lastTwo) << 2) + pixelFormat;
+        lastTwo = lastTwo << 3; // last 3 bits padding
+        IOUtils.putInt2BE(data, 40, lastTwo);
 
         setData(data);
         return super.write();
