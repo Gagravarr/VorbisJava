@@ -73,17 +73,17 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
 
         OggPacket p = null;
         while( (p = r.getNextPacket()) != null ) {
-            if (TheoraPacketFactory.isTheoraStream(p)) {
-                try {
-                    TheoraPacketFactory.create(p);
+            if (p.isBeginningOfStream() && p.getData().length > 10) {
+                if (TheoraPacketFactory.isTheoraStream(p)) {
                     sid = p.getSid();
-                    break;
-                } catch(IllegalArgumentException e) {
-                    // Not an theora stream, don't worry
+                    break; // TODO Soundtracks?
+                } else {
                     // TODO Is it a soundtrack though?
-System.err.println(e); // TODO Temporary measure
                 }
             }
+        }
+        if (sid == -1) {
+            throw new IllegalArgumentException("Supplied File is not Theora");
         }
 
         // First three packets are required to be info, comments, setup

@@ -51,13 +51,12 @@ public class VorbisPacketFactory {
     }
 	
     protected static boolean isVorbisSpecial(OggPacket packet) {
-        byte type = packet.getData()[0];
+        byte[] d = packet.getData();
+        if (d.length < 16) return false;
 
         // Ensure "vorbis" on the special types
+        byte type = d[0];
         if(type == 1 || type == 3 || type == 5) {
-            byte[] d = packet.getData();
-            if (d.length < 10) return false;
-
             if(d[1] == (byte)'v' &&
                d[2] == (byte)'o' &&
                d[3] == (byte)'r' &&
@@ -75,10 +74,9 @@ public class VorbisPacketFactory {
      *  instance based on the type.
      */
     public static VorbisPacket create(OggPacket packet) {
-        byte type = packet.getData()[0];
-
         // Special header types detection
-        if(isVorbisSpecial(packet)) {
+        if (isVorbisSpecial(packet)) {
+            byte type = packet.getData()[0];
             switch(type) {
             case TYPE_INFO:
                 return new VorbisInfo(packet);

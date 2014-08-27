@@ -64,15 +64,15 @@ public class OpusFile implements OggAudioStream, Closeable {
 
         OggPacket p = null;
         while( (p = r.getNextPacket()) != null ) {
-            if(p.isBeginningOfStream() && p.getData().length > 10) {
-                try {
-                    OpusPacketFactory.create(p);
+            if (p.isBeginningOfStream() && p.getData().length > 10) {
+                if (OpusPacketFactory.isOpusStream(p)) {
                     sid = p.getSid();
                     break;
-                } catch(IllegalArgumentException e) {
-                    // Not an opus stream, don't worry
                 }
             }
+        }
+        if (sid == -1) {
+            throw new IllegalArgumentException("Supplied File is not Opus");
         }
 
         // First two packets are required to be info then tags
