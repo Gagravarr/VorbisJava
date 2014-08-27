@@ -56,14 +56,15 @@ public class VorbisPacketFactory {
         // Ensure "vorbis" on the special types
         if(type == 1 || type == 3 || type == 5) {
             byte[] d = packet.getData();
-            if(d[1] == (byte)'v' &&
-                    d[2] == (byte)'o' &&
-                    d[3] == (byte)'r' &&
-                    d[4] == (byte)'b' &&
-                    d[5] == (byte)'i' &&
-                    d[6] == (byte)'s') {
+            if (d.length < 10) return false;
 
-                return true;
+            if(d[1] == (byte)'v' &&
+               d[2] == (byte)'o' &&
+               d[3] == (byte)'r' &&
+               d[4] == (byte)'b' &&
+               d[5] == (byte)'i' &&
+               d[6] == (byte)'s') {
+                    return true;
             }
         }
         return false;
