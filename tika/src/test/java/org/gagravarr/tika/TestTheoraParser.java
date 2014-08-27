@@ -38,13 +38,17 @@ public class TestTheoraParser extends TestCase {
     private InputStream getTheoraSpeexFile() throws IOException {
         return this.getClass().getResourceAsStream("/testTheoraSPEEX.ogg");
     }
+    private InputStream[] getAllTheoraFiles() throws IOException {
+        return new InputStream[] {
+                getTheoraVorbisFile(), getTheoraVorbisSkeletonFile(),
+                getTheoraSpeexFile()
+        };
+    }
     // TODO Finish the other test files and use them
 
     public void testBasics() throws Exception {
         TheoraParser parser = new TheoraParser();
-        for (InputStream inp : new InputStream[] {
-            getTheoraVorbisFile(), getTheoraVorbisSkeletonFile(), getTheoraSpeexFile()    
-        }) {
+        for (InputStream inp : getAllTheoraFiles()) {
             ContentHandler handler = new BodyContentHandler();
             ParseContext context = new ParseContext();
             Metadata metadata = new Metadata();
