@@ -75,9 +75,11 @@ public class OggStreamIdentifier {
    
    // Video types
    public static final OggStreamType THEORA_VIDEO = new OggStreamType(
-                                     "video/theora", "Thora", Kind.VIDEO);
+                                     "video/theora", "Theora", Kind.VIDEO);
    public static final OggStreamType THEORA_VIDEO_ALT = new OggStreamType(
                                      "video/x-theora", "Theora", Kind.VIDEO);
+   public static final OggStreamType DAALA_VIDEO = new OggStreamType(
+                                     "video/daala", "Daala", Kind.VIDEO);
    public static final OggStreamType DIRAC_VIDEO = new OggStreamType(
                                      "video/x-dirac", "Dirac", Kind.VIDEO);
    public static final OggStreamType OGM_VIDEO = new OggStreamType(
@@ -146,6 +148,9 @@ public class OggStreamIdentifier {
                if (TheoraPacketFactory.isTheoraStream(p)) {
                    return THEORA_VIDEO;
                }
+               if (isDaalaStream(p)) {
+                   return DAALA_VIDEO;
+               }
                if (isDiracStream(p)) {
                    return DIRAC_VIDEO;
                }
@@ -174,6 +179,15 @@ public class OggStreamIdentifier {
        return IOUtils.byteRangeMatches(MAGIC_OGG_PCM, p.getData(), 0);
    }
 
+   protected static final byte[] MAGIC_DAALA = new byte[8];
+   static {
+       MAGIC_DAALA[0] = (byte)0x80;
+       IOUtils.putUTF8(MAGIC_DAALA, 1, "daala");
+       // Remaining 2 bytes are all zero
+   }
+   protected static boolean isDaalaStream(OggPacket p) {
+       return IOUtils.byteRangeMatches(MAGIC_DAALA, p.getData(), 0);
+   }
    protected static final byte[] MAGIC_DIRAC = IOUtils.toUTF8Bytes("BBCD");
    protected static boolean isDiracStream(OggPacket p) {
        return IOUtils.byteRangeMatches(MAGIC_DIRAC, p.getData(), 0);

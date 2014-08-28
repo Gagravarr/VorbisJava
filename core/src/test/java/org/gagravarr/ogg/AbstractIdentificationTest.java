@@ -43,6 +43,9 @@ public abstract class AbstractIdentificationTest extends TestCase {
     protected static InputStream getTestFlacNativeFile() throws IOException {
         return AbstractIdentificationTest.class.getResourceAsStream("/testFLAC.flac");
     }
+    protected static InputStream getTestDaalaFile() throws IOException {
+        return AbstractIdentificationTest.class.getResourceAsStream("/testDaala.ogg");
+    }
     protected static InputStream getTestTheoraFile() throws IOException {
         return AbstractIdentificationTest.class.getResourceAsStream("/testTheora.ogg");
     }

@@ -58,6 +58,8 @@ public class TestStreamIdentifier extends AbstractIdentificationTest {
                                 new OggFile(getTestOpusFile()));
         assertTypeOfFirstStream(OggStreamIdentifier.OGG_FLAC,
                                 new OggFile(getTestFlacOggFile()));
+        assertTypeOfFirstStream(OggStreamIdentifier.DAALA_VIDEO,
+                                new OggFile(getTestDaalaFile()));
         assertTypeOfFirstStream(OggStreamIdentifier.THEORA_VIDEO,
                                 new OggFile(getTestTheoraFile()));
     }

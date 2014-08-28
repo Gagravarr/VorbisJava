@@ -54,6 +54,8 @@ public class OggParser extends AbstractParser {
    protected static final MediaType KATE =
            MediaType.parse(OggStreamIdentifier.KATE.mimetype);
    
+   protected static final MediaType DAALA_VIDEO =
+           MediaType.parse(OggStreamIdentifier.DAALA_VIDEO.mimetype);
    protected static final MediaType DIRAC_VIDEO =
            MediaType.parse(OggStreamIdentifier.DIRAC_VIDEO.mimetype);
    protected static final MediaType OGM_VIDEO =
@@ -74,7 +76,7 @@ public class OggParser extends AbstractParser {
          OGG_GENERAL, OGG_AUDIO, OGG_VIDEO,
          // Ones we lack a proper parser for, but may be able to support
          //  better in the future with a dedicated parser
-         DIRAC_VIDEO, OGM_VIDEO,
+         DAALA_VIDEO, DIRAC_VIDEO, OGM_VIDEO,
          OGG_UVS, OGG_YUV,  OGG_RGB, OGG_PCM,
          KATE
    });

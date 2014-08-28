@@ -70,6 +70,10 @@ public class TestOggDetector extends AbstractIdentificationTest {
 
         // Various Ogg Video based formats
         assertEquals(
+                OggParser.DAALA_VIDEO,
+                d.detect(TikaInputStream.get(getTestDaalaFile()), m)
+        );
+        assertEquals(
                 TheoraParser.THEORA_VIDEO,
                 d.detect(TikaInputStream.get(getTestTheoraFile()), m)
         );
