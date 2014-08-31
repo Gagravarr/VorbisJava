@@ -33,12 +33,20 @@ public class TestFlacFileRead extends TestCase {
       return this.getClass().getResourceAsStream("/testFLAC.flac");
    }
 
+   private FlacFile flac;
+   @Override
+   protected void tearDown() throws IOException {
+       if (flac != null) {
+           flac.close();
+       }
+   }
+
    public void testReadOgg() throws IOException {
       OggFile ogg = new OggFile(getTestOggFile());
-      FlacOggFile flac = new FlacOggFile(ogg);
+      flac = new FlacOggFile(ogg);
 
       // Check the first packet for general info
-      FlacFirstOggPacket first = flac.getFirstPacket();
+      FlacFirstOggPacket first = ((FlacOggFile)flac).getFirstPacket();
       assertNotNull(first);
       assertEquals(1, first.getMajorVersion());
       assertEquals(0, first.getMinorVersion());
@@ -71,12 +79,13 @@ public class TestFlacFileRead extends TestCase {
       //assertNotNull( flac.getNextAudioPacket() );
       //assertNotNull( flac.getNextAudioPacket() );
 
+      @SuppressWarnings("unused")
       FlacAudioFrame ad = flac.getNextAudioPacket();
       //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
    }
 
    public void testReadFlacNative() throws IOException {
-      FlacNativeFile flac = new FlacNativeFile(getTestFlacFile());
+      flac = new FlacNativeFile(getTestFlacFile());
 
       // Check the info
       FlacInfo info = flac.getInfo();
@@ -106,6 +115,7 @@ public class TestFlacFileRead extends TestCase {
       //assertNotNull( flac.getNextAudioPacket() );
       //assertNotNull( flac.getNextAudioPacket() );
 
+      @SuppressWarnings("unused")
       FlacAudioFrame ad = flac.getNextAudioPacket();
       //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
    }

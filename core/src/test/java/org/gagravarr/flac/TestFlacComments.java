@@ -39,14 +39,23 @@ public class TestFlacComments extends TestCase {
         FlacTags tags = new FlacTags(r.getNextPacket());
         doTestComments(tags);
 
+        // Tidy up
+        ogg.close();
+
+
         // Now direct from the file
         ogg = new OggFile(getTestOggFile());
         FlacOggFile flac = new FlacOggFile(ogg);
         doTestComments(flac.getTags());
+
+        // Tidy up
+        flac.close();
+        ogg.close();
     }
     public void testReadFlac() throws IOException {
         FlacNativeFile flac = new FlacNativeFile(getTestFlacFile());
         doTestComments(flac.getTags());
+        flac.close();
     }
 
     private void doTestComments(FlacTags tags) {

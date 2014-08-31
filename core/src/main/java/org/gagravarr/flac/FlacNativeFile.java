@@ -70,6 +70,7 @@ public class FlacNativeFile extends FlacFile {
       }
       
       // Rest is audio
+      this.input = inp;
    }
    
 	
