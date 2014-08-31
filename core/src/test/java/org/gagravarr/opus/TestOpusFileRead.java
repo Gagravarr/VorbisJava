@@ -28,9 +28,17 @@ public class TestOpusFileRead extends TestCase {
         return this.getClass().getResourceAsStream("/testOPUS.opus");
     }
 
+    private OpusFile of;
+    @Override
+    protected void tearDown() throws IOException {
+        if (of != null) {
+            of.close();
+        }
+    }
+
     public void testRead() throws IOException {
         OggFile ogg = new OggFile(getTestFile());
-        OpusFile of = new OpusFile(ogg);
+        of = new OpusFile(ogg);
 
         assertEquals(1, of.getInfo().getVersion());
         assertEquals(0, of.getInfo().getMajorVersion());

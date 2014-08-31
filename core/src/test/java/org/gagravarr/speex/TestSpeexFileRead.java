@@ -28,9 +28,17 @@ public class TestSpeexFileRead extends TestCase {
         return this.getClass().getResourceAsStream("/testSPEEX.spx");
     }
 
+    private SpeexFile sf;
+    @Override
+    protected void tearDown() throws IOException {
+        if (sf != null) {
+            sf.close();
+        }
+    }
+
     public void testRead() throws IOException {
         OggFile ogg = new OggFile(getTestFile());
-        SpeexFile sf = new SpeexFile(ogg);
+        sf = new SpeexFile(ogg);
 
         assertEquals("1.2rc1", sf.getInfo().getVersionString());
         assertEquals(1, sf.getInfo().getVersionId());

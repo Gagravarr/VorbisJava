@@ -112,5 +112,8 @@ public class TestOpusFileWrite extends TestCase {
 
         assertEquals(infoSize, opIN.getInfo().getData().length);
         assertEquals(tagsSize, opIN.getTags().getData().length);
+
+        // Tidy up
+        opIN.close();
     }
 }

@@ -116,5 +116,9 @@ public class TestSpeexFileWrite extends TestCase {
 
         assertEquals(infoSize, spIN.getInfo().getData().length);
         assertEquals(tagsSize, spIN.getTags().getData().length);
+
+
+        // Tidy up
+        spIN.close();
     }
 }

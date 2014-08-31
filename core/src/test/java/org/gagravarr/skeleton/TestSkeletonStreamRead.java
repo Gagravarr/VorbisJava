@@ -114,5 +114,9 @@ public class TestSkeletonStreamRead extends TestCase {
         // And that's it
         p = r.getNextPacketWithSid(expectFishSid);
         assertNull(p);
+
+
+        // Tidy up
+        ogg.close();
     }
 }
