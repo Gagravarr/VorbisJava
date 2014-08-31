@@ -115,7 +115,7 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
                         // Are we, in all likelyhood, past all the headers?
                         if (packetsSinceSetup > 10) break;
                     }
-                } else if (skeleton != null && skeleton.getSid() == sid) {
+                } else if (skeleton != null && skeleton.getSid() == p.getSid()) {
                     skeleton.processPacket(p);
                 } else {
                     // TODO Soundtracks
