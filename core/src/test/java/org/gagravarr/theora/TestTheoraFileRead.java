@@ -40,42 +40,47 @@ public class TestTheoraFileRead extends TestCase {
 
     public void testReadBasics() throws IOException {
         OggFile ogg = new OggFile(getTheoraFile());
-        TheoraFile vf = new TheoraFile(ogg);
+        TheoraFile tf = new TheoraFile(ogg);
 
         // Check the Info
-        assertEquals("3.2.0", vf.getInfo().getVersion());
-        assertEquals(3, vf.getInfo().getMajorVersion());
-        assertEquals(2, vf.getInfo().getMinorVersion());
-        assertEquals(0, vf.getInfo().getRevisionVersion());
+        assertEquals("3.2.0", tf.getInfo().getVersion());
+        assertEquals(3, tf.getInfo().getMajorVersion());
+        assertEquals(2, tf.getInfo().getMinorVersion());
+        assertEquals(0, tf.getInfo().getRevisionVersion());
 
-        assertEquals(20, vf.getInfo().getFrameWidthMB());
-        assertEquals(15, vf.getInfo().getFrameHeightMB());
-        assertEquals(320, vf.getInfo().getFrameWidth());
-        assertEquals(240, vf.getInfo().getFrameHeight());
-        assertEquals(320, vf.getInfo().getPictureRegionWidth());
-        assertEquals(240, vf.getInfo().getPictureRegionHeight());
-        assertEquals(0, vf.getInfo().getPictureRegionXOffset());
-        assertEquals(0, vf.getInfo().getPictureRegionYOffset());
+        assertEquals(20, tf.getInfo().getFrameWidthMB());
+        assertEquals(15, tf.getInfo().getFrameHeightMB());
+        assertEquals(320, tf.getInfo().getFrameWidth());
+        assertEquals(240, tf.getInfo().getFrameHeight());
+        assertEquals(320, tf.getInfo().getPictureRegionWidth());
+        assertEquals(240, tf.getInfo().getPictureRegionHeight());
+        assertEquals(0, tf.getInfo().getPictureRegionXOffset());
+        assertEquals(0, tf.getInfo().getPictureRegionYOffset());
 
-        assertEquals(0x01c9c4ab, vf.getInfo().getFrameRateNumerator());
-        assertEquals(1000000, vf.getInfo().getFrameRateDenominator());
-        assertEquals(0, vf.getInfo().getPixelAspectNumerator());
-        assertEquals(0, vf.getInfo().getPixelAspectDenomerator());
+        assertEquals(0x01c9c4ab, tf.getInfo().getFrameRateNumerator());
+        assertEquals(1000000, tf.getInfo().getFrameRateDenominator());
+        assertEquals(0, tf.getInfo().getPixelAspectNumerator());
+        assertEquals(0, tf.getInfo().getPixelAspectDenomerator());
 
-        assertEquals(0, vf.getInfo().getColourSpace());
-        assertEquals(0, vf.getInfo().getNominalBitrate());
-        assertEquals(44, vf.getInfo().getQualityHint());
-        assertEquals(6, vf.getInfo().getKeyFrameNumberGranuleShift());
-        assertEquals(0, vf.getInfo().getPixelFormat());
+        assertEquals(0, tf.getInfo().getColourSpace());
+        assertEquals(0, tf.getInfo().getNominalBitrate());
+        assertEquals(44, tf.getInfo().getQualityHint());
+        assertEquals(6, tf.getInfo().getKeyFrameNumberGranuleShift());
+        assertEquals(0, tf.getInfo().getPixelFormat());
 
         // Check the Comments
         assertEquals(
                 "Xiph.Org libTheora I 20040317 3 2 0",
-                vf.getComments().getVendor()
+                tf.getComments().getVendor()
         );
-        assertEquals(0, vf.getComments().getAllComments().size());
+        assertEquals(0, tf.getComments().getAllComments().size());
 
         // TODO Test the setup
+
+        // Doesn't have a skeleton stream
+        assertEquals(null, tf.getSkeleton());
+
+        // TODO Test soundtracks
 
         // Has a handful of video frames
         TheoraVideoData vd = null;
@@ -94,46 +99,51 @@ public class TestTheoraFileRead extends TestCase {
 
     public void testReadWithVorbisAudio() throws IOException {
         OggFile ogg = new OggFile(getTheoraVorbisFile());
-        TheoraFile vf = new TheoraFile(ogg);
+        TheoraFile tf = new TheoraFile(ogg);
 
         // Check the Info
-        assertEquals("3.2.1", vf.getInfo().getVersion());
-        assertEquals(3, vf.getInfo().getMajorVersion());
-        assertEquals(2, vf.getInfo().getMinorVersion());
-        assertEquals(1, vf.getInfo().getRevisionVersion());
+        assertEquals("3.2.1", tf.getInfo().getVersion());
+        assertEquals(3, tf.getInfo().getMajorVersion());
+        assertEquals(2, tf.getInfo().getMinorVersion());
+        assertEquals(1, tf.getInfo().getRevisionVersion());
 
-        assertEquals(40, vf.getInfo().getFrameWidthMB());
-        assertEquals(30, vf.getInfo().getFrameHeightMB());
-        assertEquals(640, vf.getInfo().getFrameWidth());
-        assertEquals(480, vf.getInfo().getFrameHeight());
-        assertEquals(640, vf.getInfo().getPictureRegionWidth());
-        assertEquals(480, vf.getInfo().getPictureRegionHeight());
-        assertEquals(0, vf.getInfo().getPictureRegionXOffset());
-        assertEquals(0, vf.getInfo().getPictureRegionYOffset());
+        assertEquals(40, tf.getInfo().getFrameWidthMB());
+        assertEquals(30, tf.getInfo().getFrameHeightMB());
+        assertEquals(640, tf.getInfo().getFrameWidth());
+        assertEquals(480, tf.getInfo().getFrameHeight());
+        assertEquals(640, tf.getInfo().getPictureRegionWidth());
+        assertEquals(480, tf.getInfo().getPictureRegionHeight());
+        assertEquals(0, tf.getInfo().getPictureRegionXOffset());
+        assertEquals(0, tf.getInfo().getPictureRegionYOffset());
 
-        assertEquals(1, vf.getInfo().getFrameRateNumerator());
-        assertEquals(1, vf.getInfo().getFrameRateDenominator());
-        assertEquals(0, vf.getInfo().getPixelAspectNumerator());
-        assertEquals(0, vf.getInfo().getPixelAspectDenomerator());
+        assertEquals(1, tf.getInfo().getFrameRateNumerator());
+        assertEquals(1, tf.getInfo().getFrameRateDenominator());
+        assertEquals(0, tf.getInfo().getPixelAspectNumerator());
+        assertEquals(0, tf.getInfo().getPixelAspectDenomerator());
 
-        assertEquals(0, vf.getInfo().getColourSpace());
-        assertEquals(0, vf.getInfo().getNominalBitrate());
-        assertEquals(38, vf.getInfo().getQualityHint());
-        assertEquals(6, vf.getInfo().getKeyFrameNumberGranuleShift());
-        assertEquals(0, vf.getInfo().getPixelFormat());
+        assertEquals(0, tf.getInfo().getColourSpace());
+        assertEquals(0, tf.getInfo().getNominalBitrate());
+        assertEquals(38, tf.getInfo().getQualityHint());
+        assertEquals(6, tf.getInfo().getKeyFrameNumberGranuleShift());
+        assertEquals(0, tf.getInfo().getPixelFormat());
 
         // Check the Comments
         assertEquals(
                 "Xiph.Org libtheora 1.1 20090822 (Thusnelda)",
-                vf.getComments().getVendor()
+                tf.getComments().getVendor()
         );
         assertEquals(
                 "ffmpeg2theora-0.27",
-                vf.getComments().getComments("ENCODER").get(0)
+                tf.getComments().getComments("ENCODER").get(0)
         );
-        assertEquals(2, vf.getComments().getAllComments().size());
+        assertEquals(2, tf.getComments().getAllComments().size());
 
         // TODO Test the setup
+
+        // Doesn't have a skeleton stream
+        assertEquals(null, tf.getSkeleton());
+
+        // TODO Test soundtracks
 
         // Has a handful of video frames
         TheoraVideoData vd = null;

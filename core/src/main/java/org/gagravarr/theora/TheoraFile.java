@@ -76,6 +76,7 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
      */
     public TheoraFile(OggPacketReader r) throws IOException {
         this.r = r;
+        this.pendingPackets = new LinkedList<TheoraVideoData>();
 
         // The start of the file should contain the skeleton
         //  (if there is one), the header packets for the Theora
