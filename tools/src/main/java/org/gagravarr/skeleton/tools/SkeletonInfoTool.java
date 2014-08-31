@@ -26,8 +26,8 @@ import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.skeleton.SkeletonFisbone;
 import org.gagravarr.skeleton.SkeletonFishead;
-import org.gagravarr.skeleton.SkeletonPacket;
 import org.gagravarr.skeleton.SkeletonPacketFactory;
+import org.gagravarr.skeleton.SkeletonStream;
 
 /**
  * A tool for looking at the innards of a Skeleton-described
@@ -39,7 +39,6 @@ public class SkeletonInfoTool {
             printHelp();
         }
 
-        boolean debugging = false;
         String filename = args[0];
         if(args.length > 1 && args[0].equals("-d")) {
             filename = args[1];
@@ -55,6 +54,8 @@ public class SkeletonInfoTool {
         System.err.println("  SkeletonInfoTool file.ogg");
         System.exit(1);
     }
+
+    private static boolean debugging = false;
 
     private File file;
     private OggFile ogg;
@@ -78,15 +79,21 @@ public class SkeletonInfoTool {
                 streams++;
 
                 if (SkeletonPacketFactory.isSkeletonStream(p)) {
-                    SkeletonStream skel = new SkeletonStream(p.getSid(), streams);
+                    SkeletonStream skel = new SkeletonStream(p);
                     skelIds.put(sidI, skel);
                     skels.add(skel);
+
+                    if (debugging) {
+                        System.out.println("Found skeleton in stream at " + streams + " with SID " + skel.getSid());
+                    }
+                } else {
+                    if (debugging) {
+                        System.out.println("Found non-skeleton stream at " + streams + " with SID " + p.getSid());
+                    }
                 }
             }
             if (skelIds.containsKey(p.getSid())) {
-                skelIds.get(sidI).packets.add(
-                        SkeletonPacketFactory.create(p)
-                );
+                skelIds.get(sidI).processPacket(p);
             }
         }
 
@@ -104,30 +111,33 @@ public class SkeletonInfoTool {
         // Report what we found
         for (SkeletonStream skel : skeletons) {
             System.out.println();
-            System.out.println("Skeleton at " + skel.streamNumber + " with serial " + skel.sid);
+            System.out.println("Skeleton with serial " + formatSid(skel.getSid()));
 
             // Output the head info
-            SkeletonFishead head = (SkeletonFishead)skel.packets.get(0);
+            SkeletonFishead head = skel.getFishead();
             System.out.println(" - Skeleton version: " + head.getVersion());
             System.out.println(" - Created at: " + head.getUtc());
 
             // Output the bones
             int bones = 0;
-            for (SkeletonPacket sp : skel.packets) {
-                if (sp instanceof SkeletonFisbone) {
-                    SkeletonFisbone bone = (SkeletonFisbone)sp;
-                    System.out.print(" * Bone " + (++bones));
+            for (SkeletonFisbone bone : skel.getFisbones()) {
+                System.out.println(" * Bone " + (++bones));
+                System.out.println("  - For stream " + formatSid(bone.getSerialNumber()));
 
-                    // TODO Output the other bits of the bone
+                // TODO Output the other bits of the bone
 
-                    System.out.println(" - Message Headers:");
-                    for (String key : bone.getMessageHeaders().keySet()) {
-                        System.out.println("  * " + key + " = " + bone.getMessageHeaders().get(key));
-                    }
+                System.out.println("  - Message Headers:");
+                for (String key : bone.getMessageHeaders().keySet()) {
+                    System.out.println("   * " + key + " = " + bone.getMessageHeaders().get(key));
                 }
             }
 
-            // TODO Output something of the key frame(s)
+            if (skel.getKeyFrames().isEmpty()) {
+                System.out.println(" * No key frames found");
+            } else {
+                // TODO Output something of the key frame(s)
+                System.out.println(" * " + skel.getKeyFrames().size() + " keyframes");
+            }
         }
         if (skeletons.isEmpty()) {
             System.out.println();
@@ -135,15 +145,12 @@ public class SkeletonInfoTool {
         }
     }
 
-    public static class SkeletonStream {
-        private int sid;
-        private int streamNumber;
-        private List<SkeletonPacket> packets;
-
-        protected SkeletonStream(int sid, int streamNumber) {
-            this.sid = sid;
-            this.streamNumber = streamNumber;
-            this.packets = new ArrayList<SkeletonPacket>();
-        }
+    protected static String formatSid(int sid) {
+        StringBuffer s = new StringBuffer();
+        s.append(sid);
+        s.append(" (0x");
+        s.append(Integer.toHexString(sid));
+        s.append(")");
+        return s.toString();
     }
 }
