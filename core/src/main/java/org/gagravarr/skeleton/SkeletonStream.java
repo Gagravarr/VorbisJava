@@ -47,6 +47,24 @@ public class SkeletonStream {
 
         processPacket(packet);
     }
+    /**
+     * Creates a new Skeleton stream, with empty fisbones
+     *  referencing the specified streams (by their stream ids /
+     *  serial numbers)
+     */
+    public SkeletonStream(int[] sids) {
+        this.fishead = new SkeletonFishead();
+        for (int sid : sids) {
+            SkeletonFisbone bone = new SkeletonFisbone();
+            bone.setSerialNumber(sid);
+            fisbones.add(bone);
+
+            if (sid == -1 || bonesByStream.containsKey(sid)) {
+                throw new IllegalArgumentException("Invalid / duplicate sid " + sid);
+            }
+            bonesByStream.put(sid, bone);
+        }
+    }
 
     /**
      * Processes and tracks the next packet for

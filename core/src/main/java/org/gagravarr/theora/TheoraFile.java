@@ -20,7 +20,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.gagravarr.ogg.HighLevelOggStreamPacket;
 import org.gagravarr.ogg.OggFile;
@@ -28,12 +30,15 @@ import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.ogg.OggPacketWriter;
 import org.gagravarr.ogg.OggStreamAudioData;
+import org.gagravarr.skeleton.SkeletonFisbone;
+import org.gagravarr.skeleton.SkeletonKeyFramePacket;
+import org.gagravarr.skeleton.SkeletonPacketFactory;
+import org.gagravarr.skeleton.SkeletonStream;
 
 /**
  * This is a wrapper around an OggFile that lets you
  *  get at all the interesting bits of a Theora file.
  * TODO including soundtracks
- * TODO including skeletons
  */
 public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
     private OggFile ogg;
@@ -45,8 +50,10 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
     private TheoraComments comments;
     private TheoraSetup setup;
 
+    private SkeletonStream skeleton;
     // TODO Soundtracks
 
+    private LinkedList<TheoraVideoData> pendingPackets;
     private List<TheoraVideoData> writtenPackets;
 
     /**
@@ -66,33 +73,57 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
     }
     /**
      * Loads a Theora File from the given packet reader.
-     * TODO Support soundtracks
      */
     public TheoraFile(OggPacketReader r) throws IOException {
         this.r = r;
 
+        // The start of the file should contain the skeleton
+        //  (if there is one), the header packets for the Theora
+        //  stream, the header packets for the soundtrack streams,
+        //  and the start of any other streams that are time-parallel
+        // However, they can all be in pretty much any order, including
+        //  coming after the start of the first few video frames, so
+        //  process into the video a little bit looking for things
+        //  we care about
+        int packetsSinceSetup = -1;
         OggPacket p = null;
         while( (p = r.getNextPacket()) != null ) {
             if (p.isBeginningOfStream() && p.getData().length > 10) {
                 if (TheoraPacketFactory.isTheoraStream(p)) {
                     sid = p.getSid();
-                    break; // TODO Soundtracks?
+                    info = (TheoraInfo)TheoraPacketFactory.create(p);
+                } else if (SkeletonPacketFactory.isSkeletonStream(p)) {
+                    skeleton = new SkeletonStream(p);
                 } else {
-                    // TODO Is it a soundtrack though?
+                    // TODO Is it a soundtrack?
+                }
+            } else {
+                if (p.getSid() == sid) {
+                    TheoraPacket tp = TheoraPacketFactory.create(p);
+
+                    // First three packets must be info, comments, setup
+                    if (comments == null) {
+                        comments = (TheoraComments)tp;
+                    } else if (setup == null) {
+                        setup = (TheoraSetup)tp;
+                        packetsSinceSetup = 0;
+                    } else {
+                        pendingPackets.add((TheoraVideoData)tp);
+                        packetsSinceSetup++;
+
+                        // Are we, in all likelyhood, past all the headers?
+                        if (packetsSinceSetup > 10) break;
+                    }
+                } else if (skeleton != null && skeleton.getSid() == sid) {
+                    skeleton.processPacket(p);
+                } else {
+                    // TODO Soundtracks
                 }
             }
         }
         if (sid == -1) {
             throw new IllegalArgumentException("Supplied File is not Theora");
         }
-
-        // First three packets are required to be info, comments, setup
-        info = (TheoraInfo)TheoraPacketFactory.create( p );
-        comments = (TheoraComments)TheoraPacketFactory.create( r.getNextPacketWithSid(sid) );
-        setup = (TheoraSetup)TheoraPacketFactory.create( r.getNextPacketWithSid(sid) );
-        // TODO What about audio / soundtracks?
-
-        // Everything else should be video data
     }
 
     /**
@@ -152,6 +183,64 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
         return setup;
     }
 
+    /**
+     * Returns the Skeleton data describing all the
+     *  streams, or null if the file has no Skeleton stream
+     */
+    public SkeletonStream getSkeleton() {
+        return skeleton;
+    }
+    public void ensureSkeleton() {
+        if (skeleton != null) return;
+
+        int[] sids = new int[0];
+        if (sid != -1) {
+            sids = new int[] { sid };
+        }
+        // TODO What about soundtracks?
+
+        skeleton = new SkeletonStream(sids);
+    }
+
+    /**
+     * Returns the next audio or video packet across
+     *  any supported stream, or null if no more remain
+     */
+    public OggStreamAudioData getNextAudioVideoPacket() throws IOException {
+        return getNextAudioVideoPacket(null);
+    }
+    /**
+     * Returns the next audio or video packet from any of
+     *  the specified streams, or null if no more remain
+     */
+    public OggStreamAudioData getNextAudioVideoPacket(Set<Integer> sids) throws IOException {
+        OggStreamAudioData data = null;
+
+        if (! pendingPackets.isEmpty()) {
+            data = pendingPackets.removeFirst();
+        }
+        // TODO What about soundtracks?
+
+        if (data == null) {
+            OggPacket p = null;
+            while ((p = r.getNextPacket()) != null) {
+                if (sids == null || sids.contains(p.getSid())) {
+                    if (p.getSid() == sid) {
+                        data = (OggStreamAudioData)TheoraPacketFactory.create(p);
+                        break;
+                    } else {
+                        // TODO What about soundtracks?
+                    }
+                } else {
+                    // They're not interested in this stream
+                    // Proceed on to the next packet
+                }
+            }
+        }
+
+        return data;
+    }
+
 
     /**
      * Buffers the given video ready for writing
@@ -189,13 +278,34 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
             ogg = null;
         }
         if(w != null) {
+            // First, write the initial packet of each stream
+            // Skeleton (if present) goes first, then video, then audio(s)
+            if (skeleton != null) {
+                w.bufferPacket(skeleton.getFishead().write(), true);
+            }
             w.bufferPacket(info.write(), true);
+            // TODO Soundtracks
+
+            // Next, provide the rest of the skeleton information, to
+            //  make it easy to work out what's what
+            if (skeleton != null) {
+                for (SkeletonFisbone bone : skeleton.getFisbones()) {
+                    w.bufferPacket(bone.write(), true);
+                }
+                for (SkeletonKeyFramePacket frame : skeleton.getKeyFrames()) {
+                    w.bufferPacket(frame.write(), true);
+                }
+            }
+
+            // Next is the rest of the Theora headers
             w.bufferPacket(comments.write(), true);
             w.bufferPacket(setup.write(), true);
 
+            // Finish the headers with the soundtrack stream remaining headers
+            // TODO Soundtracks
+
             // TODO Write video, with some sort of granule
             // TODO Write audio
-            // TODO Write skeleton
 
             w.close();
             w = null;
