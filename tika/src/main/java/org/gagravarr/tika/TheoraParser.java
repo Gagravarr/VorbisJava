@@ -69,6 +69,13 @@ public class TheoraParser extends AbstractParser {
        XHTMLContentHandler xhtml = new XHTMLContentHandler(handler, metadata);
        xhtml.startDocument();
 
+       // If possible, use the Skeleton to work out how things relate
+       if (theora.getSkeleton() != null) {
+           // TODO Use this to work out the prefixes on metadata keys
+       } else {
+           // TODO Guess some sensible defaults for prefixes
+       }
+
        // Extract the common Theora info
        extractInfo(metadata, theora.getInfo());
 
