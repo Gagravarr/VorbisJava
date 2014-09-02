@@ -22,13 +22,11 @@ import org.gagravarr.ogg.OggFile;
 
 /**
  * Tests for reading things using VorbisFile
- * @author nick
- *
  */
 public class TestVorbisFileRead extends TestCase {
-	private InputStream getTestFile() throws IOException {
-		return this.getClass().getResourceAsStream("/testVORBIS.ogg");
-	}
+    private InputStream getTestFile() throws IOException {
+        return this.getClass().getResourceAsStream("/testVORBIS.ogg");
+    }
 	
     private VorbisFile vf;
     @Override
@@ -37,30 +35,31 @@ public class TestVorbisFileRead extends TestCase {
             vf.close();
         }
     }
-	public void testRead() throws IOException {
-		OggFile ogg = new OggFile(getTestFile());
-		vf = new VorbisFile(ogg);
-		
-		assertEquals(2, vf.getInfo().getChannels());
-		assertEquals(44100, vf.getInfo().getRate());
-		
-		assertEquals(0, vf.getInfo().getBitrateLower());
-		assertEquals(0, vf.getInfo().getBitrateUpper());
-		assertEquals(80000, vf.getInfo().getBitrateNominal());
-		
-		assertEquals("Test Title", vf.getComment().getTitle());
-		assertEquals("Test Artist", vf.getComment().getArtist());
-		
-		// TODO - proper setup packet checking
-		assertEquals(255*13+0xa9, vf.getSetup().getData().length);
-		
-		// Has audio data
-		assertNotNull( vf.getNextAudioPacket() );
-		assertNotNull( vf.getNextAudioPacket() );
-		assertNotNull( vf.getNextAudioPacket() );
-		assertNotNull( vf.getNextAudioPacket() );
-		
-		VorbisAudioData ad = vf.getNextAudioPacket();
-		assertEquals(0x3c0, ad.getGranulePosition());
-	}
+
+    public void testRead() throws IOException {
+        OggFile ogg = new OggFile(getTestFile());
+        vf = new VorbisFile(ogg);
+
+        assertEquals(2, vf.getInfo().getChannels());
+        assertEquals(44100, vf.getInfo().getRate());
+
+        assertEquals(0, vf.getInfo().getBitrateLower());
+        assertEquals(0, vf.getInfo().getBitrateUpper());
+        assertEquals(80000, vf.getInfo().getBitrateNominal());
+
+        assertEquals("Test Title", vf.getComment().getTitle());
+        assertEquals("Test Artist", vf.getComment().getArtist());
+
+        // TODO - proper setup packet checking
+        assertEquals(255*13+0xa9, vf.getSetup().getData().length);
+
+        // Has audio data
+        assertNotNull( vf.getNextAudioPacket() );
+        assertNotNull( vf.getNextAudioPacket() );
+        assertNotNull( vf.getNextAudioPacket() );
+        assertNotNull( vf.getNextAudioPacket() );
+
+        VorbisAudioData ad = vf.getNextAudioPacket();
+        assertEquals(0x3c0, ad.getGranulePosition());
+    }
 }
