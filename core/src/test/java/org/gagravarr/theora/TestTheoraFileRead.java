@@ -84,7 +84,8 @@ public class TestTheoraFileRead extends TestCase {
         );
         assertEquals(0, tf.getComments().getAllComments().size());
 
-        // TODO Test the setup
+        // TODO - proper setup packet checking
+        assertEquals(255*10+0x57, tf.getSetup().getData().length);
 
         // Doesn't have a skeleton stream
         assertEquals(null, tf.getSkeleton());
@@ -147,7 +148,8 @@ public class TestTheoraFileRead extends TestCase {
         );
         assertEquals(2, tf.getComments().getAllComments().size());
 
-        // TODO Test the setup
+        // TODO - proper setup packet checking
+        assertEquals(255*12+0x90, tf.getSetup().getData().length);
 
         // Doesn't have a skeleton stream
         assertEquals(null, tf.getSkeleton());
@@ -214,7 +216,8 @@ public class TestTheoraFileRead extends TestCase {
         );
         assertEquals(1, tf.getComments().getAllComments().size());
 
-        // TODO Test the setup
+        // TODO - proper setup packet checking
+        assertEquals(255*12+0x90, tf.getSetup().getData().length);
 
         // Doesn't have a skeleton stream
         assertEquals(null, tf.getSkeleton());
@@ -277,7 +280,8 @@ public class TestTheoraFileRead extends TestCase {
         );
         assertEquals(2, tf.getComments().getAllComments().size());
 
-        // TODO Test the setup
+        // TODO - proper setup packet checking
+        assertEquals(255*12+0x90, tf.getSetup().getData().length);
 
         // It has a skeleton stream
         SkeletonStream skel = tf.getSkeleton();
