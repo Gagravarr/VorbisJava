@@ -92,23 +92,23 @@ public class TestVorbisFileWrite extends TestCase {
 		// And check
 		assertEquals(2, vfIN.getInfo().getChannels());
 		assertEquals(44100, vfIN.getInfo().getRate());
-		
+
 		assertEquals(0, vfIN.getInfo().getBitrateLower());
 		assertEquals(0, vfIN.getInfo().getBitrateUpper());
 		assertEquals(80000, vfIN.getInfo().getBitrateNominal());
-		
+
 		assertEquals("Test Title", vfIN.getComment().getTitle());
 		assertEquals("Test Artist", vfIN.getComment().getArtist());
-		
+
 		// Has audio data
 		assertNotNull( vfIN.getNextAudioPacket() );
 		assertNotNull( vfIN.getNextAudioPacket() );
 		assertNotNull( vfIN.getNextAudioPacket() );
 		assertNotNull( vfIN.getNextAudioPacket() );
-		
+
 		VorbisAudioData ad = vfIN.getNextAudioPacket();
 		assertEquals(0x3c0, ad.getGranulePosition());
-		
+
 
 		// Check the core packets stayed the same size
 		assertEquals(infoSize, vfOUT.getInfo().getData().length);
@@ -118,5 +118,9 @@ public class TestVorbisFileWrite extends TestCase {
 		assertEquals(infoSize, vfIN.getInfo().getData().length);
 		assertEquals(commentSize, vfIN.getComment().getData().length);
 		assertEquals(setupSize, vfIN.getSetup().getData().length);
+
+
+		// All done
+		vfIN.close();
 	}
 }

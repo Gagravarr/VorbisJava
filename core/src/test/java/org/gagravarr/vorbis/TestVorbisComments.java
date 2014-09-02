@@ -64,6 +64,8 @@ public class TestVorbisComments extends TestCase {
 		assertEquals(2, c.getComments("COmmENT").size());
 		assertEquals("Test Comment", c.getComments("COMMent").get(0));
 		assertEquals("Another Test Comment", c.getComments("COMMent").get(1));
+
+		ogg.close();
 	}
 	
 	public void testModify() throws IOException {

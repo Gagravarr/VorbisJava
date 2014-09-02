@@ -30,9 +30,16 @@ public class TestVorbisFileRead extends TestCase {
 		return this.getClass().getResourceAsStream("/testVORBIS.ogg");
 	}
 	
+    private VorbisFile vf;
+    @Override
+    protected void tearDown() throws IOException {
+        if (vf != null) {
+            vf.close();
+        }
+    }
 	public void testRead() throws IOException {
 		OggFile ogg = new OggFile(getTestFile());
-		VorbisFile vf = new VorbisFile(ogg);
+		vf = new VorbisFile(ogg);
 		
 		assertEquals(2, vf.getInfo().getChannels());
 		assertEquals(44100, vf.getInfo().getRate());
