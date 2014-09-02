@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.gagravarr.ogg.HighLevelOggStreamPacket;
@@ -30,6 +31,7 @@ import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.ogg.OggPacketWriter;
 import org.gagravarr.ogg.OggStreamAudioData;
+import org.gagravarr.ogg.audio.OggAudioHeaders;
 import org.gagravarr.skeleton.SkeletonFisbone;
 import org.gagravarr.skeleton.SkeletonKeyFramePacket;
 import org.gagravarr.skeleton.SkeletonPacketFactory;
@@ -51,7 +53,8 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
     private TheoraSetup setup;
 
     private SkeletonStream skeleton;
-    // TODO Soundtracks
+    private Map<Integer,OggAudioHeaders> soundtracks;
+    // TODO Complete soundtracks support
 
     private LinkedList<TheoraVideoData> pendingPackets;
     private List<TheoraVideoData> writtenPackets;

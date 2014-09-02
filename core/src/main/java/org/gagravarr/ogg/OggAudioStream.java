@@ -18,6 +18,8 @@ import java.io.IOException;
 /**
  * Interface for reading a stream of
  *  {@link OggStreamAudioData} packets
+ *
+ * TODO Condisder moving this into the audio package
  */
 public interface OggAudioStream {
     /**
