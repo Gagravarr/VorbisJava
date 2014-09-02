@@ -39,9 +39,17 @@ public class TestTheoraFileRead extends TestCase {
     }
     // TODO Finish the other test files and use them
 
+    private TheoraFile tf;
+    @Override
+    protected void tearDown() throws IOException {
+        if (tf != null) {
+            tf.close();
+        }
+    }
+
     public void testReadBasics() throws IOException {
         OggFile ogg = new OggFile(getTheoraFile());
-        TheoraFile tf = new TheoraFile(ogg);
+        tf = new TheoraFile(ogg);
 
         // Check the Info
         assertEquals("3.2.0", tf.getInfo().getVersion());
@@ -100,7 +108,7 @@ public class TestTheoraFileRead extends TestCase {
 
     public void testReadWithVorbisAudio() throws IOException {
         OggFile ogg = new OggFile(getTheoraVorbisFile());
-        TheoraFile tf = new TheoraFile(ogg);
+        tf = new TheoraFile(ogg);
 
         // Check the Info
         assertEquals("3.2.1", tf.getInfo().getVersion());
@@ -165,9 +173,72 @@ public class TestTheoraFileRead extends TestCase {
         // TODO
     }
 
+    public void testReadWithSpeexAudio() throws IOException {
+        OggFile ogg = new OggFile(getTheoraSpeexFile());
+        tf = new TheoraFile(ogg);
+
+        // Check the Info
+        assertEquals("3.2.1", tf.getInfo().getVersion());
+        assertEquals(3, tf.getInfo().getMajorVersion());
+        assertEquals(2, tf.getInfo().getMinorVersion());
+        assertEquals(1, tf.getInfo().getRevisionVersion());
+
+        assertEquals(40, tf.getInfo().getFrameWidthMB());
+        assertEquals(30, tf.getInfo().getFrameHeightMB());
+        assertEquals(640, tf.getInfo().getFrameWidth());
+        assertEquals(480, tf.getInfo().getFrameHeight());
+        assertEquals(640, tf.getInfo().getPictureRegionWidth());
+        assertEquals(480, tf.getInfo().getPictureRegionHeight());
+        assertEquals(0, tf.getInfo().getPictureRegionXOffset());
+        assertEquals(0, tf.getInfo().getPictureRegionYOffset());
+
+        assertEquals(1, tf.getInfo().getFrameRateNumerator());
+        assertEquals(1, tf.getInfo().getFrameRateDenominator());
+        assertEquals(0, tf.getInfo().getPixelAspectNumerator());
+        assertEquals(0, tf.getInfo().getPixelAspectDenomerator());
+
+        assertEquals(0, tf.getInfo().getColourSpace());
+        assertEquals(0, tf.getInfo().getNominalBitrate());
+        assertEquals(38, tf.getInfo().getQualityHint());
+        assertEquals(6, tf.getInfo().getKeyFrameNumberGranuleShift());
+        assertEquals(0, tf.getInfo().getPixelFormat());
+
+        // Check the Comments
+        assertEquals(
+                "Xiph.Org libtheora 1.1 20090822 (Thusnelda)",
+                tf.getComments().getVendor()
+        );
+        assertEquals(
+                "ffmpeg2theora-0.27",
+                tf.getComments().getComments("ENCODER").get(0)
+        );
+        assertEquals(1, tf.getComments().getAllComments().size());
+
+        // TODO Test the setup
+
+        // Doesn't have a skeleton stream
+        assertEquals(null, tf.getSkeleton());
+
+        // TODO Test soundtracks
+
+        // Has a handful of video frames
+        TheoraVideoData vd = null;
+
+//        vd = vf.getNextVideoPacket();
+//        assertNotNull( vd );
+//        assertEquals(0x3c0, vd.getGranulePosition());
+
+//        vd = vf.getNextVideoPacket();
+//        assertNotNull( vd );
+//        assertEquals(0x3c0, vd.getGranulePosition());
+
+//        vd = vf.getNextVideoPacket();
+        assertNull( vd );
+    }
+
     public void testReadWithSkeleton() throws IOException {
         OggFile ogg = new OggFile(getTheoraVorbisSkeletonFile());
-        TheoraFile tf = new TheoraFile(ogg);
+        tf = new TheoraFile(ogg);
 
         // Check the Info
         assertEquals("3.2.1", tf.getInfo().getVersion());
