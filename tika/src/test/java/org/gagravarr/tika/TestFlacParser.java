@@ -75,6 +75,7 @@ public class TestFlacParser extends TestCase {
 
         assertEquals("reference libFLAC 1.2.1 20070917", metadata.get(XMP.CREATOR_TOOL));
         assertEquals("reference libFLAC 1.2.1 20070917", metadata.get("vendor"));
+        assertEquals("FLAC", metadata.get(XMPDM.AUDIO_COMPRESSOR));
         if (hasVersion) {
             assertEquals("Flac 1.0", metadata.get("version"));
         }

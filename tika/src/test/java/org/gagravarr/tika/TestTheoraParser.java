@@ -62,6 +62,12 @@ public class TestTheoraParser extends TestCase {
             assertEquals(TheoraParser.THEORA_VIDEO.toString(), metadata.get(Metadata.CONTENT_TYPE));
             assertEquals("Theora 3.2.1", metadata.get("version"));
 
+            assertEquals("Theora", metadata.get(XMPDM.VIDEO_COMPRESSOR));
+
+            assertEquals("Xiph.Org libtheora 1.1 20090822 (Thusnelda)", metadata.get(XMP.CREATOR_TOOL));
+            assertEquals("Xiph.Org libtheora 1.1 20090822 (Thusnelda)", metadata.get("vendor"));
+            assertEquals("ffmpeg2theora-0.27", metadata.get("encoder"));
+
             // Check text
             // TODO
         }

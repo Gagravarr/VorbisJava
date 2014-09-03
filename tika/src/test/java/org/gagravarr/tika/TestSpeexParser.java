@@ -68,6 +68,7 @@ public class TestSpeexParser extends TestCase {
         assertEquals("Encoded with Speex 1.2rc1", metadata.get(XMP.CREATOR_TOOL));
         assertEquals("Encoded with Speex 1.2rc1", metadata.get("vendor"));
         assertEquals("Speex 1 - 1.2rc1", metadata.get("version"));
+        assertEquals("Speex", metadata.get(XMPDM.AUDIO_COMPRESSOR));
 
         // Check text
         String content = handler.toString();

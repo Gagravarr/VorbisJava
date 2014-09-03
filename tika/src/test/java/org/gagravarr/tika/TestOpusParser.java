@@ -68,6 +68,7 @@ public class TestOpusParser extends TestCase {
         assertEquals("libopus 0.9.14", metadata.get(XMP.CREATOR_TOOL));
         assertEquals("libopus 0.9.14", metadata.get("vendor"));
         assertEquals("Opus 0.1", metadata.get("version"));
+        assertEquals("Opus", metadata.get(XMPDM.AUDIO_COMPRESSOR));
 
         // Check text
         String content = handler.toString();

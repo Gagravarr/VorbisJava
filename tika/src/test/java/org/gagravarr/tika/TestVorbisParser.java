@@ -68,6 +68,7 @@ public class TestVorbisParser extends TestCase {
         assertEquals("Xiph.Org libVorbis I 20070622", metadata.get(XMP.CREATOR_TOOL));
         assertEquals("Xiph.Org libVorbis I 20070622", metadata.get("vendor"));
         assertEquals("Vorbis 0", metadata.get("version"));
+        assertEquals("Vorbis", metadata.get(XMPDM.AUDIO_COMPRESSOR));
 
         // Check text
         String content = handler.toString();

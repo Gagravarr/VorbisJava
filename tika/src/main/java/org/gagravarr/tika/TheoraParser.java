@@ -29,6 +29,7 @@ import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.XHTMLContentHandler;
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggStreamIdentifier;
+import org.gagravarr.ogg.audio.OggAudioHeaders;
 import org.gagravarr.theora.TheoraFile;
 import org.gagravarr.theora.TheoraInfo;
 import org.xml.sax.ContentHandler;
@@ -77,12 +78,17 @@ public class TheoraParser extends AbstractParser {
        }
 
        // Extract the common Theora info
+       // TODO Prefix this correctly for the video as required
        extractInfo(metadata, theora.getInfo());
 
        // Extract the common Theora comments
+       // TODO Prefix this correctly for the video as required
+       OggAudioParser.extractComments(metadata, xhtml, theora.getComments());
 
-       // Extract any soundtracks
-       // TODO
+       // Extract any soundtracks, with the right prefixes
+       for (OggAudioHeaders audio : theora.getSoundtracks()) {
+           // TODO Implement
+       }
 
        // Finish
        xhtml.endDocument();
