@@ -20,6 +20,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +34,7 @@ import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.ogg.OggPacketWriter;
 import org.gagravarr.ogg.OggStreamAudioData;
 import org.gagravarr.ogg.audio.OggAudioHeaders;
+import org.gagravarr.ogg.audio.OggAudioStreamHeaders;
 import org.gagravarr.skeleton.SkeletonFisbone;
 import org.gagravarr.skeleton.SkeletonKeyFramePacket;
 import org.gagravarr.skeleton.SkeletonPacketFactory;
@@ -53,7 +56,7 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
     private TheoraSetup setup;
 
     private SkeletonStream skeleton;
-    private Map<Integer,OggAudioHeaders> soundtracks;
+    private Map<Integer,OggAudioStreamHeaders> soundtracks;
     // TODO Complete soundtracks support
 
     private LinkedList<TheoraVideoData> pendingPackets;
@@ -80,6 +83,7 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
     public TheoraFile(OggPacketReader r) throws IOException {
         this.r = r;
         this.pendingPackets = new LinkedList<TheoraVideoData>();
+        this.soundtracks = new HashMap<Integer, OggAudioStreamHeaders>();
 
         // The start of the file should contain the skeleton
         //  (if there is one), the header packets for the Theora
@@ -99,7 +103,11 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
                 } else if (SkeletonPacketFactory.isSkeletonStream(p)) {
                     skeleton = new SkeletonStream(p);
                 } else {
-                    // TODO Is it a soundtrack?
+                    try {
+                        soundtracks.put(p.getSid(), OggAudioStreamHeaders.create(p));
+                    } catch (IllegalArgumentException e) {
+                        // Not a soundtrack
+                    }
                 }
             } else {
                 if (p.getSid() == sid) {
@@ -120,8 +128,8 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
                     }
                 } else if (skeleton != null && skeleton.getSid() == p.getSid()) {
                     skeleton.processPacket(p);
-                } else {
-                    // TODO Soundtracks
+                } else if (soundtracks.containsKey(p.getSid())) {
+                    soundtracks.get(p.getSid()).populate(p);
                 }
             }
         }
@@ -161,9 +169,8 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
             this.sid = w.getSid();
         }
 
-        writtenPackets = new ArrayList<TheoraVideoData>();
-
-        // TODO What about soundtracks?
+        this.writtenPackets = new ArrayList<TheoraVideoData>();
+        this.soundtracks = new HashMap<Integer, OggAudioStreamHeaders>();
 
         this.info = info;
         this.comments = comments;
@@ -197,13 +204,34 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
     public void ensureSkeleton() {
         if (skeleton != null) return;
 
-        int[] sids = new int[0];
+        List<Integer> sids = new ArrayList<Integer>();
         if (sid != -1) {
-            sids = new int[] { sid };
+            sids.add(sid);
         }
-        // TODO What about soundtracks?
+        for (Integer stsid : soundtracks.keySet()) {
+            if (stsid != -1) {
+                sids.add(stsid);
+            }
+        }
+        int[] sidsA = new int[sids.size()];
+        for (int i=0; i<sidsA.length; i++) {
+            sidsA[i] = sids.get(i);
+        }
 
-        skeleton = new SkeletonStream(sids);
+        skeleton = new SkeletonStream(sidsA);
+    }
+
+    /**
+     * Returns the soundtracks and their stream IDs
+     */
+    public Map<Integer, ? extends OggAudioHeaders> getSoundtrackStreams() {
+        return soundtracks;
+    }
+    /**
+     * Returns all the soundtracks
+     */
+    public Collection<? extends OggAudioHeaders> getSoundtracks() {
+        return soundtracks.values();
     }
 
     /**

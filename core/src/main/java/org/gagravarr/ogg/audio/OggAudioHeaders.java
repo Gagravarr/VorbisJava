@@ -17,9 +17,6 @@ package org.gagravarr.ogg.audio;
 /**
  * Interface for reading the headers at the start of an
  *  {@link OggAudioStream}
- *
- * TODO Have a stream based bean for this
- * TODO Have a Factory which can build these generically
  */
 public interface OggAudioHeaders {
     /**
