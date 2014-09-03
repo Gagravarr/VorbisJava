@@ -13,7 +13,6 @@
  */
 package org.gagravarr.ogg.audio;
 
-import org.gagravarr.ogg.OggAudioStream;
 
 /**
  * Common interface for the Setup header near the

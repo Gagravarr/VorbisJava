@@ -13,7 +13,6 @@
  */
 package org.gagravarr.ogg.audio;
 
-import org.gagravarr.ogg.OggAudioStream;
 
 /**
  * Interface for reading the headers at the start of an

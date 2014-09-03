@@ -22,13 +22,13 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.gagravarr.ogg.OggAudioStream;
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.ogg.OggPacketWriter;
 import org.gagravarr.ogg.audio.OggAudioHeaders;
 import org.gagravarr.ogg.audio.OggAudioSetupHeader;
+import org.gagravarr.ogg.audio.OggAudioStream;
 
 /**
  * This is a wrapper around an OggFile that lets you

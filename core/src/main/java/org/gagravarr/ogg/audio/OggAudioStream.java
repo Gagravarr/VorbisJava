@@ -11,15 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.gagravarr.ogg;
+package org.gagravarr.ogg.audio;
 
 import java.io.IOException;
 
+import org.gagravarr.ogg.OggStreamAudioData;
+
 /**
- * Interface for reading a stream of
- *  {@link OggStreamAudioData} packets
- *
- * TODO Condisder moving this into the audio package
+ * Interface for reading a stream of {@link OggStreamAudioData}
+ *  packets, either in a sequential (streaming) fashion, or by
+ *  skipping to a certain point.
  */
 public interface OggAudioStream {
     /**
@@ -27,7 +28,7 @@ public interface OggAudioStream {
      *  stream, or null if no more remain
      */
     public OggStreamAudioData getNextAudioPacket() throws IOException;
-    
+
     /**
      * Skips the audio data to the next packet with a granule
      *  of at least the given granule position.

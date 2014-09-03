@@ -19,7 +19,7 @@ import org.gagravarr.ogg.OggPacket;
 /**
  * Raw, compressed audio data, which keeps track of a granule position
  *
- * TODO Condisder moving this into the audio package
+ * TODO Make this generic for Video data too
  */
 public class OggStreamAudioData extends HighLevelOggStreamPacket {
     protected long granulePosition;
