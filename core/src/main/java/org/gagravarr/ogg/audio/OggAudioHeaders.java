@@ -19,13 +19,24 @@ import org.gagravarr.ogg.OggAudioStream;
  * Interface for reading the headers at the start of an
  *  {@link OggAudioStream}
  *
- * TODO Have the various formats implement this
  * TODO Have a stream based bean for this
  * TODO Have a Factory which can build these generically
  */
 public interface OggAudioHeaders {
+    /**
+     * @return The stream id of the overall audio stream
+     */
     public int getSid();
+    /**
+     * @return The information / identification of the stream and audio encoding
+     */
     public OggAudioInfoHeader getInfo();
-    public OggAudioTagsHeader getTags(); // TODO Tags or Comments?
+    /**
+     * @return The Tags / Comments describing the stream
+     */
+    public OggAudioTagsHeader getTags();
+    /**
+     * @return The Setup information for the audio encoding, if used in the format
+     */
     public OggAudioSetupHeader getSetup();
 }

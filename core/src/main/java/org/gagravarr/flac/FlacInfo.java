@@ -17,12 +17,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.gagravarr.ogg.IOUtils;
+import org.gagravarr.ogg.audio.OggAudioInfoHeader;
 
 /**
  * The Stream Info metadata block holds useful
  *  information on the audio data of the file
  */
-public class FlacInfo extends FlacMetadataBlock {
+public class FlacInfo extends FlacMetadataBlock implements OggAudioInfoHeader {
     /**
      * <16> The minimum block size (in samples) used in the stream. 
      */
@@ -133,6 +134,13 @@ public class FlacInfo extends FlacMetadataBlock {
 
         // Write the signature
         out.write(signature);
+    }
+
+    /**
+     * Flac doesn't really have versions
+     */
+    public String getVersionString() {
+        return "FLAC";
     }
 
     /**

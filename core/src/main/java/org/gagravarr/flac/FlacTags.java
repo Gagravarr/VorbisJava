@@ -18,6 +18,7 @@ import java.io.OutputStream;
 
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
+import org.gagravarr.ogg.audio.OggAudioTagsHeader;
 import org.gagravarr.vorbis.VorbisComments;
 import org.gagravarr.vorbis.VorbisStyleComments;
 
@@ -25,7 +26,7 @@ import org.gagravarr.vorbis.VorbisStyleComments;
  * This is a {@link VorbisComments} with a Flac metadata
  *  block header, rather than the usual vorbis one.
  */
-public class FlacTags extends VorbisStyleComments {
+public class FlacTags extends VorbisStyleComments implements OggAudioTagsHeader {
    public FlacTags(OggPacket packet) {
       super(packet, 4);
       

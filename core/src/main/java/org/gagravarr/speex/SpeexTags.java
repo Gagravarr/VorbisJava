@@ -16,6 +16,7 @@ package org.gagravarr.speex;
 import java.io.OutputStream;
 
 import org.gagravarr.ogg.OggPacket;
+import org.gagravarr.ogg.audio.OggAudioTagsHeader;
 import org.gagravarr.vorbis.VorbisComments;
 import org.gagravarr.vorbis.VorbisStyleComments;
 
@@ -23,7 +24,7 @@ import org.gagravarr.vorbis.VorbisStyleComments;
  * This is a {@link VorbisComments} with an Speex metadata
  *  block header, rather than the usual vorbis one.
  */
-public class SpeexTags extends VorbisStyleComments implements SpeexPacket {
+public class SpeexTags extends VorbisStyleComments implements SpeexPacket, OggAudioTagsHeader {
    public SpeexTags(OggPacket packet) {
       super(packet, 0);
       

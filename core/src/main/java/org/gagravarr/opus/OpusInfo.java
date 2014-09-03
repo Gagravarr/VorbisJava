@@ -16,13 +16,14 @@ package org.gagravarr.opus;
 import org.gagravarr.ogg.HighLevelOggStreamPacket;
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
+import org.gagravarr.ogg.audio.OggAudioInfoHeader;
 
 /**
  * The identification header identifies the bitstream as Opus, 
  *  and includes the Opus version, the simple audio characteristics 
  *  of the stream such as sample rate and number of channels etc.
  */
-public class OpusInfo extends HighLevelOggStreamPacket implements OpusPacket {
+public class OpusInfo extends HighLevelOggStreamPacket implements OpusPacket, OggAudioInfoHeader {
     private byte version;
     private int majorVersion;
     private int minorVersion;
@@ -111,6 +112,9 @@ public class OpusInfo extends HighLevelOggStreamPacket implements OpusPacket {
     }
     public int getMinorVersion() {
         return minorVersion;
+    }
+    public String getVersionString() {
+        return majorVersion + "." + minorVersion;
     }
 
     public int getChannels() {

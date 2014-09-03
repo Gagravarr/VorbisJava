@@ -16,13 +16,14 @@ package org.gagravarr.speex;
 import org.gagravarr.ogg.HighLevelOggStreamPacket;
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
+import org.gagravarr.ogg.audio.OggAudioInfoHeader;
 
 /**
  * The identification header identifies the bitstream as Speex, 
  *  and includes the Speex version, the simple audio characteristics 
  *  of the stream such as sample rate and number of channels etc.
  */
-public class SpeexInfo extends HighLevelOggStreamPacket implements SpeexPacket {
+public class SpeexInfo extends HighLevelOggStreamPacket implements SpeexPacket, OggAudioInfoHeader {
     private String versionString;
     private int versionId;
     private long rate;

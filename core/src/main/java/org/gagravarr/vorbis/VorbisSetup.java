@@ -16,12 +16,13 @@ package org.gagravarr.vorbis;
 import org.gagravarr.ogg.HighLevelOggStreamPacket;
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
+import org.gagravarr.ogg.audio.OggAudioSetupHeader;
 
 /**
  * Includes extensive CODEC setup information as well as the 
  *  complete VQ and Huffman codebooks needed for decode
  */
-public class VorbisSetup extends HighLevelOggStreamPacket implements VorbisPacket {
+public class VorbisSetup extends HighLevelOggStreamPacket implements VorbisPacket, OggAudioSetupHeader {
 	public VorbisSetup(OggPacket pkt) {
 		super(pkt);
 		

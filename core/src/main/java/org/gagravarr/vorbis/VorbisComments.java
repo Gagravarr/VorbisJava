@@ -17,11 +17,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.gagravarr.ogg.OggPacket;
+import org.gagravarr.ogg.audio.OggAudioTagsHeader;
 
 /**
  * Holds encoder information and user specified tags
  */
-public class VorbisComments extends VorbisStyleComments implements VorbisPacket {
+public class VorbisComments extends VorbisStyleComments implements VorbisPacket, OggAudioTagsHeader {
     public VorbisComments(OggPacket pkt) {
         super(pkt, HEADER_LENGTH_METADATA);
     }

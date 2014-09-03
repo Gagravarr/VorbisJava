@@ -16,13 +16,14 @@ package org.gagravarr.vorbis;
 import org.gagravarr.ogg.HighLevelOggStreamPacket;
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
+import org.gagravarr.ogg.audio.OggAudioInfoHeader;
 
 /**
  * The identification header identifies the bitstream as Vorbis, 
  *  Vorbis version, and the simple audio characteristics of the 
  *  stream such as sample rate and number of channels.
  */
-public class VorbisInfo extends HighLevelOggStreamPacket implements VorbisPacket {
+public class VorbisInfo extends HighLevelOggStreamPacket implements VorbisPacket, OggAudioInfoHeader {
 	private int version;
 	private int channels;
 	private long rate;
@@ -86,6 +87,9 @@ public class VorbisInfo extends HighLevelOggStreamPacket implements VorbisPacket
 	
 	public int getVersion() {
 		return version;
+	}
+	public String getVersionString() {
+	    return Integer.toString(version);
 	}
 	
 	public int getChannels() {

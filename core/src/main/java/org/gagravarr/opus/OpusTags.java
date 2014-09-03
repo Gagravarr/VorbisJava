@@ -17,6 +17,7 @@ import java.io.OutputStream;
 
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
+import org.gagravarr.ogg.audio.OggAudioTagsHeader;
 import org.gagravarr.vorbis.VorbisComments;
 import org.gagravarr.vorbis.VorbisStyleComments;
 
@@ -24,7 +25,7 @@ import org.gagravarr.vorbis.VorbisStyleComments;
  * This is a {@link VorbisComments} with an Opus metadata
  *  block header, rather than the usual vorbis one.
  */
-public class OpusTags extends VorbisStyleComments implements OpusPacket {
+public class OpusTags extends VorbisStyleComments implements OpusPacket, OggAudioTagsHeader {
    public OpusTags(OggPacket packet) {
       super(packet, MAGIC_TAGS_BYTES.length);
       
