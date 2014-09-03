@@ -26,6 +26,8 @@ import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.ogg.OggPacketWriter;
+import org.gagravarr.ogg.OggStreamIdentifier;
+import org.gagravarr.ogg.OggStreamIdentifier.OggStreamType;
 import org.gagravarr.ogg.audio.OggAudioHeaders;
 import org.gagravarr.ogg.audio.OggAudioSetupHeader;
 import org.gagravarr.ogg.audio.OggAudioStream;
@@ -149,6 +151,13 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
      */
     public int getSid() {
         return sid;
+    }
+
+    /**
+     * This is an Opus file
+     */
+    public OggStreamType getType() {
+        return OggStreamIdentifier.OPUS_AUDIO;
     }
 
     public OpusInfo getInfo() {

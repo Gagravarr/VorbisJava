@@ -26,9 +26,10 @@ import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.ogg.OggPacketWriter;
+import org.gagravarr.ogg.OggStreamIdentifier;
+import org.gagravarr.ogg.OggStreamIdentifier.OggStreamType;
 import org.gagravarr.ogg.audio.OggAudioHeaders;
 import org.gagravarr.ogg.audio.OggAudioSetupHeader;
-import org.gagravarr.vorbis.VorbisPacket;
 
 /**
  * This lets you work with FLAC files that
@@ -139,7 +140,6 @@ public class FlacOggFile extends FlacFile implements OggAudioHeaders {
 
     public FlacAudioFrame getNextAudioPacket() throws IOException {
         OggPacket p = null;
-        VorbisPacket vp = null;
         while( (p = r.getNextPacketWithSid(sid)) != null ) {
             return new FlacAudioFrame(p.getData());
         }
@@ -160,6 +160,13 @@ public class FlacOggFile extends FlacFile implements OggAudioHeaders {
      */
     public int getSid() {
         return sid;
+    }
+
+    /**
+     * This is a Flac-in-Ogg file
+     */
+    public OggStreamType getType() {
+        return OggStreamIdentifier.OGG_FLAC;
     }
 
     /**
@@ -195,10 +202,10 @@ public class FlacOggFile extends FlacFile implements OggAudioHeaders {
             for(FlacAudioFrame fa : writtenAudio) {
                 // Update the granule position as we go
                 // TODO Track this
-//              if(vd.getGranulePosition() >= 0 &&
-//                 lastGranule != vd.getGranulePosition()) {
+//              if(fa.getGranulePosition() >= 0 &&
+//                 lastGranule != fa.getGranulePosition()) {
 //                 w.flush();
-//                 lastGranule = vd.getGranulePosition();
+//                 lastGranule = fa.getGranulePosition();
 //                 w.setGranulePosition(lastGranule);
 //              }
 

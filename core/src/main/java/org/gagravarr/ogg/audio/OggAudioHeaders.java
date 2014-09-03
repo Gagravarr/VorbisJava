@@ -13,6 +13,8 @@
  */
 package org.gagravarr.ogg.audio;
 
+import org.gagravarr.ogg.OggStreamIdentifier.OggStreamType;
+
 
 /**
  * Interface for reading the headers at the start of an
@@ -23,6 +25,10 @@ public interface OggAudioHeaders {
      * @return The stream id of the overall audio stream
      */
     public int getSid();
+    /**
+     * @return The type of the audio stream
+     */
+    public OggStreamType getType();
     /**
      * @return The information / identification of the stream and audio encoding
      */

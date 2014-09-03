@@ -26,6 +26,8 @@ import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.ogg.OggPacketWriter;
+import org.gagravarr.ogg.OggStreamIdentifier;
+import org.gagravarr.ogg.OggStreamIdentifier.OggStreamType;
 import org.gagravarr.ogg.audio.OggAudioHeaders;
 import org.gagravarr.ogg.audio.OggAudioStream;
 
@@ -151,6 +153,13 @@ public class VorbisFile implements OggAudioStream, OggAudioHeaders, Closeable {
      */
     public int getSid() {
         return sid;
+    }
+
+    /**
+     * This is a Vorbis file
+     */
+    public OggStreamType getType() {
+        return OggStreamIdentifier.OGG_VORBIS;
     }
 
     public VorbisInfo getInfo() {
