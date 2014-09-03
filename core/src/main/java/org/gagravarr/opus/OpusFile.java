@@ -27,12 +27,14 @@ import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.ogg.OggPacketWriter;
+import org.gagravarr.ogg.audio.OggAudioHeaders;
+import org.gagravarr.ogg.audio.OggAudioSetupHeader;
 
 /**
  * This is a wrapper around an OggFile that lets you
  *  get at all the interesting bits of an Opus file.
  */
-public class OpusFile implements OggAudioStream, Closeable {
+public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
     private OggFile ogg;
     private OggPacketReader r;
     private OggPacketWriter w;
@@ -155,7 +157,12 @@ public class OpusFile implements OggAudioStream, Closeable {
     public OpusTags getTags() {
         return tags;
     }
-
+    /**
+     * Opus doesn't have setup headers, so this is always null
+     */
+    public OggAudioSetupHeader getSetup() {
+        return null;
+    }
 
     /**
      * Buffers the given audio ready for writing

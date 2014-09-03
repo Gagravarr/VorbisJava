@@ -27,12 +27,13 @@ import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.ogg.OggPacketWriter;
+import org.gagravarr.ogg.audio.OggAudioHeaders;
 
 /**
  * This is a wrapper around an OggFile that lets you
  *  get at all the interesting bits of a Vorbis file.
  */
-public class VorbisFile implements OggAudioStream, Closeable {
+public class VorbisFile implements OggAudioStream, OggAudioHeaders, Closeable {
     private OggFile ogg;
     private OggPacketReader r;
     private OggPacketWriter w;
@@ -156,6 +157,9 @@ public class VorbisFile implements OggAudioStream, Closeable {
         return info;
     }
     public VorbisComments getComment() {
+        return comment;
+    }
+    public VorbisComments getTags() {
         return comment;
     }
     public VorbisSetup getSetup() {

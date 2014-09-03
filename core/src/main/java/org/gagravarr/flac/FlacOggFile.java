@@ -26,13 +26,15 @@ import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.ogg.OggPacketWriter;
+import org.gagravarr.ogg.audio.OggAudioHeaders;
+import org.gagravarr.ogg.audio.OggAudioSetupHeader;
 import org.gagravarr.vorbis.VorbisPacket;
 
 /**
  * This lets you work with FLAC files that
  *  are contained in an Ogg Stream
  */
-public class FlacOggFile extends FlacFile {
+public class FlacOggFile extends FlacFile implements OggAudioHeaders {
     private OggFile ogg;
     private OggPacketReader r;
     private OggPacketWriter w;
@@ -212,6 +214,13 @@ public class FlacOggFile extends FlacFile {
             ogg.close();
             ogg = null;
         }
+    }
+
+    /**
+     * Flac doesn't have setup packets per-se, so return null
+     */
+    public OggAudioSetupHeader getSetup() {
+        return null;
     }
 
     /**
