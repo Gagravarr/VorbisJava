@@ -74,9 +74,10 @@ public class OggAudioStreamHeaders implements OggAudioHeaders {
                         (OpusInfo)OpusPacketFactory.create(firstPacket));
             }
             if (FlacFirstOggPacket.isFlacStream(firstPacket)) {
+                FlacFirstOggPacket flac = new FlacFirstOggPacket(firstPacket);
                 return new OggAudioStreamHeaders(sid, 
                         OggStreamIdentifier.OGG_FLAC,
-                        null); // TODO
+                        flac.getInfo());
             }
             throw new IllegalArgumentException("Unsupported stream of type " + OggStreamIdentifier.identifyType(firstPacket));
         } else {
