@@ -19,6 +19,8 @@ import java.io.InputStream;
 import junit.framework.TestCase;
 
 import org.gagravarr.ogg.OggFile;
+import org.gagravarr.ogg.OggStreamAudioData;
+import org.gagravarr.ogg.OggStreamIdentifier;
 import org.gagravarr.skeleton.SkeletonStream;
 
 /**
@@ -90,7 +92,11 @@ public class TestTheoraFileRead extends TestCase {
         // Doesn't have a skeleton stream
         assertEquals(null, tf.getSkeleton());
 
-        // TODO Test soundtracks
+        // Doesn't have any soundtracks
+        assertNotNull(tf.getSoundtracks());
+        assertNotNull(tf.getSoundtrackStreams());
+        assertEquals(0, tf.getSoundtracks().size());
+        assertEquals(0, tf.getSoundtrackStreams().size());
 
         // Has a handful of video frames
         TheoraVideoData vd = null;
@@ -154,10 +160,17 @@ public class TestTheoraFileRead extends TestCase {
         // Doesn't have a skeleton stream
         assertEquals(null, tf.getSkeleton());
 
-        // TODO Test soundtracks
+        // Has a single, vorbis soundtrack
+        assertNotNull(tf.getSoundtracks());
+        assertNotNull(tf.getSoundtrackStreams());
+        assertEquals(1, tf.getSoundtracks().size());
+        assertEquals(1, tf.getSoundtrackStreams().size());
+        assertEquals(OggStreamIdentifier.OGG_VORBIS, 
+                     tf.getSoundtracks().iterator().next().getType());
 
-        // Has a handful of video frames
-        TheoraVideoData vd = null;
+
+        // Has a handful of video and audio frames interleaved
+        OggStreamAudioData ad = null;
 
 //        vd = vf.getNextVideoPacket();
 //        assertNotNull( vd );
@@ -168,7 +181,7 @@ public class TestTheoraFileRead extends TestCase {
 //        assertEquals(0x3c0, vd.getGranulePosition());
 
 //        vd = vf.getNextVideoPacket();
-        assertNull( vd );
+        assertNull( ad );
     }
 
     public void testReadWithOpusAudio() throws IOException {
@@ -222,9 +235,16 @@ public class TestTheoraFileRead extends TestCase {
         // Doesn't have a skeleton stream
         assertEquals(null, tf.getSkeleton());
 
-        // TODO Test soundtracks
+        // Has a single, speex soundtrack
+        assertNotNull(tf.getSoundtracks());
+        assertNotNull(tf.getSoundtrackStreams());
+        assertEquals(1, tf.getSoundtracks().size());
+        assertEquals(1, tf.getSoundtrackStreams().size());
+        assertEquals(OggStreamIdentifier.SPEEX_AUDIO, 
+                     tf.getSoundtracks().iterator().next().getType());
 
-        // Has a handful of video frames
+
+        // Has a handful of video and audio frames
         TheoraVideoData vd = null;
 
 //        vd = vf.getNextVideoPacket();
@@ -292,9 +312,16 @@ public class TestTheoraFileRead extends TestCase {
         assertEquals("video/main", skel.getFisbones().get(0).getMessageHeaders().get("Role"));
         assertEquals("audio/main", skel.getFisbones().get(1).getMessageHeaders().get("Role"));
 
-        // TODO Test soundtracks
+        // Has a single, vorbis soundtrack
+        assertNotNull(tf.getSoundtracks());
+        assertNotNull(tf.getSoundtrackStreams());
+        assertEquals(1, tf.getSoundtracks().size());
+        assertEquals(1, tf.getSoundtrackStreams().size());
+        assertEquals(OggStreamIdentifier.OGG_VORBIS, 
+                     tf.getSoundtracks().iterator().next().getType());
 
-        // Has a handful of video frames
+
+        // Has a handful of video and audio frames
         TheoraVideoData vd = null;
 
 //        vd = vf.getNextVideoPacket();

@@ -257,7 +257,8 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
         // If we have a skeleton, tell it about the new stream
         if (skeleton != null) {
             SkeletonFisbone bone = skeleton.addBoneForStream(audio.getSid());
-            // TODO Populate the bone as best we can
+            bone.setContentType(audio.getType().mimetype);
+            // TODO Populate the rest of the bone as best we can
         }
 
         // Record the new audio stream
