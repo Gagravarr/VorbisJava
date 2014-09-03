@@ -55,14 +55,7 @@ public class SkeletonStream {
     public SkeletonStream(int[] sids) {
         this.fishead = new SkeletonFishead();
         for (int sid : sids) {
-            SkeletonFisbone bone = new SkeletonFisbone();
-            bone.setSerialNumber(sid);
-            fisbones.add(bone);
-
-            if (sid == -1 || bonesByStream.containsKey(sid)) {
-                throw new IllegalArgumentException("Invalid / duplicate sid " + sid);
-            }
-            bonesByStream.put(sid, bone);
+            addBoneForStream(sid);
         }
     }
 
@@ -121,8 +114,24 @@ public class SkeletonStream {
      * Get the fisbone for a given stream, or null if
      *  the stream isn't described
      */
-    public SkeletonFisbone getBonesForStream(int sid) {
+    public SkeletonFisbone getBoneForStream(int sid) {
         return bonesByStream.get(sid);
+    }
+
+    /**
+     * Adds a new fisbone for the given stream
+     */
+    public SkeletonFisbone addBoneForStream(int sid) {
+        SkeletonFisbone bone = new SkeletonFisbone();
+        bone.setSerialNumber(sid);
+        fisbones.add(bone);
+
+        if (sid == -1 || bonesByStream.containsKey(sid)) {
+            throw new IllegalArgumentException("Invalid / duplicate sid " + sid);
+        }
+        bonesByStream.put(sid, bone);
+
+        return bone;
     }
 
     /**
