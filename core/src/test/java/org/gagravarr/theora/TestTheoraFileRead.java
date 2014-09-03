@@ -23,6 +23,7 @@ import org.gagravarr.ogg.OggStreamAudioData;
 import org.gagravarr.ogg.OggStreamAudioVisualData;
 import org.gagravarr.ogg.OggStreamIdentifier;
 import org.gagravarr.skeleton.SkeletonStream;
+import org.gagravarr.vorbis.VorbisAudioData;
 
 /**
  * Tests for reading things using TheoraFile
@@ -80,6 +81,7 @@ public class TestTheoraFileRead extends TestCase {
         assertEquals(6, tf.getInfo().getKeyFrameNumberGranuleShift());
         assertEquals(0, tf.getInfo().getPixelFormat());
 
+
         // Check the Comments
         assertEquals(
                 "Xiph.Org libTheora I 20040317 3 2 0",
@@ -87,11 +89,14 @@ public class TestTheoraFileRead extends TestCase {
         );
         assertEquals(0, tf.getComments().getAllComments().size());
 
+
         // TODO - proper setup packet checking
         assertEquals(255*10+0x57, tf.getSetup().getData().length);
 
+
         // Doesn't have a skeleton stream
         assertEquals(null, tf.getSkeleton());
+
 
         // Doesn't have any soundtracks
         assertNotNull(tf.getSoundtracks());
@@ -99,18 +104,43 @@ public class TestTheoraFileRead extends TestCase {
         assertEquals(0, tf.getSoundtracks().size());
         assertEquals(0, tf.getSoundtrackStreams().size());
 
-        // Has a handful of video frames, but no audio
+
+        // Has a quote a few video frames, but no audio
         OggStreamAudioVisualData avd = null;
 
-//        vd = vf.getNextVideoPacket();
-//        assertNotNull( vd );
-//        assertEquals(0x3c0, vd.getGranulePosition());
+        avd = tf.getNextAudioVisualPacket();
+        assertNotNull( avd );
+        assertEquals(TheoraVideoData.class, avd.getClass());
+        assertEquals(0, avd.getGranulePosition());
 
-//        vd = vf.getNextVideoPacket();
-//        assertNotNull( vd );
-//        assertEquals(0x3c0, vd.getGranulePosition());
+        avd = tf.getNextAudioVisualPacket();
+        assertNotNull( avd );
+        assertEquals(TheoraVideoData.class, avd.getClass());
+        assertEquals(1, avd.getGranulePosition());
 
-//        vd = vf.getNextVideoPacket();
+        avd = tf.getNextAudioVisualPacket();
+        assertNotNull( avd );
+        assertEquals(TheoraVideoData.class, avd.getClass());
+        assertEquals(3, avd.getGranulePosition());
+
+        avd = tf.getNextAudioVisualPacket();
+        assertNotNull( avd );
+        assertEquals(TheoraVideoData.class, avd.getClass());
+        assertEquals(3, avd.getGranulePosition());
+
+        avd = tf.getNextAudioVisualPacket();
+        assertNotNull( avd );
+        assertEquals(TheoraVideoData.class, avd.getClass());
+        assertEquals(5, avd.getGranulePosition());
+
+        int count = 5;
+        while ((avd = tf.getNextAudioVisualPacket()) != null) {
+            assertEquals(TheoraVideoData.class, avd.getClass());
+            count++;
+        }
+        assertTrue("Not enough, found " + count, count > 100);
+
+        avd = tf.getNextAudioVisualPacket();
         assertNull( avd );
     }
 
@@ -171,18 +201,20 @@ public class TestTheoraFileRead extends TestCase {
 
 
         // Has a handful of video and audio frames interleaved
-        OggStreamAudioData ad = null;
+        OggStreamAudioVisualData avd = null;
 
-//        vd = vf.getNextVideoPacket();
-//        assertNotNull( vd );
-//        assertEquals(0x3c0, vd.getGranulePosition());
+        int numTheora = 0;
+        int numVorbis = 0;
+        while ((avd = tf.getNextAudioVisualPacket()) != null) {
+            if (avd instanceof TheoraVideoData) numTheora++;
+            if (avd instanceof VorbisAudioData) numVorbis++;
+        }
 
-//        vd = vf.getNextVideoPacket();
-//        assertNotNull( vd );
-//        assertEquals(0x3c0, vd.getGranulePosition());
+        assertTrue("Not enough video, found " + numTheora, numTheora > 0);
+        assertTrue("Not enough audio, found " + numVorbis, numVorbis > 5);
 
-//        vd = vf.getNextVideoPacket();
-        assertNull( ad );
+        avd = tf.getNextAudioVisualPacket();
+        assertNull( avd );
     }
 
     public void testReadWithOpusAudio() throws IOException {
@@ -245,19 +277,21 @@ public class TestTheoraFileRead extends TestCase {
                      tf.getSoundtracks().iterator().next().getType());
 
 
-        // Has a handful of video and audio frames
-        TheoraVideoData vd = null;
+        // Has a handful of video and audio frames interleaved
+        OggStreamAudioVisualData avd = null;
 
-//        vd = vf.getNextVideoPacket();
-//        assertNotNull( vd );
-//        assertEquals(0x3c0, vd.getGranulePosition());
+        int numTheora = 0;
+        int numAudio = 0;
+        while ((avd = tf.getNextAudioVisualPacket()) != null) {
+            if (avd instanceof TheoraVideoData) numTheora++;
+            if (avd instanceof OggStreamAudioData) numAudio++;
+        }
 
-//        vd = vf.getNextVideoPacket();
-//        assertNotNull( vd );
-//        assertEquals(0x3c0, vd.getGranulePosition());
+        assertTrue("Not enough video, found " + numTheora, numTheora > 0);
+        assertTrue("Not enough audio, found " + numAudio,  numAudio > 0);
 
-//        vd = vf.getNextVideoPacket();
-        assertNull( vd );
+        avd = tf.getNextAudioVisualPacket();
+        assertNull( avd );
     }
 
     public void testReadWithSkeleton() throws IOException {
