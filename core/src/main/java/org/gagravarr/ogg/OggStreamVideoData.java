@@ -14,13 +14,13 @@
 package org.gagravarr.ogg;
 
 /**
- * Raw, compressed audio
+ * Raw, compressed video
  */
-public class OggStreamAudioData extends OggStreamAudioVisualData {
-    public OggStreamAudioData(OggPacket pkt) {
+public class OggStreamVideoData extends OggStreamAudioVisualData {
+    public OggStreamVideoData(OggPacket pkt) {
         super(pkt);
     }
-    public OggStreamAudioData(byte[] data) {
+    public OggStreamVideoData(byte[] data) {
         super(data);
     }
 }
