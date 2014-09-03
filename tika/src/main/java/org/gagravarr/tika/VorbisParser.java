@@ -79,6 +79,7 @@ public class VorbisParser extends OggAudioParser {
 
       // Finish
       xhtml.endDocument();
+      vorbis.close();
    }
    
    protected void extractInfo(Metadata metadata, VorbisInfo info) throws TikaException {

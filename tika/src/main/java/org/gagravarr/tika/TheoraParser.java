@@ -92,6 +92,7 @@ public class TheoraParser extends AbstractParser {
 
        // Finish
        xhtml.endDocument();
+       theora.close();
     }
 
     protected void extractInfo(Metadata metadata, TheoraInfo info) throws TikaException {

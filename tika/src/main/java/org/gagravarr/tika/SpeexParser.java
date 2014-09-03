@@ -78,6 +78,7 @@ public class SpeexParser extends OggAudioParser {
 
       // Finish
       xhtml.endDocument();
+      speex.close();
    }
    
    protected void extractInfo(Metadata metadata, SpeexInfo info) throws TikaException {

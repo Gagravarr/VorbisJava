@@ -78,6 +78,7 @@ public class OpusParser extends OggAudioParser {
 
       // Finish
       xhtml.endDocument();
+      opus.close();
    }
    
    protected void extractInfo(Metadata metadata, OpusInfo info) throws TikaException {

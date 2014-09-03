@@ -131,6 +131,7 @@ public class OggDetector implements Detector {
 
          // Tidy
          tis.reset();
+         ogg.close();
 
          // TODO See if we found any of the Ogg Metadata streams,
          //  eg Ogg Skeleton / Annodex or CMML, and if so use them

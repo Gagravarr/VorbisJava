@@ -81,6 +81,7 @@ public class FlacParser extends AbstractParser {
 
       // Finish
       xhtml.endDocument();
+      flac.close();
    }
    
    protected void extractInfo(Metadata metadata, FlacInfo info) throws TikaException {

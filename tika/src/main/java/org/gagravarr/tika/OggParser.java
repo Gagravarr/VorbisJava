@@ -28,6 +28,7 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.AbstractParser;
 import org.apache.tika.parser.ParseContext;
+import org.apache.tika.sax.XHTMLContentHandler;
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
@@ -100,6 +101,10 @@ public class OggParser extends AbstractParser {
       List<Integer> sids = new ArrayList<Integer>();
       int totalStreams = 0;
       
+      // Start
+      XHTMLContentHandler xhtml = new XHTMLContentHandler(handler, metadata);
+      xhtml.startDocument();
+
       // Check the streams in turn
       OggPacketReader r = ogg.getPacketReader();
       OggPacket p;
@@ -142,5 +147,9 @@ public class OggParser extends AbstractParser {
 
       // If we found a skeleton stream, report the relations between the streams
       // TODO
+
+      // Finish
+      xhtml.endDocument();
+      ogg.close();
    }
 }
