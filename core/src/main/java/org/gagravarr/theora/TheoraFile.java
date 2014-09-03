@@ -180,6 +180,7 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
 
         this.writtenPackets = new ArrayList<TheoraVideoData>();
         this.soundtracks = new HashMap<Integer, OggAudioStreamHeaders>();
+        this.soundtrackWriters = new HashMap<OggAudioStreamHeaders, OggPacketWriter>();
 
         this.info = info;
         this.comments = comments;

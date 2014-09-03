@@ -29,13 +29,13 @@ public class FlacFirstOggPacket extends HighLevelOggStreamPacket {
    private int majorVersion;
    private int minorVersion;
    private int numberOfHeaderBlocks;
-   private FlacInfo info;
+   private FlacOggInfo info;
    
    public FlacFirstOggPacket() {
-      this(new FlacInfo());
+      this(new FlacOggInfo());
    }
 
-   public FlacFirstOggPacket(FlacInfo info) {
+   public FlacFirstOggPacket(FlacOggInfo info) {
       super();
       majorVersion = 1;
       minorVersion = 0;
@@ -57,7 +57,7 @@ public class FlacFirstOggPacket extends HighLevelOggStreamPacket {
       // 13-16 = 0 + length
       
       // Then it's the info
-      info = new FlacInfo(data, 17);
+      info = new FlacOggInfo(data, 17, majorVersion+"."+minorVersion);
    }
 
    @Override
@@ -93,7 +93,7 @@ public class FlacFirstOggPacket extends HighLevelOggStreamPacket {
       this.majorVersion = majorVersion;
    }
    
-   public FlacInfo getInfo() {
+   public FlacOggInfo getInfo() {
       return info;
    }
 

@@ -97,14 +97,14 @@ public class FlacOggFile extends FlacFile implements OggAudioHeaders {
      * Opens for writing.
      */
     public FlacOggFile(OutputStream out) {
-        this(out, new FlacInfo(), new FlacTags());   
+        this(out, new FlacOggInfo(), new FlacTags());
     }
     /**
      * Opens for writing, based on the settings
      *  from a pre-read file. The Steam ID (SID) is
      *  automatically allocated for you.
      */
-    public FlacOggFile(OutputStream out, FlacInfo info, FlacTags tags) {
+    public FlacOggFile(OutputStream out, FlacOggInfo info, FlacTags tags) {
         this(out, -1, info, tags);
     }
     /**
@@ -113,7 +113,7 @@ public class FlacOggFile extends FlacFile implements OggAudioHeaders {
      *  Steam ID (SID). You should only set the SID
      *  when copying one file to another!
      */
-    public FlacOggFile(OutputStream out, int sid, FlacInfo info, FlacTags tags) {
+    public FlacOggFile(OutputStream out, int sid, FlacOggInfo info, FlacTags tags) {
         ogg = new OggFile(out);
 
         if(sid > 0) {
@@ -221,6 +221,14 @@ public class FlacOggFile extends FlacFile implements OggAudioHeaders {
             ogg.close();
             ogg = null;
         }
+    }
+
+    /**
+     * Return the Ogg-specific version of the Flac Info
+     */
+    @Override
+    public FlacOggInfo getInfo() {
+        return (FlacOggInfo)info;
     }
 
     /**
