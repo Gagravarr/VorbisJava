@@ -57,6 +57,7 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
 
     private SkeletonStream skeleton;
     private Map<Integer,OggAudioStreamHeaders> soundtracks;
+    private Map<OggAudioStreamHeaders, OggPacketWriter> soundtrackWriters;
 
     private LinkedList<OggStreamAudioData> pendingPackets;
     private List<TheoraVideoData> writtenPackets;
@@ -243,26 +244,37 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
     }
     /**
      * Adds a new soundtrack to the video
+     * 
+     * @return the serial id (sid) of the new soundtrack
      */
-    public void addSoundtrack(OggAudioHeaders audio) {
+    public int addSoundtrack(OggAudioHeaders audio) {
         if (w == null) {
             throw new IllegalStateException("Not in write mode");
         }
 
         // If it doesn't have a sid yet, get it one
+        OggPacketWriter aw = null;
         if (audio.getSid() == -1) {
-            // TODO How?
+            aw = ogg.getPacketWriter();
+            // TODO How to tell the OggAudioHeaders the new SID?
+        } else {
+            aw = ogg.getPacketWriter(audio.getSid());
         }
+        int audioSid = aw.getSid();
 
         // If we have a skeleton, tell it about the new stream
         if (skeleton != null) {
-            SkeletonFisbone bone = skeleton.addBoneForStream(audio.getSid());
+            SkeletonFisbone bone = skeleton.addBoneForStream(audioSid);
             bone.setContentType(audio.getType().mimetype);
             // TODO Populate the rest of the bone as best we can
         }
 
         // Record the new audio stream
-        soundtracks.put(audio.getSid(), (OggAudioStreamHeaders)audio);
+        soundtracks.put(audioSid, (OggAudioStreamHeaders)audio);
+        soundtrackWriters.put((OggAudioStreamHeaders)audio, aw);
+
+        // Report the sid
+        return audioSid;
     }
 
     /**
@@ -326,6 +338,10 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
      *  the Info/Comment/Setup objects
      */
     public void writeAudioData(OggStreamAudioData data, int sid) {
+        if (! soundtracks.containsKey(sid)) {
+            throw new IllegalArgumentException("Unknown audio stream with id " + sid);
+        }
+
         // TODO Buffer this somehow
     }
 
@@ -334,34 +350,39 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
      *  file and free its resources.
      * In Writing mode, will write out the Info, Comment
      *  Tags objects, and then the video and audio data.
-     * TODO Support Skeletons too
      */
     public void close() throws IOException {
-        if(r != null) {
+        if (r != null) {
             r = null;
             ogg.close();
             ogg = null;
         }
-        if(w != null) {
+        if (w != null) {
             // First, write the initial packet of each stream
             // Skeleton (if present) goes first, then video, then audio(s)
+            OggPacketWriter sw = null;
             if (skeleton != null) {
-                w.bufferPacket(skeleton.getFishead().write(), true);
+                sw = ogg.getPacketWriter();
+                sw.bufferPacket(skeleton.getFishead().write(), true);
             }
+
             w.bufferPacket(info.write(), true);
-            for (OggAudioStreamHeaders audio : soundtracks.values()) {
+
+            for (OggAudioStreamHeaders audio : soundtrackWriters.keySet()) {
+                OggPacketWriter aw = soundtrackWriters.get(audio);
+
                 // TODO How to let these be write-able?
-                //w.bufferPacket(audio.getInfo().write(), true);
+                //aw.bufferPacket(audio.getInfo().write(), true);
             }
 
             // Next, provide the rest of the skeleton information, to
             //  make it easy to work out what's what
             if (skeleton != null) {
                 for (SkeletonFisbone bone : skeleton.getFisbones()) {
-                    w.bufferPacket(bone.write(), true);
+                    sw.bufferPacket(bone.write(), true);
                 }
                 for (SkeletonKeyFramePacket frame : skeleton.getKeyFrames()) {
-                    w.bufferPacket(frame.write(), true);
+                    sw.bufferPacket(frame.write(), true);
                 }
             }
 
@@ -370,10 +391,18 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
             w.bufferPacket(setup.write(), true);
 
             // Finish the headers with the soundtrack stream remaining headers
-            // TODO Soundtracks
+            for (OggAudioStreamHeaders audio : soundtrackWriters.keySet()) {
+                OggPacketWriter aw = soundtrackWriters.get(audio);
+
+                // TODO How to let these be write-able?
+                //aw.bufferPacket(audio.getTags().write(), true);
+                if (audio.getSetup() != null) {
+                    //aw.bufferPacket(audio.getSetup().write(), true);
+                }
+            }
 
             // TODO Write video, with some sort of granule
-            // TODO Write audio
+            // TODO Write audio alongside the video, with granules
 
             w.close();
             w = null;
