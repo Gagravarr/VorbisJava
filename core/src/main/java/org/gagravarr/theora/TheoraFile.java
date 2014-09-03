@@ -34,6 +34,8 @@ import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.ogg.OggPacketWriter;
 import org.gagravarr.ogg.OggStreamAudioData;
+import org.gagravarr.ogg.OggStreamAudioVisualData;
+import org.gagravarr.ogg.OggStreamVideoData;
 import org.gagravarr.ogg.audio.OggAudioHeaders;
 import org.gagravarr.ogg.audio.OggAudioStreamHeaders;
 import org.gagravarr.skeleton.SkeletonFisbone;
@@ -59,7 +61,7 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
     private Map<Integer,OggAudioStreamHeaders> soundtracks;
     private Map<OggAudioStreamHeaders, OggPacketWriter> soundtrackWriters;
 
-    private LinkedList<OggStreamAudioData> pendingPackets;
+    private LinkedList<OggStreamAudioVisualData> pendingPackets;
     private List<TheoraVideoData> writtenPackets;
 
     /**
@@ -80,7 +82,7 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
      */
     public TheoraFile(OggPacketReader r) throws IOException {
         this.r = r;
-        this.pendingPackets = new LinkedList<OggStreamAudioData>();
+        this.pendingPackets = new LinkedList<OggStreamAudioVisualData>();
         this.soundtracks = new HashMap<Integer, OggAudioStreamHeaders>();
 
         Set<Integer> headerCompleteSoundtracks = new HashSet<Integer>();
@@ -130,11 +132,12 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
                 } else if (skeleton != null && skeleton.getSid() == psid) {
                     skeleton.processPacket(p);
                 } else if (soundtracks.containsKey(psid)) {
+                    OggAudioStreamHeaders audio = soundtracks.get(psid);
                     if (headerCompleteSoundtracks.contains(psid)) {
                         // Onto the data part for this soundtrack
-                        pendingPackets.add(null); // TODO Wrap the soundtrack packet
+                        pendingPackets.add( audio.createAudio(p) );
                     } else {
-                        boolean ongoing = soundtracks.get(psid).populate(p);
+                        boolean ongoing = audio.populate(p);
                         if (! ongoing) {
                             headerCompleteSoundtracks.add(psid);
                         }
@@ -282,15 +285,15 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
      * Returns the next audio or video packet across
      *  any supported stream, or null if no more remain
      */
-    public OggStreamAudioData getNextAudioVideoPacket() throws IOException {
-        return getNextAudioVideoPacket(null);
+    public OggStreamAudioVisualData getNextAudioVisualPacket() throws IOException {
+        return getNextAudioVisualPacket(null);
     }
     /**
      * Returns the next audio or video packet from any of
      *  the specified streams, or null if no more remain
      */
-    public OggStreamAudioData getNextAudioVideoPacket(Set<Integer> sids) throws IOException {
-        OggStreamAudioData data = null;
+    public OggStreamAudioVisualData getNextAudioVisualPacket(Set<Integer> sids) throws IOException {
+        OggStreamAudioVisualData data = null;
 
         if (! pendingPackets.isEmpty()) {
             data = pendingPackets.removeFirst();
@@ -301,10 +304,12 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
             while ((p = r.getNextPacket()) != null) {
                 if (sids == null || sids.contains(p.getSid())) {
                     if (p.getSid() == sid) {
-                        data = (OggStreamAudioData)TheoraPacketFactory.create(p);
+                        data = (OggStreamVideoData)TheoraPacketFactory.create(p);
                         break;
                     } else if (soundtracks.containsKey(p.getSid())) {
-                        // TODO How do we create the soundtrack packet?
+                        OggAudioStreamHeaders audio = soundtracks.get(p.getSid());
+                        data = (OggStreamAudioData)audio.createAudio(p);
+                        break;
                     } else {
                         // We don't know how to handle this stream
                         throw new IllegalArgumentException("Unsupported stream type with sid " + p.getSid());

@@ -14,12 +14,12 @@
 package org.gagravarr.theora;
 
 import org.gagravarr.ogg.OggPacket;
-import org.gagravarr.ogg.OggStreamAudioData;
+import org.gagravarr.ogg.OggStreamVideoData;
 
 /**
  * Raw, compressed video data
  */
-public class TheoraVideoData extends OggStreamAudioData implements TheoraPacket {
+public class TheoraVideoData extends OggStreamVideoData implements TheoraPacket {
     public TheoraVideoData(OggPacket pkt) {
         super(pkt);
     }

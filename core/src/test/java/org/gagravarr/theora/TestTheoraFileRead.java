@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggStreamAudioData;
+import org.gagravarr.ogg.OggStreamAudioVisualData;
 import org.gagravarr.ogg.OggStreamIdentifier;
 import org.gagravarr.skeleton.SkeletonStream;
 
@@ -98,8 +99,8 @@ public class TestTheoraFileRead extends TestCase {
         assertEquals(0, tf.getSoundtracks().size());
         assertEquals(0, tf.getSoundtrackStreams().size());
 
-        // Has a handful of video frames
-        TheoraVideoData vd = null;
+        // Has a handful of video frames, but no audio
+        OggStreamAudioVisualData avd = null;
 
 //        vd = vf.getNextVideoPacket();
 //        assertNotNull( vd );
@@ -110,7 +111,7 @@ public class TestTheoraFileRead extends TestCase {
 //        assertEquals(0x3c0, vd.getGranulePosition());
 
 //        vd = vf.getNextVideoPacket();
-        assertNull( vd );
+        assertNull( avd );
     }
 
     public void testReadWithVorbisAudio() throws IOException {
@@ -334,5 +335,21 @@ public class TestTheoraFileRead extends TestCase {
 
 //        vd = vf.getNextVideoPacket();
         assertNull( vd );
+    }
+
+    /**
+     * Ensure that when we request audio-visual data with
+     *  sid restrictions, we get (only) the data we wanted
+     */
+    public void testGetAudioVisualDataBySid() throws Exception {
+        // Ask for everything, ensure we get everything
+
+        // Ask for just video, shouldn't get audio
+
+        // Ask for video + one audio, rest skipped
+
+        // Ask for both audio, no video, get just that
+
+        // TODO Implement this test
     }
 }
