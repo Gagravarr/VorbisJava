@@ -41,6 +41,7 @@ public class FlacFirstOggPacket extends HighLevelOggStreamPacket {
       minorVersion = 0;
       numberOfHeaderBlocks = 0;
       this.info = info;
+      this.info.setFlacFirstOggPacket(this);
    }
 
    public FlacFirstOggPacket(OggPacket oggPacket) {
@@ -57,7 +58,7 @@ public class FlacFirstOggPacket extends HighLevelOggStreamPacket {
       // 13-16 = 0 + length
       
       // Then it's the info
-      info = new FlacOggInfo(data, 17, majorVersion+"."+minorVersion);
+      info = new FlacOggInfo(data, 17, this);
    }
 
    @Override

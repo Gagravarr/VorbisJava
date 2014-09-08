@@ -13,6 +13,7 @@
  */
 package org.gagravarr.flac;
 
+import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.audio.OggAudioInfoHeader;
 
 /**
@@ -20,28 +21,45 @@ import org.gagravarr.ogg.audio.OggAudioInfoHeader;
  *  {@link FlacFirstOggPacket}
  */
 public class FlacOggInfo extends FlacInfo implements OggAudioInfoHeader {
-    private String version;
+    private FlacFirstOggPacket parent;
 
     /**
      * Creates a new, empty info
      */
     public FlacOggInfo() {
         super();
-        version = "1.0";
     }
-
     /**
      * Reads the Info from the specified data
      */
-    public FlacOggInfo(byte[] data, int offset, String version) {
+    public FlacOggInfo(byte[] data, int offset, FlacFirstOggPacket parent) {
         super(data, offset);
-        this.version = version;
+        this.parent = parent;
+    }
+    /**
+     * Supplies the FlacFirstOggPacket for a new info
+     */
+    protected void setFlacFirstOggPacket(FlacFirstOggPacket parent) {
+        this.parent = parent;
     }
 
     /**
      * The version comes from the parent packet
      */
     public String getVersionString() {
-        return version;
+        return parent.getMajorVersion() + "." + parent.getMinorVersion();
+    }
+
+    /**
+     * Data setting directly not supported
+     */
+    public void setData(byte[] data) {
+        throw new IllegalStateException("Not supported for FLAC");
+    }
+    /**
+     * Data writing passes through to the parent packet
+     */
+    public OggPacket write() {
+        return parent.write();
     }
 }
