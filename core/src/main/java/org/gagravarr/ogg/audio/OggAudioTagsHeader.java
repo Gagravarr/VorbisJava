@@ -13,11 +13,12 @@
  */
 package org.gagravarr.ogg.audio;
 
+import org.gagravarr.ogg.OggStreamPacket;
 
 /**
  * Common interface for the Tags (Comments) header near
  *  the start of an {@link OggAudioStream}
  */
-public interface OggAudioTagsHeader {
+public interface OggAudioTagsHeader extends OggStreamPacket {
     // TODO Bring over the common parts from VorbisStyleComments
 }

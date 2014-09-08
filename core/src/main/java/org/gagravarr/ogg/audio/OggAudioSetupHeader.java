@@ -13,6 +13,7 @@
  */
 package org.gagravarr.ogg.audio;
 
+import org.gagravarr.ogg.OggStreamPacket;
 
 /**
  * Common interface for the Setup header near the
@@ -20,5 +21,5 @@ package org.gagravarr.ogg.audio;
  *
  * Note that not all Ogg Audio formats have Setup headers.
  */
-public interface OggAudioSetupHeader {
+public interface OggAudioSetupHeader extends OggStreamPacket {
 }

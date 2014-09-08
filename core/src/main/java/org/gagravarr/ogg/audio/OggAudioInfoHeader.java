@@ -13,17 +13,19 @@
  */
 package org.gagravarr.ogg.audio;
 
+import org.gagravarr.ogg.OggStreamPacket;
 
 /**
  * Common interface for the Info (Information /
  *  Identification) header at the start of an
  *  {@link OggAudioStream}
  */
-public interface OggAudioInfoHeader {
+public interface OggAudioInfoHeader extends OggStreamPacket {
     /**
      * @return The version of the codec / format used
      */
     public String getVersionString();
 
     // TODO Can we bring any more common things across?
+    // TODO Perhaps sample rates, channel counts etc?
 }
