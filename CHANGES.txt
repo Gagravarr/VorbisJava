@@ -1,5 +1,9 @@
 Version 0.7 (In Progress)
- (No changes yet)
+ * VorbisFile / OpusFile / etc with close methods support
+   the java.io.Closeable() interface
+ * Skeleton (stream metadata) read support, and info tool
+ * Common interfaces for Audio streams and headers
+ * Basic Theora read support
 
 Version 0.6 (2014-05-09)
  * Tika audio parsers extraction of audio length

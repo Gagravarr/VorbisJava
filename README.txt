@@ -2,7 +2,7 @@
            -----------------------------
 
 This library is a pure Java, Apache v2 licensed project for working with
-Ogg, Vorbis, FLAC, Opus and Speex files
+Ogg, Vorbis, FLAC, Opus, Speex and Theora files
 
 Currently, support for the Ogg container is fairly complete, offering
 the ability to read, write, add and change streams within an Ogg file.
@@ -28,6 +28,9 @@ Very limited support is also included for FLAC comments (user metadata),
 which use the same scheme as Vorbis. FLAC-native and FLAC-in-Ogg files
 are both supproted for extracting the user metadata.
 
+Theora support is of a similar level to that for Opus and Speex, providing
+basic access to metadata (both video and soundtrack), but not much else.
+
 
 Tools
 -----
@@ -46,6 +49,10 @@ included.
      Prints detailed information on the contents of a Vorbis file, including
      versions, comments, bitrates, channels and audio rates, codebooks
      and file length
+
+  org.gagravarr.skeleton.tools.SkeletonInfoTool
+     Prints information on a skeleton-described ogg file, reporting on
+     a per-bone basis about the streams described and their metadata
 
   org.gagravarr.vorbis.tools.VorbisCommentTool
      Allows the listing and editing of comments (user metadata) of a Vorbis
@@ -68,8 +75,9 @@ Apache Tika
 Included in the tika module are Parser and Detector plugins for
 Apache Tika for Ogg based file formats. Currently, parsers are only available
 for the Audio formats (Vorbis, Opus, Speex, Flac), but a basic stream info
-outputting parser exists for other Ogg types. Detection should handle all
-the well known Ogg formats (Audio and Video).
+outputting parser exists for other Ogg types. Theora video support should
+be available shortly. Detection should handle all the well known Ogg 
+formats (Audio and Video).
 
 The parsers and detector include appropriate service registry entries for Tika 
 to allow these plugins to be automatically loaded by Tika. Simply ensure that 
@@ -79,7 +87,7 @@ they will be used.
 
 Getting Started
 ---------------
-There are five main classes that you can start with, depending on the
+There are seven main classes that you can start with, depending on the
 kind of file you have, and your interests. These are:
 
   org.gagravarr.ogg.OggFile
@@ -96,6 +104,11 @@ kind of file you have, and your interests. These are:
      the key parts of the Opus file, such as info and comments.
      (No support at all for audio packets, for now)
 
+  org.gagravarr.speex.SpeexFile
+     Provides read support for Ogg Speex audio files. Provides access to 
+     the key parts of the Speex file, such as info and comments.
+     (No support at all for audio packets, for now)
+
   org.gagravarr.flac.FlacOggFile
      Provides read support for FLAC files stored in an Ogg container. Allows
      access to the key parts of the file, such as Info, Tags and compressed
@@ -105,6 +118,10 @@ kind of file you have, and your interests. These are:
      Provides read support for regular FLAC files. Provides access to the 
      key parts of the file, such as Info, Tags and compressed audio. 
      (No encoding or decoding of audio packets though)
+
+  org.gagravarr.skeleton.SkeletonStream
+     Provides read support for a Skeleton metadata stream, typically
+     contained within a video or audio file.
 
 The best way to see how to use the code is to look at the Tools Package,
 which has examples of reading and writing tags, and the Tika Package, which
