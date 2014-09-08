@@ -15,6 +15,9 @@ package org.gagravarr.theora;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -22,7 +25,10 @@ import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggStreamAudioData;
 import org.gagravarr.ogg.OggStreamAudioVisualData;
 import org.gagravarr.ogg.OggStreamIdentifier;
+import org.gagravarr.ogg.OggStreamVideoData;
+import org.gagravarr.opus.OpusAudioData;
 import org.gagravarr.skeleton.SkeletonStream;
+import org.gagravarr.speex.SpeexAudioData;
 import org.gagravarr.vorbis.VorbisAudioData;
 
 /**
@@ -40,6 +46,9 @@ public class TestTheoraFileRead extends TestCase {
     }
     private InputStream getTheoraSpeexFile() throws IOException {
         return this.getClass().getResourceAsStream("/testTheoraSPEEX.ogg");
+    }
+    private InputStream getTheoraVorbisOpusSpeexFile() throws IOException {
+        return this.getClass().getResourceAsStream("/testTheoraAudio3.ogg");
     }
     // TODO Finish the other test files and use them
 
@@ -377,13 +386,89 @@ public class TestTheoraFileRead extends TestCase {
      */
     public void testGetAudioVisualDataBySid() throws Exception {
         // Ask for everything, ensure we get everything
+        OggFile ogg = new OggFile(getTheoraVorbisOpusSpeexFile());
+        tf = new TheoraFile(ogg);
+
+        assertEquals(null, tf.getSkeleton());
+        assertEquals(3, tf.getSoundtracks().size());
+
+        int tsid = 1466951650;
+        int vsid = 74691676;
+        int ssid = 478384172;
+        int osid = 801682967;
+        assertEquals(tsid, tf.getSid());
+        assertEquals(true, tf.getSoundtrackStreams().containsKey(vsid));
+        assertEquals(true, tf.getSoundtrackStreams().containsKey(ssid));
+        assertEquals(true, tf.getSoundtrackStreams().containsKey(osid));
+
+
+        int videoPackets = 0;
+        int opusPackets = 0;
+        int speexPackets = 0;
+        int vorbisPackets = 0;
 
         // Ask for just video, shouldn't get audio
+        OggStreamAudioVisualData avd;
+        Set<Integer> sids = Collections.singleton(tsid);
+        do {
+            avd = tf.getNextAudioVisualPacket(sids);
+            if (avd != null) {
+                assertFalse(avd instanceof OggStreamAudioData);
+                assertTrue(avd instanceof OggStreamVideoData);
+                videoPackets++;
+            }
+        } while (avd != null);
+        assertEquals(2, videoPackets);
+
 
         // Ask for video + one audio, rest skipped
+        ogg = new OggFile(getTheoraVorbisOpusSpeexFile());
+        tf = new TheoraFile(ogg);
 
-        // Ask for both audio, no video, get just that
+        sids = new HashSet<Integer>();
+        sids.add(tsid);
+        sids.add(osid);
 
-        // TODO Implement this test
+        videoPackets = 0;
+        opusPackets = 0;
+        do {
+            avd = tf.getNextAudioVisualPacket(sids);
+            if (avd != null) {
+                if (avd instanceof OggStreamVideoData) videoPackets++;
+                else if (avd instanceof OpusAudioData) opusPackets++;
+                else fail("Unexpected type " + avd);
+            }
+        } while (avd != null);
+        assertEquals(2, videoPackets);
+        assertEquals(2, opusPackets);
+
+
+        // Ask for all audio, no video, get just that
+        ogg = new OggFile(getTheoraVorbisOpusSpeexFile());
+        tf = new TheoraFile(ogg);
+
+        sids = new HashSet<Integer>();
+        sids.add(vsid);
+        sids.add(ssid);
+        sids.add(osid);
+
+        videoPackets = 0;
+        opusPackets = 0;
+        speexPackets = 0;
+        vorbisPackets = 0;
+        do {
+            avd = tf.getNextAudioVisualPacket(sids);
+            if (avd != null) {
+                assertFalse(avd instanceof OggStreamVideoData);
+                if (avd instanceof OpusAudioData) opusPackets++;
+                else if (avd instanceof SpeexAudioData) speexPackets++;
+                else if (avd instanceof VorbisAudioData) vorbisPackets++;
+                else fail("Unexpected type " + avd);
+            }
+        } while (avd != null);
+        assertEquals(0, videoPackets);
+        assertEquals(2, opusPackets);
+        assertEquals(3, speexPackets);
+        assertEquals(9, vorbisPackets);
     }
 }

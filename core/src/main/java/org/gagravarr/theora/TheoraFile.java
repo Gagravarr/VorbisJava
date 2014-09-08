@@ -61,7 +61,7 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
     private Map<Integer,OggAudioStreamHeaders> soundtracks;
     private Map<OggAudioStreamHeaders, OggPacketWriter> soundtrackWriters;
 
-    private LinkedList<OggStreamAudioVisualData> pendingPackets;
+    private LinkedList<AudioVisualDataAndSid> pendingPackets;
     private List<AudioVisualDataAndSid> writtenPackets;
 
     /**
@@ -82,7 +82,7 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
      */
     public TheoraFile(OggPacketReader r) throws IOException {
         this.r = r;
-        this.pendingPackets = new LinkedList<OggStreamAudioVisualData>();
+        this.pendingPackets = new LinkedList<AudioVisualDataAndSid>();
         this.soundtracks = new HashMap<Integer, OggAudioStreamHeaders>();
 
         Set<Integer> headerCompleteSoundtracks = new HashSet<Integer>();
@@ -123,10 +123,11 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
                         setup = (TheoraSetup)tp;
                         packetsSinceSetup = 0;
                     } else {
-                        pendingPackets.add((TheoraVideoData)tp);
+                        pendingPackets.add(new AudioVisualDataAndSid(
+                                               (TheoraVideoData)tp, sid));
                         packetsSinceSetup++;
 
-                        // Are we, in all likelyhood, past all the headers?
+                        // Are we, in all likelihood, past all the headers?
                         if (packetsSinceSetup > 10) break;
                     }
                 } else if (skeleton != null && skeleton.getSid() == psid) {
@@ -135,7 +136,8 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
                     OggAudioStreamHeaders audio = soundtracks.get(psid);
                     if (headerCompleteSoundtracks.contains(psid)) {
                         // Onto the data part for this soundtrack
-                        pendingPackets.add( audio.createAudio(p) );
+                        pendingPackets.add(new AudioVisualDataAndSid(
+                                               audio.createAudio(p), psid));
                     } else {
                         boolean ongoing = audio.populate(p);
                         if (! ongoing) {
@@ -295,8 +297,11 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
     public OggStreamAudioVisualData getNextAudioVisualPacket(Set<Integer> sids) throws IOException {
         OggStreamAudioVisualData data = null;
 
-        if (! pendingPackets.isEmpty()) {
-            data = pendingPackets.removeFirst();
+        while (data == null && !pendingPackets.isEmpty()) {
+            AudioVisualDataAndSid avd = pendingPackets.removeFirst();
+            if (sids == null || sids.contains(avd.sid)) {
+                data = avd.data;
+            }
         }
 
         if (data == null) {
