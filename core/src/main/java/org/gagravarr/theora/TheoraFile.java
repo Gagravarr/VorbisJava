@@ -62,7 +62,7 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
     private Map<OggAudioStreamHeaders, OggPacketWriter> soundtrackWriters;
 
     private LinkedList<OggStreamAudioVisualData> pendingPackets;
-    private List<TheoraVideoData> writtenPackets;
+    private List<AudioVisualDataAndSid> writtenPackets;
 
     /**
      * Opens the given file for reading
@@ -181,7 +181,7 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
             this.sid = w.getSid();
         }
 
-        this.writtenPackets = new ArrayList<TheoraVideoData>();
+        this.writtenPackets = new ArrayList<AudioVisualDataAndSid>();
         this.soundtracks = new HashMap<Integer, OggAudioStreamHeaders>();
         this.soundtrackWriters = new HashMap<OggAudioStreamHeaders, OggPacketWriter>();
 
@@ -333,7 +333,7 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
      *  the Info/Comment/Setup objects
      */
     public void writeVideoData(TheoraVideoData data) {
-        writtenPackets.add(data);
+        writtenPackets.add(new AudioVisualDataAndSid(data, sid));
     }
     /**
      * Buffers the given audio ready for writing
@@ -343,12 +343,12 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
      *  because we assume you'll still be populating
      *  the Info/Comment/Setup objects
      */
-    public void writeAudioData(OggStreamAudioData data, int sid) {
-        if (! soundtracks.containsKey(sid)) {
-            throw new IllegalArgumentException("Unknown audio stream with id " + sid);
+    public void writeAudioData(OggStreamAudioData data, int audioSid) {
+        if (! soundtracks.containsKey(audioSid)) {
+            throw new IllegalArgumentException("Unknown audio stream with id " + audioSid);
         }
 
-        // TODO Buffer this somehow
+        writtenPackets.add(new AudioVisualDataAndSid(data, audioSid));
     }
 
     /**
@@ -403,11 +403,42 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
                 }
             }
 
-            // TODO Write video, with some sort of granule
-            // TODO Write audio alongside the video, with granules
+            // Write the audio visual data, along with their granules
+            long lastGranule = 0;
+            for (AudioVisualDataAndSid avData : writtenPackets) {
+                OggPacketWriter avw = w;
+                if (avData.sid != sid) {
+                    avw = soundtrackWriters.get(avData.sid);
+                }
 
+                // Update the granule position as we go
+                // TODO Is this the correct logic for multi-stream writing?
+                if(avData.data.getGranulePosition() >= 0 &&
+                        lastGranule != avData.data.getGranulePosition()) {
+                    avw.flush();
+                    lastGranule = avData.data.getGranulePosition();
+                    avw.setGranulePosition(lastGranule);
+                }
+
+                // Write the data, flushing if needed
+                avw.bufferPacket(avData.data.write());
+                if(avw.getSizePendingFlush() > 16384) {
+                    avw.flush();
+                }
+            }
+
+            // Close down all our writers
             w.close();
             w = null;
+
+            if (sw != null) {
+                sw.close();
+                sw = null;
+            }
+            for (OggPacketWriter aw : soundtrackWriters.values()) {
+                aw.close();
+            }
+
             ogg.close();
             ogg = null;
         }
@@ -419,5 +450,15 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
      */
     public OggFile getOggFile() {
         return ogg;
+    }
+
+    // TODO Decide if this can be made generic and non-Theora
+    protected static class AudioVisualDataAndSid {
+        protected OggStreamAudioVisualData data;
+        protected int sid;
+        private AudioVisualDataAndSid(OggStreamAudioVisualData data, int sid) {
+            this.data = data;
+            this.sid = sid;
+        }
     }
 }
