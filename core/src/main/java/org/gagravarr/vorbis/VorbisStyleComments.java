@@ -25,12 +25,13 @@ import java.util.Map;
 import org.gagravarr.ogg.HighLevelOggStreamPacket;
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggPacket;
+import org.gagravarr.ogg.audio.OggAudioTagsHeader;
 
 /**
  * General class for all Vorbis-style comments/tags, as used
  *  by things like Vorbis, Opus and FLAC.
  */
-public abstract class VorbisStyleComments extends HighLevelOggStreamPacket {
+public abstract class VorbisStyleComments extends HighLevelOggStreamPacket implements OggAudioTagsHeader {
    public static final String KEY_ARTIST = "artist";
    public static final String KEY_ALBUM = "album";
    public static final String KEY_TITLE = "title";
@@ -168,7 +169,7 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket {
    /**
     * Returns the (first) Date, or null if no
     *  Date tags present. Dates are normally stored
-    *  in ISO8601 date format, i.e. YYYY-MM-DD 
+    *  in ISO8601 date format, i.e. YYYY-MM-DD
     */
    public String getDate() {
        return getSingleComment("date");

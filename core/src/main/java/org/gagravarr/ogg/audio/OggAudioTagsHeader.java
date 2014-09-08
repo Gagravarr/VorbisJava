@@ -13,6 +13,8 @@
  */
 package org.gagravarr.ogg.audio;
 
+import java.util.List;
+
 import org.gagravarr.ogg.OggStreamPacket;
 
 /**
@@ -20,5 +22,49 @@ import org.gagravarr.ogg.OggStreamPacket;
  *  the start of an {@link OggAudioStream}
  */
 public interface OggAudioTagsHeader extends OggStreamPacket {
-    // TODO Bring over the common parts from VorbisStyleComments
+    public String getVendor();
+
+    /**
+     * Returns the (first) Artist, or null if no
+     *  Artist tags present.
+     */
+    public String getArtist();
+    /**
+     * Returns the (first) Album, or null if no
+     *  Album tags present.
+     */
+    public String getAlbum();
+    /**
+     * Returns the (first) Title, or null if no
+     *  Title tags present.
+     */
+    public String getTitle();
+    /**
+     * Returns the (first) Genre, or null if no
+     *  Genre tags present.
+     */
+    public String getGenre();
+    /**
+     * Returns the (first) track number as a literal
+     *  string, eg "4" or "09", or null if
+     *  no track number tags present;
+     */
+    public String getTrackNumber();
+    /**
+     * Returns the track number, as converted into
+     *  an integer, or -1 if not available / not numeric
+     */
+    public int getTrackNumberNumeric();
+    /**
+     * Returns the (first) Date, or null if no
+     *  Date tags present. Dates are normally stored
+     *  in ISO8601 date format, i.e. YYYY-MM-DD
+     */
+    public String getDate();
+    /**
+     * Returns all comments for a given tag, in
+     *  file order. Will return an empty list for
+     *  tags which aren't present.
+     */
+    public List<String> getComments(String tag);
 }
