@@ -376,9 +376,7 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
 
             for (OggAudioStreamHeaders audio : soundtrackWriters.keySet()) {
                 OggPacketWriter aw = soundtrackWriters.get(audio);
-
-                // TODO How to let these be write-able?
-                //aw.bufferPacket(audio.getInfo().write(), true);
+                aw.bufferPacket(audio.getInfo().write(), true);
             }
 
             // Next, provide the rest of the skeleton information, to
@@ -399,11 +397,9 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
             // Finish the headers with the soundtrack stream remaining headers
             for (OggAudioStreamHeaders audio : soundtrackWriters.keySet()) {
                 OggPacketWriter aw = soundtrackWriters.get(audio);
-
-                // TODO How to let these be write-able?
-                //aw.bufferPacket(audio.getTags().write(), true);
+                aw.bufferPacket(audio.getTags().write(), true);
                 if (audio.getSetup() != null) {
-                    //aw.bufferPacket(audio.getSetup().write(), true);
+                    aw.bufferPacket(audio.getSetup().write(), true);
                 }
             }
 
