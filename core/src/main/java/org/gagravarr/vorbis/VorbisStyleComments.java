@@ -70,12 +70,12 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
            }
        }
 
-       if(offset < d.length) {
-           byte framingBit = d[offset];
-           if(framingBit == 0) {
-               throw new IllegalArgumentException("Framing bit not set, invalid");
-           }
-       }
+//       if(offset < d.length) {
+//           byte framingBit = d[offset];
+//           if(framingBit == 0) {
+//               throw new IllegalArgumentException("Framing bit not set, invalid");
+//           }
+//       }
    }
 
    public VorbisStyleComments() {
