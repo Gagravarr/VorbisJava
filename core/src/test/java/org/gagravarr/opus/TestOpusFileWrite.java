@@ -26,12 +26,15 @@ import org.gagravarr.ogg.OggFile;
  * Tests for round-tripping with OpusFile
  */
 public class TestOpusFileWrite extends TestCase {
-    private InputStream getTestFile() throws IOException {
-        return this.getClass().getResourceAsStream("/testOPUS.opus");
+    private InputStream getTest09File() throws IOException {
+        return this.getClass().getResourceAsStream("/testOPUS_09.opus");
+    }
+    private InputStream getTest11File() throws IOException {
+        return this.getClass().getResourceAsStream("/testOPUS_11.opus");
     }
 
     public void testReadWrite() throws IOException {
-        OggFile in = new OggFile(getTestFile());
+        OggFile in = new OggFile(getTest09File());
         OpusFile opIN = new OpusFile(in);
 
         int infoSize = opIN.getInfo().getData().length;
@@ -57,63 +60,67 @@ public class TestOpusFileWrite extends TestCase {
     }
 
     public void testReadWriteRead() throws IOException {
-        OggFile in = new OggFile(getTestFile());
-        OpusFile opOrig = new OpusFile(in);
+        for (InputStream inpStream : new InputStream[] {
+            getTest09File()//, getTest11File() // TODO Fix to work with LibOpus 1.1    
+        }) {
+            OggFile in = new OggFile(inpStream);
+            OpusFile opOrig = new OpusFile(in);
 
-        int infoSize = opOrig.getInfo().getData().length;
-        int tagsSize = opOrig.getTags().getData().length;
+            int infoSize = opOrig.getInfo().getData().length;
+            int tagsSize = opOrig.getTags().getData().length;
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        OpusFile opOUT = new OpusFile(
-                baos,
-                opOrig.getInfo(),
-                opOrig.getTags()
-        );
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            OpusFile opOUT = new OpusFile(
+                    baos,
+                    opOrig.getInfo(),
+                    opOrig.getTags()
+            );
 
-        OpusAudioData oad;
-        while( (oad = opOrig.getNextAudioPacket()) != null ) {
-            opOUT.writeAudioData(oad);
+            OpusAudioData oad;
+            while( (oad = opOrig.getNextAudioPacket()) != null ) {
+                opOUT.writeAudioData(oad);
+            }
+
+            opOrig.close();
+            opOUT.close();
+
+
+            // Now open the new one
+            OpusFile opIN = new OpusFile(new OggFile(
+                    new ByteArrayInputStream(baos.toByteArray())
+            ));
+
+            // And check
+            assertEquals(2, opIN.getInfo().getChannels());
+            assertEquals(44100, opIN.getInfo().getRate());
+
+            assertEquals("Test Title", opIN.getTags().getTitle());
+            assertEquals("Test Artist", opIN.getTags().getArtist());
+
+            // Has some audio data, but not very much
+            OpusAudioData ad = null;
+
+            ad = opIN.getNextAudioPacket();
+            assertNotNull( ad );
+            assertEquals(0x579, ad.getGranulePosition());
+
+            ad = opIN.getNextAudioPacket();
+            assertNotNull( ad );
+            assertEquals(0x579, ad.getGranulePosition());
+
+            ad = opIN.getNextAudioPacket();
+            assertNull( ad );
+
+
+            // Check the core packets stayed the same size
+            assertEquals(infoSize, opOUT.getInfo().getData().length);
+            assertEquals(tagsSize, opOUT.getTags().getData().length);
+
+            assertEquals(infoSize, opIN.getInfo().getData().length);
+            assertEquals(tagsSize, opIN.getTags().getData().length);
+
+            // Tidy up
+            opIN.close();
         }
-
-        opOrig.close();
-        opOUT.close();
-
-
-        // Now open the new one
-        OpusFile opIN = new OpusFile(new OggFile(
-                new ByteArrayInputStream(baos.toByteArray())
-        ));
-
-        // And check
-        assertEquals(2, opIN.getInfo().getChannels());
-        assertEquals(44100, opIN.getInfo().getRate());
-
-        assertEquals("Test Title", opIN.getTags().getTitle());
-        assertEquals("Test Artist", opIN.getTags().getArtist());
-
-        // Has some audio data, but not very much
-        OpusAudioData ad = null;
-        
-        ad = opIN.getNextAudioPacket();
-        assertNotNull( ad );
-        assertEquals(0x579, ad.getGranulePosition());
-        
-        ad = opIN.getNextAudioPacket();
-        assertNotNull( ad );
-        assertEquals(0x579, ad.getGranulePosition());
-        
-        ad = opIN.getNextAudioPacket();
-        assertNull( ad );
-
-
-        // Check the core packets stayed the same size
-        assertEquals(infoSize, opOUT.getInfo().getData().length);
-        assertEquals(tagsSize, opOUT.getTags().getData().length);
-
-        assertEquals(infoSize, opIN.getInfo().getData().length);
-        assertEquals(tagsSize, opIN.getTags().getData().length);
-
-        // Tidy up
-        opIN.close();
     }
 }

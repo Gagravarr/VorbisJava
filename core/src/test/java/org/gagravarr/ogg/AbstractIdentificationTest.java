@@ -35,7 +35,7 @@ public abstract class AbstractIdentificationTest extends TestCase {
         return AbstractIdentificationTest.class.getResourceAsStream("/testSPEEX.spx");
     }
     protected static InputStream getTestOpusFile() throws IOException {
-        return AbstractIdentificationTest.class.getResourceAsStream("/testOPUS.opus");
+        return AbstractIdentificationTest.class.getResourceAsStream("/testOPUS_09.opus");
     }
     protected static InputStream getTestFlacOggFile() throws IOException {
         return AbstractIdentificationTest.class.getResourceAsStream("/testFLAC.oga");
