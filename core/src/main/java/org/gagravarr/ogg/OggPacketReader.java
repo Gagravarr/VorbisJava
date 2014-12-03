@@ -21,9 +21,11 @@ public class OggPacketReader {
 	private InputStream inp;
 	private Iterator<OggPacketData> it;
 	private OggPacket nextPacket;
+	private OggPage currentPage;
 	
 	public OggPacketReader(InputStream inp) {
 		this.inp = inp;
+		currentPage = null;
 	}
 
 	/**
@@ -120,6 +122,7 @@ public class OggPacketReader {
 					Integer.toHexString(page.getSid()) + " (" +
 					page.getSid() + ")");
 		}
+		currentPage = page;
 		it = page.getPacketIterator(leftOver);
 		return getNextPacket();
 	}
@@ -152,6 +155,11 @@ public class OggPacketReader {
 	   }
 	   nextPacket = packet;
 	}
+	
+	public OggPage getCurrentPage() {
+		return currentPage;
+	}
+	
 	
 	/**
 	 * Skips forward until the first packet with a Sequence Number
@@ -190,4 +198,5 @@ public class OggPacketReader {
 			}
 		}
 	}
+	
 }
