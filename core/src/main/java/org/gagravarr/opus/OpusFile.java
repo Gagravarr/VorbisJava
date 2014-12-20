@@ -104,8 +104,11 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
 		// First two packets are required to be info then tags
 		info = (OpusInfo)OpusPacketFactory.create( firstPacket );
 		tags = (OpusTags)OpusPacketFactory.create( secondPacket );
-		info.updateInfoFromStream(r, sid, initialPage, firstPacket, secondPacket);
-		
+		if (r.markSupported()) {
+			r.mark();
+			info.updateInfoFromStream(r, sid, initialPage, firstPacket, secondPacket);
+			r.reset();
+		}
 //        System.err.println("Packet duration:"+(max_packet_duration/48.0)+"ms (max), "
 //        +(total_samples/total_packets/48.0)+"ms (avg), "+min_packet_duration/48.0+"ms (min)");
 //        double time = (lastgranulepos-firstgranulepos-info.getPreSkip()) / 48000.;
