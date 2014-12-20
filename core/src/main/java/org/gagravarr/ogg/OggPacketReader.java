@@ -13,8 +13,10 @@
  */
 package org.gagravarr.ogg;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.FileChannel;
 import java.util.Iterator;
 
 public class OggPacketReader {
@@ -22,6 +24,8 @@ public class OggPacketReader {
 	private Iterator<OggPacketData> it;
 	private OggPacket nextPacket;
 	private OggPage currentPage;
+	private FileChannel channel;
+	private long pos;
 	
 	public OggPacketReader(InputStream inp) {
 		this.inp = inp;
@@ -199,4 +203,35 @@ public class OggPacketReader {
 		}
 	}
 	
+	
+	/**
+	 * Checks if the underlying inputstream supports marks. Needed currently only by OpusInfo.
+	 * @return true if the inputstream supports marks.
+	 */
+	public boolean markSupported() {
+		if (inp instanceof FileInputStream) {
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * Sets the mark at the current position.
+	 * @throws IOException if the stream is closed
+	 */
+	public void mark() throws IOException {
+		if (!markSupported()) return;
+		channel = ((FileInputStream)inp).getChannel();
+		pos = channel.position(); 
+		//inp.mark(max);
+	}
+	/**
+	 * Resets the inputstream to the mark set before.
+	 * @throws IOException if the inputstream could not be reset.
+ 	 */
+	public void reset() throws IOException {
+	    if (channel != null)
+	    	channel.position(pos);
+	}
 }
+
+
