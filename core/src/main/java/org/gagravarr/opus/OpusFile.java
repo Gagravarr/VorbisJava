@@ -26,6 +26,7 @@ import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.ogg.OggPacketWriter;
+import org.gagravarr.ogg.OggPage;
 import org.gagravarr.ogg.OggStreamIdentifier;
 import org.gagravarr.ogg.OggStreamIdentifier.OggStreamType;
 import org.gagravarr.ogg.audio.OggAudioHeaders;
@@ -37,198 +38,234 @@ import org.gagravarr.ogg.audio.OggAudioStream;
  *  get at all the interesting bits of an Opus file.
  */
 public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
-    private OggFile ogg;
-    private OggPacketReader r;
-    private OggPacketWriter w;
-    private int sid = -1;
+	private OggFile ogg;
+	private OggPacketReader r;
+	private OggPacketWriter w;
+	private int sid = -1;
 
-    private OpusInfo info;
-    private OpusTags tags;
+	private OpusInfo info;
+	private OpusTags tags;
 
-    private List<OpusAudioData> writtenPackets;
+	private List<OpusAudioData> writtenPackets;
 
-    /**
-     * Opens the given file for reading
-     */
-    public OpusFile(File f) throws IOException, FileNotFoundException {
-        this(new OggFile(new FileInputStream(f)));
-    }
-    /**
-     * Opens the given file for reading
-     */
-    public OpusFile(OggFile ogg) throws IOException {
-        this(ogg.getPacketReader());
-        this.ogg = ogg;
-    }
-    /**
-     * Loads a Opus File from the given packet reader.
-     */
-    public OpusFile(OggPacketReader r) throws IOException {	
-        this.r = r;
+	/**
+	 * Opens the given file for reading
+	 */
+	public OpusFile(File f) throws IOException, FileNotFoundException {
+		this(new OggFile(new FileInputStream(f)));
+	}
+	/**
+	 * Opens the given file for reading
+	 */
+	public OpusFile(OggFile ogg) throws IOException {
+		this(ogg.getPacketReader());
+		this.ogg = ogg;
+	}
+	/**
+	 * Loads a Opus File from the given packet reader.
+	 */
+	public OpusFile(OggPacketReader r) throws IOException {	
+		this.r = r;
 
-        OggPacket p = null;
-        while( (p = r.getNextPacket()) != null ) {
-            if (p.isBeginningOfStream() && p.getData().length > 10) {
-                if (OpusPacketFactory.isOpusStream(p)) {
-                    sid = p.getSid();
-                    break;
-                }
-            }
-        }
-        if (sid == -1) {
-            throw new IllegalArgumentException("Supplied File is not Opus");
-        }
+		OggPacket p = null;
+		//p = r.getNextPacket();
+		OggPacket firstPacket = null;
+		OggPacket secondPacket = null;
+		OggPage initialPage = null; 
+		OggPage otherPage = null;
+		while( (p = r.getNextPacket()) != null ) {
+			if (p.isBeginningOfStream() && p.getData().length > 10) {
+				if (OpusPacketFactory.isOpusStream(p)) {
+					sid = p.getSid();
+					if (sid == -1) {
+						throw new IllegalArgumentException("Supplied File is not Opus");
+					}
+					firstPacket = p;
+					initialPage = r.getCurrentPage();
+					secondPacket = r.getNextPacketWithSid(sid);
+					otherPage = r.getCurrentPage();
+					break;
 
-        // First two packets are required to be info then tags
-        info = (OpusInfo)OpusPacketFactory.create( p );
-        tags = (OpusTags)OpusPacketFactory.create( r.getNextPacketWithSid(sid) );
-
+				}
+			}
+		}
+		
+		if (initialPage == null) {
+			System.out.println("Initial page null!");
+		}
+		if (otherPage == null) {
+			System.out.println("Other page null!");
+		}
+		//if (otherPage.getSequenceNumber() != initialPage.getSequenceNumber()) {
+		//	System.out.println("Page advanced!");
+		//}
+		
+		
+		// First two packets are required to be info then tags
+		info = (OpusInfo)OpusPacketFactory.create( firstPacket );
+		tags = (OpusTags)OpusPacketFactory.create( secondPacket );
+		if (r.markSupported()) {
+			r.mark();
+			info.updateInfoFromStream(r, sid, initialPage, firstPacket, secondPacket);
+			r.reset();
+		}
+//        System.err.println("Packet duration:"+(max_packet_duration/48.0)+"ms (max), "
+//        +(total_samples/total_packets/48.0)+"ms (avg), "+min_packet_duration/48.0+"ms (min)");
+//        double time = (lastgranulepos-firstgranulepos-info.getPreSkip()) / 48000.;
+//        if (time<=0) time =0;
+//        int minutes = (int)time / 60;
+//        int seconds = (int)(time - (minutes*60));
+//        int milliseconds = (int)((time - minutes*60 - seconds)*1000);
+//        System.err.println("Playback duration:"+minutes+"m:"+seconds+"."+milliseconds+"s");
+        
         // Everything else should be audio data
-    }
+	}
 
-    /**
-     * Opens for writing.
-     */
-    public OpusFile(OutputStream out) {
-        this(out, new OpusInfo(), new OpusTags());   
-    }
-    /**
-     * Opens for writing, based on the settings
-     *  from a pre-read file. The Steam ID (SID) is
-     *  automatically allocated for you.
-     */
-    public OpusFile(OutputStream out, OpusInfo info, OpusTags tags) {
-        this(out, -1, info, tags);
-    }
-    /**
-     * Opens for writing, based on the settings
-     *  from a pre-read file, with a specific
-     *  Steam ID (SID). You should only set the SID
-     *  when copying one file to another!
-     */
-    public OpusFile(OutputStream out, int sid, OpusInfo info, OpusTags tags) {
-        ogg = new OggFile(out);
+	
 
-        if(sid > 0) {
-            w = ogg.getPacketWriter(sid);
-            this.sid = sid;
-        } else {
-            w = ogg.getPacketWriter();
-            this.sid = w.getSid();
-        }
+	/**
+	 * Opens for writing.
+	 */
+	 public OpusFile(OutputStream out) {
+		 this(out, new OpusInfo(), new OpusTags());   
+	 }
+	 /**
+	  * Opens for writing, based on the settings
+	  *  from a pre-read file. The Steam ID (SID) is
+	  *  automatically allocated for you.
+	  */
+	 public OpusFile(OutputStream out, OpusInfo info, OpusTags tags) {
+		 this(out, -1, info, tags);
+	 }
+	 /**
+	  * Opens for writing, based on the settings
+	  *  from a pre-read file, with a specific
+	  *  Steam ID (SID). You should only set the SID
+	  *  when copying one file to another!
+	  */
+	 public OpusFile(OutputStream out, int sid, OpusInfo info, OpusTags tags) {
+		 ogg = new OggFile(out);
 
-        writtenPackets = new ArrayList<OpusAudioData>();
+		 if(sid > 0) {
+			 w = ogg.getPacketWriter(sid);
+			 this.sid = sid;
+		 } else {
+			 w = ogg.getPacketWriter();
+			 this.sid = w.getSid();
+		 }
 
-        this.info = info;
-        this.tags = tags;
-    }
+		 writtenPackets = new ArrayList<OpusAudioData>();
 
-    public OpusAudioData getNextAudioPacket() throws IOException {
-        OggPacket p = null;
-        OpusPacket op = null;
-        while( (p = r.getNextPacketWithSid(sid)) != null ) {
-            op = OpusPacketFactory.create(p);
-            if(op instanceof OpusAudioData) {
-                return (OpusAudioData)op;
-            } else {
-                System.err.println("Skipping non audio packet " + op + " mid audio stream");
-            }
-        }
-        return null;
-    }
+		 this.info = info;
+		 this.tags = tags;
+	 }
 
-    /**
-     * Skips the audio data to the next packet with a granule
-     *  of at least the given granule position.
-     * Note that skipping backwards is not currently supported!
-     */
-    public void skipToGranule(long granulePosition) throws IOException {
-        r.skipToGranulePosition(sid, granulePosition);
-    }
+	 public OpusAudioData getNextAudioPacket() throws IOException {
+		 OggPacket p = null;
+		 OpusPacket op = null;
+		 while( (p = r.getNextPacketWithSid(sid)) != null ) {
+			 op = OpusPacketFactory.create(p);
+			 if(op instanceof OpusAudioData) {
+				 return (OpusAudioData)op;
+			 } else {
+				 System.err.println("Skipping non audio packet " + op + " mid audio stream");
+			 }
+		 }
+		 return null;
+	 }
 
-    /**
-     * Returns the Ogg Stream ID
-     */
-    public int getSid() {
-        return sid;
-    }
+	 /**
+	  * Skips the audio data to the next packet with a granule
+	  *  of at least the given granule position.
+	  * Note that skipping backwards is not currently supported!
+	  */
+	 public void skipToGranule(long granulePosition) throws IOException {
+		 r.skipToGranulePosition(sid, granulePosition);
+	 }
 
-    /**
-     * This is an Opus file
-     */
-    public OggStreamType getType() {
-        return OggStreamIdentifier.OPUS_AUDIO;
-    }
+	 /**
+	  * Returns the Ogg Stream ID
+	  */
+	 public int getSid() {
+		 return sid;
+	 }
 
-    public OpusInfo getInfo() {
-        return info;
-    }
-    public OpusTags getTags() {
-        return tags;
-    }
-    /**
-     * Opus doesn't have setup headers, so this is always null
-     */
-    public OggAudioSetupHeader getSetup() {
-        return null;
-    }
+	 /**
+	  * This is an Opus file
+	  */
+	 public OggStreamType getType() {
+		 return OggStreamIdentifier.OPUS_AUDIO;
+	 }
 
-    /**
-     * Buffers the given audio ready for writing
-     *  out. Data won't be written out yet, you
-     *  need to call {@link #close()} to do that,
-     *  because we assume you'll still be populating
-     *  the Info/Comment/Setup objects
-     */
-    public void writeAudioData(OpusAudioData data) {
-        writtenPackets.add(data);
-    }
+	 public OpusInfo getInfo() {
+		 return info;
+	 }
+	 public OpusTags getTags() {
+		 return tags;
+	 }
+	 /**
+	  * Opus doesn't have setup headers, so this is always null
+	  */
+	 public OggAudioSetupHeader getSetup() {
+		 return null;
+	 }
 
-    /**
-     * In Reading mode, will close the underlying ogg
-     *  file and free its resources.
-     * In Writing mode, will write out the Info and
-     *  Tags objects, and then the audio data.
-     */
-    public void close() throws IOException {
-        if(r != null) {
-            r = null;
-            ogg.close();
-            ogg = null;
-        }
-        if(w != null) {
-            w.bufferPacket(info.write(), true);
-            w.bufferPacket(tags.write(), false);
+	 /**
+	  * Buffers the given audio ready for writing
+	  *  out. Data won't be written out yet, you
+	  *  need to call {@link #close()} to do that,
+	  *  because we assume you'll still be populating
+	  *  the Info/Comment/Setup objects
+	  */
+	 public void writeAudioData(OpusAudioData data) {
+		 writtenPackets.add(data);
+	 }
 
-            long lastGranule = 0;
-            for(OpusAudioData vd : writtenPackets) {
-                // Update the granule position as we go
-                if(vd.getGranulePosition() >= 0 &&
-                        lastGranule != vd.getGranulePosition()) {
-                    w.flush();
-                    lastGranule = vd.getGranulePosition();
-                    w.setGranulePosition(lastGranule);
-                }
+	 /**
+	  * In Reading mode, will close the underlying ogg
+	  *  file and free its resources.
+	  * In Writing mode, will write out the Info and
+	  *  Tags objects, and then the audio data.
+	  */
+	 public void close() throws IOException {
+		 if(r != null) {
+			 r = null;
+			 ogg.close();
+			 ogg = null;
+		 }
+		 if(w != null) {
+			 w.bufferPacket(info.write(), true);
+			 w.bufferPacket(tags.write(), false);
 
-                // Write the data, flushing if needed
-                w.bufferPacket(vd.write());
-                if(w.getSizePendingFlush() > 16384) {
-                    w.flush();
-                }
-            }
+			 long lastGranule = 0;
+			 for(OpusAudioData vd : writtenPackets) {
+				 // Update the granule position as we go
+				 if(vd.getGranulePosition() >= 0 &&
+						 lastGranule != vd.getGranulePosition()) {
+					 w.flush();
+					 lastGranule = vd.getGranulePosition();
+					 w.setGranulePosition(lastGranule);
+				 }
 
-            w.close();
-            w = null;
-            ogg.close();
-            ogg = null;
-        }
-    }
+				 // Write the data, flushing if needed
+				 w.bufferPacket(vd.write());
+				 if(w.getSizePendingFlush() > 16384) {
+					 w.flush();
+				 }
+			 }
 
-    /**
-     * Returns the underlying Ogg File instance
-     * @return
-     */
-    public OggFile getOggFile() {
-        return ogg;
-    }
+			 w.close();
+			 w = null;
+			 ogg.close();
+			 ogg = null;
+		 }
+	 }
+
+	 /**
+	  * Returns the underlying Ogg File instance
+	  * @return
+	  */
+	 public OggFile getOggFile() {
+		 return ogg;
+	 }
 }
