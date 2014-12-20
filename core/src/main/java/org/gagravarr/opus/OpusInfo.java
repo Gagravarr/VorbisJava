@@ -201,10 +201,12 @@ public class OpusInfo extends HighLevelOggStreamPacket implements OpusPacket, Og
 			if (min_packet_bytes>d.length) min_packet_bytes = d.length;
 			
 		}
+		if (max_page_duration<page_samples) max_page_duration=page_samples;
 		if (min_page_duration>page_samples) min_page_duration=page_samples;
 		overhead_bytes += firstPacket.getData().length;
         overhead_bytes += secondPacket.getData().length;
-        playtime = ((lastgranulepos-firstgranulepos-getPreSkip()) / 48);
+        playtime = ((lastgranulepos-getPreSkip()) / 48);
+        //playtime = ((lastgranulepos-firstgranulepos-getPreSkip()) / 48);
         total_pages = page_count;
         //System.out.println("Total_samples:"+total_samples+" total_pages:"+total_pages+" total_packets:"
         // +total_packets+" maxpage:"+max_page_duration+" minpage:"+min_page_duration+ " last spp:"+page_samples);
@@ -337,7 +339,10 @@ public class OpusInfo extends HighLevelOggStreamPacket implements OpusPacket, Og
     	return (max_packet_duration/48.0);
     }
     public double getAvgPacketDuration() {
-    	return (total_samples/total_packets/48.0);
+    	if (total_packets > 0) {
+    		return (total_samples/total_packets/48.0);
+    	} 
+    	return 0;
     }
     public double getMinPacketDuration() {
     	return (min_packet_duration/48.0);
@@ -346,7 +351,10 @@ public class OpusInfo extends HighLevelOggStreamPacket implements OpusPacket, Og
     	return max_page_duration/48.0;
     }
     public double getAvgPageDuration() {
-    	return total_samples/(double)total_pages/48.0;
+    	if (total_pages > 0 ) {
+    		return total_samples/(double)total_pages/48.0;
+    	}
+    	return 0;
     }
     public double getMinPageDuration() {
     	return min_page_duration/48.0;
