@@ -83,9 +83,8 @@ public class TestOpusParser extends TestCase {
         assertTrue(content.contains("00:00:00.03"));
     }
 
-    // TODO Fix it to work with LibOpus 1.1 files
     @SuppressWarnings("deprecation")
-    public void DISABLEDtestParserFor11() throws Exception {
+    public void testParserFor11() throws Exception {
         OpusParser parser = new OpusParser();
 
         ContentHandler handler = new BodyContentHandler();
@@ -113,7 +112,7 @@ public class TestOpusParser extends TestCase {
         assertEquals("Test Genre", metadata.get(XMPDM.GENRE));
         assertEquals("Test Comment", metadata.get(XMPDM.LOG_COMMENT));
         assertEquals("2010-01-26", metadata.get(XMPDM.RELEASE_DATE));
-        assertEquals(null, metadata.get(XMPDM.TRACK_NUMBER));
+        assertEquals("1", metadata.get(XMPDM.TRACK_NUMBER));
         assertEquals("0.03", metadata.get(XMPDM.DURATION));
 
         assertEquals("libopus 1.1", metadata.get(XMP.CREATOR_TOOL));

@@ -57,9 +57,17 @@ public class TestOpusFileRead extends TestCase {
         
         assertEquals(0, of.getInfo().getChannelMappingFamily());
 
+        // Tags that are in the 0.9 file and the 1.1 file
         assertEquals("Test Title", of.getTags().getTitle());
         assertEquals("Test Artist", of.getTags().getArtist());
-        // TODO Add null checks for tags not in the 0.9 file
+        assertEquals(1, of.getTags().getComments("Comment").size());
+        assertEquals("Test Comment", of.getTags().getComments("Comment").get(0));
+
+        // Tags that the 0.9 file misses
+        assertEquals(null, of.getTags().getAlbum());
+        assertEquals(null, of.getTags().getDate());
+        assertEquals(null, of.getTags().getGenre());
+        assertEquals(null, of.getTags().getTrackNumber());
 
         // Has some audio data, but not very much
         OpusAudioData ad = null;
@@ -76,8 +84,7 @@ public class TestOpusFileRead extends TestCase {
         assertNull( ad );
     }
 
-    // TODO Fix this test to work
-    public void DISABLEDtestRead11() throws IOException {
+    public void testRead11() throws IOException {
         OggFile ogg = new OggFile(getTest11File());
         of = new OpusFile(ogg);
 
@@ -93,9 +100,17 @@ public class TestOpusFileRead extends TestCase {
 
         assertEquals(0, of.getInfo().getChannelMappingFamily());
 
-        // TODO Check the rest of the tags
+        // Check the tags
         assertEquals("Test Title", of.getTags().getTitle());
         assertEquals("Test Artist", of.getTags().getArtist());
+        assertEquals("Test Album", of.getTags().getAlbum());
+        assertEquals("2010-01-26", of.getTags().getDate());
+        assertEquals("Test Genre", of.getTags().getGenre());
+        assertEquals("1", of.getTags().getTrackNumber());
+
+        assertEquals(2, of.getTags().getComments("Comment").size());
+        assertEquals("Test Comment", of.getTags().getComments("Comment").get(0));
+        assertEquals("Another Test Comment", of.getTags().getComments("Comment").get(1));
 
         // Has some audio data, but not very much
         OpusAudioData ad = null;
