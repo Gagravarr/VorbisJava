@@ -74,6 +74,12 @@ public class TestOpusFileWrite extends TestCase {
             int infoSize = opOrig.getInfo().getData().length;
             int tagsSize = opOrig.getTags().getData().length;
 
+            // Tags could be null padded in the original, so adjust
+            while (tagsSize > 0 && opOrig.getTags().getData()[tagsSize-1] == 0) {
+                tagsSize--;
+            }
+
+            // Have it written
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             OpusFile opOUT = new OpusFile(
                     baos,
@@ -136,14 +142,12 @@ public class TestOpusFileWrite extends TestCase {
             assertNull( ad );
 
 
-            // Check the core packets stayed the same size
+            // Check the core packets stayed the same size (modulo padding!)
             assertEquals(infoSize, opOUT.getInfo().getData().length);
-//            assertEquals(tagsSize, opOUT.getTags().getData().length);
-            // TODO Why do the tags shrink for 1.1 files? FIXME!
+            assertEquals(tagsSize, opOUT.getTags().getData().length);
 
             assertEquals(infoSize, opIN.getInfo().getData().length);
-//            assertEquals(tagsSize, opIN.getTags().getData().length);
-            // TODO Why do the tags shrink for 1.1 files? FIXME!
+            assertEquals(tagsSize, opIN.getTags().getData().length);
 
             // Tidy up
             opIN.close();
