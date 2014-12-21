@@ -1,4 +1,4 @@
-Version 0.7 (In Progress)
+Version 0.7 (2014-12-21)
  * VorbisFile / OpusFile / etc with close methods support
    the java.io.Closeable() interface
  * Skeleton (stream metadata) read support, and info tool
