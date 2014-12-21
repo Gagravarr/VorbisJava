@@ -80,6 +80,8 @@ public class OggDetector implements Detector {
          //  file in order to figure out what it is
          tis.mark((int)tis.getLength()+1);
 
+         // Open the Ogg file - underlying stream stays open as detecting only
+         @SuppressWarnings("resource")
          OggFile ogg = new OggFile(tis);
 
          // The things we'll want to keep track of
@@ -129,9 +131,8 @@ public class OggDetector implements Detector {
             }
          }
 
-         // Tidy
+         // Tidy up - reset the stream, but leave it open
          tis.reset();
-         ogg.close();
 
          // TODO See if we found any of the Ogg Metadata streams,
          //  eg Ogg Skeleton / Annodex or CMML, and if so use them
