@@ -70,7 +70,7 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
            }
        }
 
-       if(offset < d.length) {
+       if(offset < d.length && hasFramingBit()) {
            byte framingBit = d[offset];
            if(framingBit == 0) {
                throw new IllegalArgumentException("Framing bit not set, invalid");
@@ -233,6 +233,7 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
    }
 
    protected abstract int getHeaderSize();
+   protected abstract boolean hasFramingBit();
    protected abstract void populateMetadataHeader(byte[] data, int packetLength);
    protected abstract void populateMetadataFooter(OutputStream out);
 

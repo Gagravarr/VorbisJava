@@ -43,7 +43,14 @@ public class TheoraComments extends VorbisStyleComments implements TheoraPacket 
    protected int getHeaderSize() {
       return 8;
    }
-
+   /**
+    * We think that Theora follows the Vorbis model, and has
+    *  a framing bit if the comments are null-padded
+    */
+   @Override
+   protected boolean hasFramingBit() {
+       return true;
+   }
    /**
     * Magic string
     */

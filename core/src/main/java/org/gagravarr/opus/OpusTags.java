@@ -45,7 +45,14 @@ public class OpusTags extends VorbisStyleComments implements OpusPacket, OggAudi
    protected int getHeaderSize() {
       return 8;
    }
-
+   /**
+    * Opus doesn't do the framing bit if the tags are
+    *  null padded.
+    */
+   @Override
+   protected boolean hasFramingBit() {
+       return false;
+   }
    /**
     * Magic string
     */

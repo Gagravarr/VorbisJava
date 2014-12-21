@@ -47,7 +47,14 @@ public class FlacTags extends VorbisStyleComments implements OggAudioTagsHeader 
    public int getHeaderSize() {
       return 4;
    }
-
+   /**
+    * Flac doesn't do the framing bit if the tags are
+    *  null padded.
+    */
+   @Override
+   protected boolean hasFramingBit() {
+       return false;
+   }
    /**
     * Type plus three byte length
     */

@@ -44,7 +44,14 @@ public class SpeexTags extends VorbisStyleComments implements SpeexPacket, OggAu
    protected int getHeaderSize() {
       return 0;
    }
-
+   /**
+    * We think that Speex doesn't do a framing bit if the 
+    *  tags are null padded
+    */
+   @Override
+   protected boolean hasFramingBit() {
+       return false;
+   }
    /**
     * There is no header on Speex tags
     */

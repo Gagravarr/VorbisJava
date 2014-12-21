@@ -30,12 +30,23 @@ public class VorbisComments extends VorbisStyleComments implements VorbisPacket,
         super();
     }
     
+    /**
+     * Vorbis Comments have framing bits if there's padding
+     *  after the end of the defined comments
+     */
+    @Override
+    protected boolean hasFramingBit() {
+        return true;
+    }
+    @Override
     public int getHeaderSize() {
         return HEADER_LENGTH_METADATA;
     }
+    @Override
     public void populateMetadataHeader(byte[] b, int dataLength) {
         VorbisPacketFactory.populateMetadataHeader(b, TYPE_COMMENTS, dataLength);
     }
+    @Override
     public void populateMetadataFooter(OutputStream out) {
         // Vorbis requires a single framing bit at the end
         try {
