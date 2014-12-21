@@ -3,6 +3,8 @@ Version 0.7 (In Progress)
    the java.io.Closeable() interface
  * Skeleton (stream metadata) read support, and info tool
  * Common interfaces for Audio streams and headers
+ * Support for libopus 1.1 generated Opus files, which have
+   padding after comments but no framing (not all formats do)
  * Basic Theora read support
 
 Version 0.6 (2014-05-09)
