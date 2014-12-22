@@ -64,7 +64,7 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
     /**
      * Loads a Opus File from the given packet reader.
      */
-    public OpusFile(OggPacketReader r) throws IOException {	 
+    public OpusFile(OggPacketReader r) throws IOException {
         this.r = r;
         
         OggPacket p = null;

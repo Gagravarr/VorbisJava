@@ -45,7 +45,7 @@ public class OpusInfo extends HighLevelOggStreamPacket implements OpusPacket, Og
     private OggPage secondPage;
     private int sid;
     private OggPacketReader oggPacketReader;
-    
+
     private long playtime;
     private int overhead_bytes;
     private int total_pages;
@@ -53,12 +53,12 @@ public class OpusInfo extends HighLevelOggStreamPacket implements OpusPacket, Og
     private int total_samples;
     private int bytes;
     private int max_packet_duration;
-	private int min_packet_duration;
-	private int max_page_duration;
-	private int min_page_duration;
-	private int max_packet_bytes;
-	private int min_packet_bytes;
-	
+    private int min_packet_duration;
+    private int max_page_duration;
+    private int min_page_duration;
+    private int max_packet_bytes;
+    private int min_packet_bytes;
+
     public OpusInfo() {
         super();
         version = 1;
@@ -67,7 +67,7 @@ public class OpusInfo extends HighLevelOggStreamPacket implements OpusPacket, Og
 
     public OpusInfo(OggPacket pkt) {
         super(pkt);
-        
+
         // Verify the type
         byte[] data = getData();
         if (! IOUtils.byteRangeMatches(MAGIC_HEADER_BYTES, data, 0)) {
@@ -85,7 +85,7 @@ public class OpusInfo extends HighLevelOggStreamPacket implements OpusPacket, Og
         preSkip = IOUtils.getInt2(data, 10);
         rate    = IOUtils.getInt4(data, 12);
         outputGain = IOUtils.getInt2(data, 16);
-        
+
         channelMappingFamily = data[18];
         if (channelMappingFamily != 0) {
             streamCount = data[19];
@@ -125,7 +125,7 @@ public class OpusInfo extends HighLevelOggStreamPacket implements OpusPacket, Og
             System.err.println("WARNING: Problem reading Opus stream:"+e.getMessage());
         }
     }
-    
+
     boolean updateInfoFromStream() throws IOException {
         if (total_samples > 0 || oggPacketReader == null) {
             // already read from stream
@@ -236,45 +236,45 @@ public class OpusInfo extends HighLevelOggStreamPacket implements OpusPacket, Og
         isExtendedInfoAvailable = true;
         return true;
     }
-    
+
     private static int packet_get_samples_per_frame(byte[] data, int Fs) {
-		int audiosize;
-		if ((data[0]&0x80) != 0)
-		{
-			audiosize = ((data[0]>>3)&0x3);
-			audiosize = (Fs<<audiosize)/400;
-		} else if ((data[0]&0x60) == 0x60)
-		{
-			audiosize = ((data[0]&0x08) != 0) ? Fs/50 : Fs/100;
-		} else {
-			audiosize = ((data[0]>>3)&0x3);
-			if (audiosize == 3)
-				audiosize = Fs*60/1000;
-			else
-				audiosize = (Fs<<audiosize)/100;
-		}
-		return audiosize;
+        int audiosize;
+        if ((data[0]&0x80) != 0)
+        {
+            audiosize = ((data[0]>>3)&0x3);
+            audiosize = (Fs<<audiosize)/400;
+        } else if ((data[0]&0x60) == 0x60)
+        {
+            audiosize = ((data[0]&0x08) != 0) ? Fs/50 : Fs/100;
+        } else {
+            audiosize = ((data[0]>>3)&0x3);
+            if (audiosize == 3)
+                audiosize = Fs*60/1000;
+            else
+                audiosize = (Fs<<audiosize)/100;
+        }
+        return audiosize;
 
-	}
+    }
 
-	private static int packet_get_nb_frames(byte[] packet) {
-		int count = 0;
-		if (packet.length < 1) {
-			return -1;
-		}
-		count = packet[0]&0x3;
-		if (count==0)
-			return 1;
-		else if (count!=3)
-			return 2;
-		else if (packet.length<2)
-			return -4;
-		else
-			return packet[1]&0x3F;
-	}
+    private static int packet_get_nb_frames(byte[] packet) {
+        int count = 0;
+        if (packet.length < 1) {
+            return -1;
+        }
+        count = packet[0]&0x3;
+        if (count==0)
+            return 1;
+        else if (count!=3)
+            return 2;
+        else if (packet.length<2)
+            return -4;
+        else
+            return packet[1]&0x3F;
+    }
 
 
-    
+
     @Override
     public OggPacket write() {
         int length = 19;
@@ -290,18 +290,18 @@ public class OpusInfo extends HighLevelOggStreamPacket implements OpusPacket, Og
         IOUtils.putInt2(data, 10, preSkip);
         IOUtils.putInt4(data, 12, rate);
         IOUtils.putInt2(data, 16, outputGain);
-        
+
         data[18] = channelMappingFamily;
         if (channelMappingFamily != 0) {
             data[19] = streamCount;
             data[20] = twoChannelStreamCount;
             System.arraycopy(channelMapping, 0, data, 21, channels);
         }
-        
+
         setData(data);
         return super.write();
     }
-    
+
     private void parseVersion() {
         minorVersion = version & 0xf;
         majorVersion = version >> 4;
@@ -362,7 +362,7 @@ public class OpusInfo extends HighLevelOggStreamPacket implements OpusPacket, Og
     }
     public double getMaxPacketDuration() {
         if (!isExtendedInfoAvailable) return 0.0;
-    	return (max_packet_duration/48.0);
+        return (max_packet_duration/48.0);
     }
     public double getAvgPacketDuration() {
         if (!isExtendedInfoAvailable) return 0.0;
@@ -373,11 +373,11 @@ public class OpusInfo extends HighLevelOggStreamPacket implements OpusPacket, Og
     }
     public double getMinPacketDuration() {
         if (!isExtendedInfoAvailable) return 0.0;
-    	return (min_packet_duration/48.0);
+        return (min_packet_duration/48.0);
     }
     public double getMaxPageDuration() {
         if (!isExtendedInfoAvailable) return 0.0;
-    	return max_page_duration/48.0;
+        return max_page_duration/48.0;
     }
     public double getAvgPageDuration() {
         if (!isExtendedInfoAvailable) return 0.0;
@@ -388,37 +388,37 @@ public class OpusInfo extends HighLevelOggStreamPacket implements OpusPacket, Og
     }
     public double getMinPageDuration() {
         if (!isExtendedInfoAvailable) return 0.0;
-    	return min_page_duration/48.0;
+        return min_page_duration/48.0;
     }
     public int getBytes() {
         if (!isExtendedInfoAvailable) return 0;
-    	return bytes;
+        return bytes;
     }
     public int getOverheadBytes() {
         if (!isExtendedInfoAvailable) return 0;
-    	return overhead_bytes;
+        return overhead_bytes;
     }
     public String getPlayTimeAsString() {
         if (!isExtendedInfoAvailable) return null;
-       int minutes = (int)playtime / (60*1000);
-       int seconds = (int)((playtime - (minutes*(60*1000))) / 1000 );
-       int milliseconds = (int)((playtime - (minutes*60*1000) - (seconds*1000)));
-       return String.format("%dm:%d.%03ds",minutes,seconds,milliseconds);       
+        int minutes = (int)playtime / (60*1000);
+        int seconds = (int)((playtime - (minutes*(60*1000))) / 1000 );
+        int milliseconds = (int)((playtime - (minutes*60*1000) - (seconds*1000)));
+        return String.format("%dm:%d.%03ds",minutes,seconds,milliseconds);       
     }
 
-    
+
     public long getPlayTime() {
         if (!isExtendedInfoAvailable) return 0;
-    	return playtime;
+        return playtime;
     }
 
-	public int getMaxPacketBytes() {
-	    if (!isExtendedInfoAvailable) return 0;
-		return max_packet_bytes;
-	}
+    public int getMaxPacketBytes() {
+        if (!isExtendedInfoAvailable) return 0;
+        return max_packet_bytes;
+    }
 
-	public int getMinPacketBytes() {
-	    if (!isExtendedInfoAvailable) return 0;
-		return min_packet_bytes;
-	}
+    public int getMinPacketBytes() {
+        if (!isExtendedInfoAvailable) return 0;
+        return min_packet_bytes;
+    }
 }

@@ -28,8 +28,6 @@ import org.gagravarr.vorbis.tools.VorbisLikeCommentTool.Command.Commands;
  *  Opus File, much like the vorbiscomments program (but Opus)
  */
 public class OpusCommentTool extends VorbisLikeCommentTool {
-	
-	
     public static void main(String[] args) throws Exception {
         Command command = processArgs(args, "OpusComment");
         
