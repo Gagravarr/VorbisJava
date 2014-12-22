@@ -26,6 +26,7 @@ import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
 import org.gagravarr.ogg.OggPacketWriter;
+import org.gagravarr.ogg.OggPage;
 import org.gagravarr.ogg.OggStreamIdentifier;
 import org.gagravarr.ogg.OggStreamIdentifier.OggStreamType;
 import org.gagravarr.ogg.audio.OggAudioHeaders;
@@ -63,26 +64,34 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
     /**
      * Loads a Opus File from the given packet reader.
      */
-    public OpusFile(OggPacketReader r) throws IOException {	
+    public OpusFile(OggPacketReader r) throws IOException {
         this.r = r;
-
+        
         OggPacket p = null;
+        OggPacket firstPacket = null;
+        OggPacket secondPacket = null;
+        OggPage initialPage = null; 
         while( (p = r.getNextPacket()) != null ) {
             if (p.isBeginningOfStream() && p.getData().length > 10) {
                 if (OpusPacketFactory.isOpusStream(p)) {
                     sid = p.getSid();
+                    if (sid == -1) {
+                        throw new IllegalArgumentException("Supplied File is not Opus");
+                    }
+                    firstPacket = p;
+                    initialPage = r.getCurrentPage();
+                    secondPacket = r.getNextPacketWithSid(sid);
                     break;
+
                 }
             }
         }
-        if (sid == -1) {
-            throw new IllegalArgumentException("Supplied File is not Opus");
-        }
 
         // First two packets are required to be info then tags
-        info = (OpusInfo)OpusPacketFactory.create( p );
-        tags = (OpusTags)OpusPacketFactory.create( r.getNextPacketWithSid(sid) );
-
+        info = (OpusInfo)OpusPacketFactory.create( firstPacket );
+        tags = (OpusTags)OpusPacketFactory.create( secondPacket );
+        info.prepareInfoFromStream(r, sid, initialPage, firstPacket, secondPacket);
+       
         // Everything else should be audio data
     }
 
