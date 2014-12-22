@@ -8,7 +8,7 @@ Before the release:
 
 To release:
  * Follow the Sonatype Guide
-https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7a.DeploySnapshotsandStageReleaseswithMaven
+http://central.sonatype.org/pages/ossrh-guide.html
 http://central.sonatype.org/pages/apache-maven.html#performing-a-release-deployment-with-the-maven-release-plugin
 
 After the release:
