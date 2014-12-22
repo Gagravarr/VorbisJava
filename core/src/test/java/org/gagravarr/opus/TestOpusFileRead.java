@@ -126,4 +126,45 @@ public class TestOpusFileRead extends TestCase {
         ad = of.getNextAudioPacket();
         assertNull( ad );
     }
+    
+    public void testReadInfo11() throws IOException {
+        OggFile ogg = new OggFile(getTest11File());
+        of = new OpusFile(ogg);
+        OpusInfo info = of.getInfo();
+        info.consumeStream();
+        assertEquals(20.0, info.getMaxPacketDuration());
+        assertEquals(20.0, info.getAvgPacketDuration());
+        assertEquals(20.0, info.getMinPacketDuration());
+        assertEquals(40.0, info.getMaxPageDuration());
+        assertEquals(40.0, info.getAvgPageDuration());
+        assertEquals(40.0, info.getMinPageDuration());
+        assertEquals(1799, info.getBytes());
+        assertEquals(21, info.getPlayTime());
+    }
+    
+    public void testReadInfoApi11() throws IOException {
+        OggFile ogg = new OggFile(getTest11File());
+        of = new OpusFile(ogg);
+        OpusInfo info = of.getInfo();
+        // consumeStream not called
+        assertEquals(0.0, info.getMaxPacketDuration());
+        info.consumeStream();
+        assertEquals(20.0, info.getMaxPacketDuration());
+    }
+    
+    public void testReadInfo09() throws IOException {
+        OggFile ogg = new OggFile(getTest09File());
+        of = new OpusFile(ogg);
+        OpusInfo info = of.getInfo();
+        info.consumeStream();
+        assertEquals(20.0, info.getMaxPacketDuration());
+        assertEquals(20.0, info.getAvgPacketDuration());
+        assertEquals(20.0, info.getMinPacketDuration());
+        assertEquals(40.0, info.getMaxPageDuration());
+        assertEquals(40.0, info.getAvgPageDuration());
+        assertEquals(40.0, info.getMinPageDuration());
+        assertEquals(1059, info.getBytes());
+        assertEquals(21, info.getPlayTime());
+    }
+        
 }

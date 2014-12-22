@@ -68,11 +68,9 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
 		this.r = r;
 
 		OggPacket p = null;
-		//p = r.getNextPacket();
 		OggPacket firstPacket = null;
 		OggPacket secondPacket = null;
 		OggPage initialPage = null; 
-		OggPage otherPage = null;
 		while( (p = r.getNextPacket()) != null ) {
 			if (p.isBeginningOfStream() && p.getData().length > 10) {
 				if (OpusPacketFactory.isOpusStream(p)) {
@@ -83,38 +81,17 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
 					firstPacket = p;
 					initialPage = r.getCurrentPage();
 					secondPacket = r.getNextPacketWithSid(sid);
-					otherPage = r.getCurrentPage();
 					break;
 
 				}
 			}
 		}
 		
-		if (initialPage == null) {
-			System.out.println("Initial page null!");
-		}
-		if (otherPage == null) {
-			System.out.println("Other page null!");
-		}
-		//if (otherPage.getSequenceNumber() != initialPage.getSequenceNumber()) {
-		//	System.out.println("Page advanced!");
-		//}
-		
-		
 		// First two packets are required to be info then tags
 		info = (OpusInfo)OpusPacketFactory.create( firstPacket );
 		tags = (OpusTags)OpusPacketFactory.create( secondPacket );
-		info.updateInfoFromStream(r, sid, initialPage, firstPacket, secondPacket);
-		
-//        System.err.println("Packet duration:"+(max_packet_duration/48.0)+"ms (max), "
-//        +(total_samples/total_packets/48.0)+"ms (avg), "+min_packet_duration/48.0+"ms (min)");
-//        double time = (lastgranulepos-firstgranulepos-info.getPreSkip()) / 48000.;
-//        if (time<=0) time =0;
-//        int minutes = (int)time / 60;
-//        int seconds = (int)(time - (minutes*60));
-//        int milliseconds = (int)((time - minutes*60 - seconds)*1000);
-//        System.err.println("Playback duration:"+minutes+"m:"+seconds+"."+milliseconds+"s");
-        
+		info.prepareInfoFromStream(r, sid, initialPage, firstPacket, secondPacket);
+		        
         // Everything else should be audio data
 	}
 
