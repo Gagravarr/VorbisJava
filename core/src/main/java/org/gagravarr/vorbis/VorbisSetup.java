@@ -23,35 +23,35 @@ import org.gagravarr.ogg.audio.OggAudioSetupHeader;
  *  complete VQ and Huffman codebooks needed for decode
  */
 public class VorbisSetup extends HighLevelOggStreamPacket implements VorbisPacket, OggAudioSetupHeader {
-	public VorbisSetup(OggPacket pkt) {
-		super(pkt);
-		
-		// Made up of:
-		//  Codebooks
-		//  Time Domain Transforms
-		//  Floors
-		//  Residues
-		//  Mappings
-		//  Modes
-	}
-	public VorbisSetup() {
-		super();
-	}
-	
-   public int getHeaderSize() {
-      return HEADER_LENGTH_METADATA;
-   }
-   public void populateMetadataHeader(byte[] b, int dataLength) {
-       VorbisPacketFactory.populateMetadataHeader(b, TYPE_SETUP, dataLength);
-   }
+    public VorbisSetup(OggPacket pkt) {
+        super(pkt);
 
-	// Example first bit of decoding
-	public int getNumberOfCodebooks() {
-		byte[] data = getData();
-		int number = -1;
-		if(data != null && data.length >= 10) {
-			number = IOUtils.toInt(data[8]);
-		}
-		return (number+1);
-	}
+        // Made up of:
+        //  Codebooks
+        //  Time Domain Transforms
+        //  Floors
+        //  Residues
+        //  Mappings
+        //  Modes
+    }
+    public VorbisSetup() {
+        super();
+    }
+
+    public int getHeaderSize() {
+        return HEADER_LENGTH_METADATA;
+    }
+    public void populateMetadataHeader(byte[] b, int dataLength) {
+        VorbisPacketFactory.populateMetadataHeader(b, TYPE_SETUP, dataLength);
+    }
+
+    // Example first bit of decoding
+    public int getNumberOfCodebooks() {
+        byte[] data = getData();
+        int number = -1;
+        if(data != null && data.length >= 10) {
+            number = IOUtils.toInt(data[8]);
+        }
+        return (number+1);
+    }
 }

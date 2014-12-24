@@ -24,130 +24,130 @@ import org.gagravarr.ogg.audio.OggAudioInfoHeader;
  *  stream such as sample rate and number of channels.
  */
 public class VorbisInfo extends HighLevelOggStreamPacket implements VorbisPacket, OggAudioInfoHeader {
-	private int version;
-	private int channels;
-	private long rate;
-	private int bitrateUpper;
-	private int bitrateNominal;
-	private int bitrateLower;
-	private int blocksizes;
-	
-	public VorbisInfo() {
-		super();
-		version = 0;
-	}
-	
-	public VorbisInfo(OggPacket pkt) {
-		super(pkt);
-		
-		// Parse
-		byte[] data = getData();
-		version = (int)IOUtils.getInt4(data, 7);
-		if(version != 0) {
-			throw new IllegalArgumentException("Unsupported vorbis version " + version + " detected");
-		}
-		
-		channels = (int)data[11];
-		rate = IOUtils.getInt4(data, 12);
-		bitrateUpper =   (int)IOUtils.getInt4(data, 16);
-		bitrateNominal = (int)IOUtils.getInt4(data, 20);
-		bitrateLower =   (int)IOUtils.getInt4(data, 24);
+    private int version;
+    private int channels;
+    private long rate;
+    private int bitrateUpper;
+    private int bitrateNominal;
+    private int bitrateLower;
+    private int blocksizes;
 
-		blocksizes = IOUtils.toInt(data[28]);
-		byte framingBit = data[29];
-		if(framingBit == 0) {
-			throw new IllegalArgumentException("Framing bit not set, invalid");
-		}
-	}
+    public VorbisInfo() {
+        super();
+        version = 0;
+    }
 
-   public int getHeaderSize() {
-      return HEADER_LENGTH_METADATA;
-   }
-   public void populateMetadataHeader(byte[] b, int dataLength) {
-       VorbisPacketFactory.populateMetadataHeader(b, TYPE_INFO, dataLength);
-   }
+    public VorbisInfo(OggPacket pkt) {
+        super(pkt);
+
+        // Parse
+        byte[] data = getData();
+        version = (int)IOUtils.getInt4(data, 7);
+        if(version != 0) {
+            throw new IllegalArgumentException("Unsupported vorbis version " + version + " detected");
+        }
+
+        channels = (int)data[11];
+        rate = IOUtils.getInt4(data, 12);
+        bitrateUpper =   (int)IOUtils.getInt4(data, 16);
+        bitrateNominal = (int)IOUtils.getInt4(data, 20);
+        bitrateLower =   (int)IOUtils.getInt4(data, 24);
+
+        blocksizes = IOUtils.toInt(data[28]);
+        byte framingBit = data[29];
+        if(framingBit == 0) {
+            throw new IllegalArgumentException("Framing bit not set, invalid");
+        }
+    }
+
+    public int getHeaderSize() {
+        return HEADER_LENGTH_METADATA;
+    }
+    public void populateMetadataHeader(byte[] b, int dataLength) {
+        VorbisPacketFactory.populateMetadataHeader(b, TYPE_INFO, dataLength);
+    }
 
     @Override
-	public OggPacket write() {
-		byte[] data = new byte[30];
-		populateMetadataHeader(data, data.length);
-		
-		IOUtils.putInt4(data, 7, version);
-		data[11] = IOUtils.fromInt(channels);
-		IOUtils.putInt4(data, 12, rate);
-		IOUtils.putInt4(data, 16, bitrateUpper);
-		IOUtils.putInt4(data, 20, bitrateNominal);
-		IOUtils.putInt4(data, 24, bitrateLower);
-		data[28] = IOUtils.fromInt(blocksizes);
-		data[29] = 1;
-		
-		setData(data);
-		return super.write();
-	}
-	
-	public int getVersion() {
-		return version;
-	}
-	public String getVersionString() {
-	    return Integer.toString(version);
-	}
-	
-	public int getChannels() {
-		return channels;
-	}
-	public void setChannels(int channels) {
-		this.channels = channels;
-	}
-	public int getNumChannels() {
-	    return channels;
-	}
+    public OggPacket write() {
+        byte[] data = new byte[30];
+        populateMetadataHeader(data, data.length);
 
-	public long getRate() {
-		return rate;
-	}
-	public void setRate(long rate) {
-		this.rate = rate;
-	}
-	public int getSampleRate() {
-	    return (int)rate;
-	}
+        IOUtils.putInt4(data, 7, version);
+        data[11] = IOUtils.fromInt(channels);
+        IOUtils.putInt4(data, 12, rate);
+        IOUtils.putInt4(data, 16, bitrateUpper);
+        IOUtils.putInt4(data, 20, bitrateNominal);
+        IOUtils.putInt4(data, 24, bitrateLower);
+        data[28] = IOUtils.fromInt(blocksizes);
+        data[29] = 1;
 
-	public int getBitrateUpper() {
-		return bitrateUpper;
-	}
-	public void setBitrateUpper(int bitrateUpper) {
-		this.bitrateUpper = bitrateUpper;
-	}
+        setData(data);
+        return super.write();
+    }
 
-	public int getBitrateNominal() {
-		return bitrateNominal;
-	}
-	public void setBitrateNominal(int bitrateNominal) {
-		this.bitrateNominal = bitrateNominal;
-	}
+    public int getVersion() {
+        return version;
+    }
+    public String getVersionString() {
+        return Integer.toString(version);
+    }
 
-	public int getBitrateLower() {
-		return bitrateLower;
-	}
-	public void setBitrateLower(int bitrateLower) {
-		this.bitrateLower = bitrateLower;
-	}
-	
-	public int getBlocksize0() {
-		int part = blocksizes & 0x0f;
-		return (int)Math.pow(2, part);
-	}
-	public void setBlocksize0(int blocksize) {
-		int part = (int)(Math.log(blocksize) / Math.log(2));
-		blocksizes = (blocksizes & 0xf0) + part;
-	}
-	
-	public int getBlocksize1() {
-		int part = (blocksizes & 0xf0) >> 4;
-		return (int)Math.pow(2, part);
-	}
-	public void setBlocksize1(int blocksize) {
-		int part = (int)(Math.log(blocksize) / Math.log(2));
-		blocksizes = (blocksizes & 0x0f) + (part << 4);
-	}
+    public int getChannels() {
+        return channels;
+    }
+    public void setChannels(int channels) {
+        this.channels = channels;
+    }
+    public int getNumChannels() {
+        return channels;
+    }
+
+    public long getRate() {
+        return rate;
+    }
+    public void setRate(long rate) {
+        this.rate = rate;
+    }
+    public int getSampleRate() {
+        return (int)rate;
+    }
+
+    public int getBitrateUpper() {
+        return bitrateUpper;
+    }
+    public void setBitrateUpper(int bitrateUpper) {
+        this.bitrateUpper = bitrateUpper;
+    }
+
+    public int getBitrateNominal() {
+        return bitrateNominal;
+    }
+    public void setBitrateNominal(int bitrateNominal) {
+        this.bitrateNominal = bitrateNominal;
+    }
+
+    public int getBitrateLower() {
+        return bitrateLower;
+    }
+    public void setBitrateLower(int bitrateLower) {
+        this.bitrateLower = bitrateLower;
+    }
+
+    public int getBlocksize0() {
+        int part = blocksizes & 0x0f;
+        return (int)Math.pow(2, part);
+    }
+    public void setBlocksize0(int blocksize) {
+        int part = (int)(Math.log(blocksize) / Math.log(2));
+        blocksizes = (blocksizes & 0xf0) + part;
+    }
+
+    public int getBlocksize1() {
+        int part = (blocksizes & 0xf0) >> 4;
+        return (int)Math.pow(2, part);
+    }
+    public void setBlocksize1(int blocksize) {
+        int part = (int)(Math.log(blocksize) / Math.log(2));
+        blocksizes = (blocksizes & 0x0f) + (part << 4);
+    }
 }
