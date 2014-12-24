@@ -1,5 +1,10 @@
 Version 0.8 (In Progress)
  * Correct close / reset logic for Tika in OggDetector
+ * Common logic on audio statistics moved from Tika Parsers
+   and InfoTools into OggAudioStatistics
+ * New OpusInfoTool
+ * Common logic and support for Ogg Audio info tools,
+   used by VorbisInfoTool and OpusInfoTool
 
 Version 0.7 (2014-12-21)
  * VorbisFile / OpusFile / etc with close methods support

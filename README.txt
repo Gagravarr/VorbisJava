@@ -50,6 +50,10 @@ included.
      versions, comments, bitrates, channels and audio rates, codebooks
      and file length
 
+  org.gagravarr.opus.tools.OpusInfoTool
+     Prints summary information on the contents of a Opus file, including
+     versions, comments, channels and audio rates and file length
+
   org.gagravarr.skeleton.tools.SkeletonInfoTool
      Prints information on a skeleton-described ogg file, reporting on
      a per-bone basis about the streams described and their metadata
