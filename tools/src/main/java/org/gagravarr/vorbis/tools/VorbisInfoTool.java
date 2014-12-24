@@ -13,40 +13,37 @@
  */
 package org.gagravarr.vorbis.tools;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
 
-import org.gagravarr.ogg.OggPacket;
-import org.gagravarr.ogg.OggPacketReader;
-import org.gagravarr.ogg.OggStreamAudioData;
-import org.gagravarr.ogg.audio.OggAudioStatistics;
-import org.gagravarr.ogg.audio.OggAudioStream;
+import org.gagravarr.ogg.tools.OggAudioInfoTool;
 import org.gagravarr.vorbis.VorbisFile;
 
 /**
  * A tool for looking at the innards of a Vorbis File
  */
-public class VorbisInfoTool {
+public class VorbisInfoTool extends OggAudioInfoTool {
     public static void main(String[] args) throws Exception {
-        if(args.length == 0) {
-            printHelp();
-        }
+        handleMain(args, new VorbisInfoTool());
+    }
 
-        boolean debugging = false;
-        String filename = args[0];
-        if(args.length > 1 && args[0].equals("-d")) {
-            filename = args[1];
-            debugging = true;
-        }
+    @Override
+    public String getToolName() {
+        return "VorbisInfoTool";
+    }
+    @Override
+    public String getDefaultExtension() {
+        return "ogg";
+    }
 
+    @Override
+    public void process(File file, boolean debugging) throws IOException {
         InfoPacketReader r = new InfoPacketReader(
-                new FileInputStream(filename));
+                new FileInputStream(file));
         VorbisFile vf = new VorbisFile(r);
 
-        System.out.println("Processing file \"" + filename + "\"");
+        System.out.println("Processing file \"" + file + "\"");
 
         System.out.println("");
         System.out.println("Vorbis Headers:");
@@ -68,7 +65,7 @@ public class VorbisInfoTool {
         System.out.println("  Codebooks: " + vf.getSetup().getNumberOfCodebooks());
         System.out.println("");
 
-        InfoAudioStats stats = new InfoAudioStats(vf, r.lastSeqNum, debugging);
+        InfoAudioStats stats = new InfoAudioStats(vf, r.getLastSeqNum(), debugging);
         stats.calculate(vf.getInfo().getRate());
         System.out.println("");
         System.out.println("Vorbis Audio:");
@@ -76,102 +73,5 @@ public class VorbisInfoTool {
         System.out.println("  Total Data Length: " + stats.getDataSize());
         System.out.println("  Audio Length Seconds: " + stats.getDurationSeconds());
         System.out.println("  Audio Length: " + stats.getDuration());
-    }
-
-    public static void printHelp() {
-        System.err.println("Use:");
-        System.err.println("  VorbisInfoTool file.ogg");
-        System.exit(1);
-    }
-
-    public static void listTags(VorbisFile vf) throws Exception {
-        Map<String, List<String>> comments =
-                vf.getComment().getAllComments();
-        for(String tag : comments.keySet()) {
-            for(String value : comments.get(tag)) {
-                System.out.println("  " + tag + "=" + value);
-            }
-        }
-    }
-
-    protected static class InfoAudioStats extends OggAudioStatistics {
-        private boolean debugging;
-        private int lastSeqNum;
-
-        public InfoAudioStats(OggAudioStream audio, int lastSeqNum,
-                   boolean debugging) throws IOException {
-            super(audio);
-            this.debugging = debugging;
-            this.lastSeqNum = lastSeqNum;
-        }
-
-        @Override
-        protected void handleAudioData(OggStreamAudioData audioData) {
-            super.handleAudioData(audioData);
-
-            if(debugging) {
-                System.out.println(
-                        lastSeqNum + " - " +
-                        audioData.getGranulePosition() + " - " +
-                        audioData.getData().length + " bytes"
-                );
-            }
-        }
-    }
-
-    protected static class InfoPacketReader extends OggPacketReader {
-        private boolean inProgress = false;
-        private int lastSeqNum = 0;
-
-        public InfoPacketReader(InputStream inp) {
-            super(inp);
-        }
-
-        @Override
-        public OggPacket getNextPacket() throws IOException {
-            if(inProgress) {
-                inProgress = false;
-                return super.getNextPacket();
-            } else {
-                inProgress = true;
-            }
-
-            OggPacket p = super.getNextPacket();
-            inProgress = false;
-
-            if(p != null) {
-                lastSeqNum = p.getSequenceNumber();
-
-                if(p.isBeginningOfStream()) {
-                    System.out.println(
-                            "New logical stream " + 
-                            Integer.toHexString(p.getSid()) +
-                            " (" + p.getSid() + ") found"
-                    );
-                }
-                if(p.isEndOfStream()) {
-                    System.out.println(
-                            "Logical stream " + 
-                            Integer.toHexString(p.getSid()) +
-                            " (" + p.getSid() + ") completed"
-                    );
-                }
-            }
-            return p;
-        }
-
-        @Override
-        public OggPacket getNextPacketWithSid(int sid) throws IOException {
-            OggPacket p;
-            while( (p = getNextPacket()) != null ) {
-                if(p.getSid() != sid) {
-                    System.out.println("Ignoring packet from stream " +
-                            Integer.toHexString(p.getSid()));
-                } else {
-                    return p;
-                }
-            }
-            return null;
-        }
     }
 }
