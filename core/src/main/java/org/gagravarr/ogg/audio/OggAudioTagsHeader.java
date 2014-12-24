@@ -14,6 +14,7 @@
 package org.gagravarr.ogg.audio;
 
 import java.util.List;
+import java.util.Map;
 
 import org.gagravarr.ogg.OggStreamPacket;
 
@@ -67,4 +68,8 @@ public interface OggAudioTagsHeader extends OggStreamPacket {
      *  tags which aren't present.
      */
     public List<String> getComments(String tag);
+    /**
+     * Returns all the comments, across all tags
+     */
+    public Map<String, List<String>> getAllComments();
 }
