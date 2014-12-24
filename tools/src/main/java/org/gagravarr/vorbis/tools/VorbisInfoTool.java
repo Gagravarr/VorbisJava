@@ -21,7 +21,9 @@ import java.util.Map;
 
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
-import org.gagravarr.vorbis.VorbisAudioData;
+import org.gagravarr.ogg.OggStreamAudioData;
+import org.gagravarr.ogg.audio.OggAudioStatistics;
+import org.gagravarr.ogg.audio.OggAudioStream;
 import org.gagravarr.vorbis.VorbisFile;
 
 /**
@@ -66,34 +68,14 @@ public class VorbisInfoTool {
         System.out.println("  Codebooks: " + vf.getSetup().getNumberOfCodebooks());
         System.out.println("");
 
-        VorbisAudioData vad;
-        int dataPackets = 0;
-        long dataSize = 0;
-        long lastGranule = 0;
-        while( (vad = vf.getNextAudioPacket()) != null ) {
-            dataPackets += 1;
-            dataSize += vad.getData().length;
-            lastGranule = vad.getGranulePosition();
-
-            if(debugging) {
-                System.out.println(
-                        r.lastSeqNum + " - " +
-                        vad.getGranulePosition() + " - " +
-                        vad.getData().length + " bytes"
-                );
-            }
-        }
-
-        float seconds = lastGranule / vf.getInfo().getRate();
-        int minutes = (int)(seconds / 60);
-        seconds = seconds - (minutes*60); 
-
+        InfoAudioStats stats = new InfoAudioStats(vf, r.lastSeqNum, debugging);
+        stats.calculate(vf.getInfo().getRate());
         System.out.println("");
         System.out.println("Vorbis Audio:");
-        System.out.println("  Total Data Packets: " + dataPackets);
-        System.out.println("  Total Data Length: " + dataSize);
-        System.out.println("  Audio Length: " + minutes + "m:" +
-                (int)seconds + "s");
+        System.out.println("  Total Data Packets: " + stats.getDataPackets());
+        System.out.println("  Total Data Length: " + stats.getDataSize());
+        System.out.println("  Audio Length Seconds: " + stats.getDurationSeconds());
+        System.out.println("  Audio Length: " + stats.getDuration());
     }
 
     public static void printHelp() {
@@ -108,6 +90,31 @@ public class VorbisInfoTool {
         for(String tag : comments.keySet()) {
             for(String value : comments.get(tag)) {
                 System.out.println("  " + tag + "=" + value);
+            }
+        }
+    }
+
+    protected static class InfoAudioStats extends OggAudioStatistics {
+        private boolean debugging;
+        private int lastSeqNum;
+
+        public InfoAudioStats(OggAudioStream audio, int lastSeqNum,
+                   boolean debugging) throws IOException {
+            super(audio);
+            this.debugging = debugging;
+            this.lastSeqNum = lastSeqNum;
+        }
+
+        @Override
+        protected void handleAudioData(OggStreamAudioData audioData) {
+            super.handleAudioData(audioData);
+
+            if(debugging) {
+                System.out.println(
+                        lastSeqNum + " - " +
+                        audioData.getGranulePosition() + " - " +
+                        audioData.getData().length + " bytes"
+                );
             }
         }
     }
