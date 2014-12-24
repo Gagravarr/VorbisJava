@@ -14,6 +14,7 @@
 package org.gagravarr.ogg.audio;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import org.gagravarr.ogg.OggStreamAudioData;
 
@@ -71,6 +72,18 @@ public class OggAudioStatistics {
     public double getDurationSeconds() {
         return durationSeconds;
     }
+    /**
+     * Returns the duration, in Hours:Minutes:Seconds.MS
+     */
+    public String getDuration() {
+        // Output as Hours / Minutes / Seconds / Parts
+        long hours = TimeUnit.SECONDS.toHours((long)durationSeconds);
+        long mins = TimeUnit.SECONDS.toMinutes((long)durationSeconds) - (hours*60);
+        double secs = durationSeconds - (((hours*60)+mins)*60);
+
+        return String.format("%02d:%02d:%05.2f", hours, mins, secs);
+    }
+
     /**
      * The last granule (time position) in the audio stream
      */

@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
@@ -116,13 +115,7 @@ public abstract class OggAudioParser extends AbstractParser {
             metadata.add(XMPDM.DURATION, DURATION_FORMAT.format(duration));
 
             // Output as Hours / Minutes / Seconds / Parts
-            long hours = TimeUnit.SECONDS.toHours((long)duration);
-            long mins = TimeUnit.SECONDS.toMinutes((long)duration) - (hours*60);
-            double secs = duration - (((hours*60)+mins)*60);
-
-            String durationStr = 
-                    String.format("%02d:%02d:%05.2f", hours, mins, secs);
-            xhtml.element("p", durationStr.toString());
+            xhtml.element("p", stats.getDuration());
         }
     }
 }
