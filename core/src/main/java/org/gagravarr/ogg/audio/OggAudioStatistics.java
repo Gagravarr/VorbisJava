@@ -25,12 +25,24 @@ import org.gagravarr.ogg.OggStreamAudioData;
  *  additional statistics beyond these.
  */
 public class OggAudioStatistics {
+    private final OggAudioStream audio;
+
     private int dataPackets = 0;
     private long dataSize = 0;
     private long lastGranule = -1;
-    private int durationSeconds = 0;
+    private double durationSeconds = 0;
 
-    public OggAudioStatistics(OggAudioStream audio, long sampleRate) throws IOException {
+    public OggAudioStatistics(OggAudioStream audio) throws IOException {
+        this.audio = audio;
+    }
+
+    /**
+     * Calculate the statistics
+     *
+     * TODO Push more things onto {@link OggAudioInfoHeader}, then
+     *  accept that instead
+     */
+    public void calculate(long sampleRate) throws IOException {
         OggStreamAudioData data;
 
         // Have each audio packet handled, tracking at least granules
@@ -40,7 +52,7 @@ public class OggAudioStatistics {
 
         // Calculate the duration from the granules, if found
         if (lastGranule > 0) {
-            durationSeconds = (int)(lastGranule/sampleRate);
+            durationSeconds = ((double)lastGranule)/sampleRate;
         }
     }
 
@@ -56,7 +68,7 @@ public class OggAudioStatistics {
     /**
      * Returns the duration of the audio, in seconds.
      */
-    public int getDurationSeconds() {
+    public double getDurationSeconds() {
         return durationSeconds;
     }
     /**

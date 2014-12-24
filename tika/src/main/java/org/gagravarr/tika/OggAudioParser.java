@@ -26,7 +26,7 @@ import org.apache.tika.metadata.XMP;
 import org.apache.tika.metadata.XMPDM;
 import org.apache.tika.parser.AbstractParser;
 import org.apache.tika.sax.XHTMLContentHandler;
-import org.gagravarr.ogg.OggStreamAudioData;
+import org.gagravarr.ogg.audio.OggAudioStatistics;
 import org.gagravarr.ogg.audio.OggAudioStream;
 import org.gagravarr.vorbis.VorbisComments;
 import org.gagravarr.vorbis.VorbisStyleComments;
@@ -105,19 +105,13 @@ public abstract class OggAudioParser extends AbstractParser {
 
     protected void extractDuration(Metadata metadata, XHTMLContentHandler xhtml,
             long sampleRate, OggAudioStream audio) throws IOException, SAXException {
-        // Skip to the last Audio Frame with a Granule
-        long lastGranule = -1;
-        OggStreamAudioData data;
-        while ((data = audio.getNextAudioPacket()) != null) {
-            if (data.getGranulePosition() > lastGranule) {
-                lastGranule = data.getGranulePosition();
-            }
-        }
+        // Have the statistics calculated
+        OggAudioStatistics stats = new OggAudioStatistics(audio);
+        stats.calculate(sampleRate);
 
-        // Calculate the duration from that
-        if (lastGranule > 0) {
-            double duration = (double)lastGranule / sampleRate;
-
+        // Record the duration, if available
+        double duration = stats.getDurationSeconds();
+        if (duration > 0) {
             // Save as metadata to the nearest .01 seconds
             metadata.add(XMPDM.DURATION, DURATION_FORMAT.format(duration));
 
