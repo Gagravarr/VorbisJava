@@ -121,6 +121,9 @@ public class SpeexInfo extends HighLevelOggStreamPacket implements SpeexPacket, 
     public long getRate() {
         return rate;
     }
+    public int getSampleRate() {
+        return (int)rate;
+    }
     public void setRate(long rate) {
         this.rate = rate;
     }
@@ -139,10 +142,10 @@ public class SpeexInfo extends HighLevelOggStreamPacket implements SpeexPacket, 
         this.modeBitstreamVersion = modeBitstreamVersion;
     }
 
-    public int getChannels() {
+    public int getNumChannels() {
         return channels;
     }
-    public void setChannels(int channels) {
+    public void setNumChannels(int channels) {
         this.channels = channels;
     }
 

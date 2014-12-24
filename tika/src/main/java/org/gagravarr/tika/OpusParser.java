@@ -74,7 +74,7 @@ public class OpusParser extends OggAudioParser {
       extractComments(metadata, xhtml, opus.getTags());
 
       // Extract the audio length
-      extractDuration(metadata, xhtml, opus.getInfo().getRate(), opus);
+      extractDuration(metadata, xhtml, opus.getInfo(), opus);
 
       // Finish
       xhtml.endDocument();
@@ -85,6 +85,6 @@ public class OpusParser extends OggAudioParser {
       metadata.set(XMPDM.AUDIO_SAMPLE_RATE, (int)info.getRate());
       metadata.add("version", "Opus " + info.getMajorVersion() + "." + info.getMinorVersion());
     
-      extractChannelInfo(metadata, info.getChannels());
+      extractChannelInfo(metadata, info);
    }
 }

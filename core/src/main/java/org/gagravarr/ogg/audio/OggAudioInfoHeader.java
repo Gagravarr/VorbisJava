@@ -27,5 +27,13 @@ public interface OggAudioInfoHeader extends OggStreamPacket {
     public String getVersionString();
 
     // TODO Can we bring any more common things across?
-    // TODO Perhaps sample rates, channel counts etc?
+
+    /**
+     * @return The number of channels (1=mono, 2=stereo etc)
+     */
+    public int getNumChannels();
+    /**
+     * @return Sample rate in Hz
+     */
+    public int getSampleRate();
 }

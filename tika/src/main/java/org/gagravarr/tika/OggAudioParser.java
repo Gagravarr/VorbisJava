@@ -25,6 +25,7 @@ import org.apache.tika.metadata.XMP;
 import org.apache.tika.metadata.XMPDM;
 import org.apache.tika.parser.AbstractParser;
 import org.apache.tika.sax.XHTMLContentHandler;
+import org.gagravarr.ogg.audio.OggAudioInfoHeader;
 import org.gagravarr.ogg.audio.OggAudioStatistics;
 import org.gagravarr.ogg.audio.OggAudioStream;
 import org.gagravarr.vorbis.VorbisComments;
@@ -39,6 +40,9 @@ public abstract class OggAudioParser extends AbstractParser {
     private static final long serialVersionUID = 5168743829615945633L;
     private static final DecimalFormat DURATION_FORMAT = new DecimalFormat("0.0#");
 
+    protected static void extractChannelInfo(Metadata metadata, OggAudioInfoHeader info) {
+        extractChannelInfo(metadata, info.getNumChannels());
+    }
     protected static void extractChannelInfo(Metadata metadata, int channelCount) {
         if(channelCount == 1) {
             metadata.set(XMPDM.AUDIO_CHANNEL_TYPE, "Mono"); 
@@ -103,10 +107,10 @@ public abstract class OggAudioParser extends AbstractParser {
     }
 
     protected void extractDuration(Metadata metadata, XHTMLContentHandler xhtml,
-            long sampleRate, OggAudioStream audio) throws IOException, SAXException {
+            OggAudioInfoHeader info, OggAudioStream audio) throws IOException, SAXException {
         // Have the statistics calculated
         OggAudioStatistics stats = new OggAudioStatistics(audio);
-        stats.calculate(sampleRate);
+        stats.calculate(info);
 
         // Record the duration, if available
         double duration = stats.getDurationSeconds();

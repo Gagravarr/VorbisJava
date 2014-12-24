@@ -117,10 +117,10 @@ public class OpusInfo extends HighLevelOggStreamPacket implements OpusPacket, Og
         return majorVersion + "." + minorVersion;
     }
 
-    public int getChannels() {
+    public int getNumChannels() {
         return channels;
     }
-    public void setChannels(int channels) {
+    public void setNumChannels(int channels) {
         this.channels = channels;
     }
 
@@ -134,7 +134,10 @@ public class OpusInfo extends HighLevelOggStreamPacket implements OpusPacket, Og
     public long getRate() {
         return rate;
     }
-    public void setRate(long rate) {
+    public int getSampleRate() {
+        return (int)rate;
+    }
+    public void setSampleRate(long rate) {
         this.rate = rate;
     }
 

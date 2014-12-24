@@ -49,7 +49,7 @@ public class OpusInfoTool extends OggAudioInfoTool {
         System.out.println("Opus Headers:");
         System.out.println("  Version: " + of.getInfo().getVersion());
         System.out.println("  Vendor: " + of.getTags().getVendor());
-        System.out.println("  Channels: " + of.getInfo().getChannels());
+        System.out.println("  Channels: " + of.getInfo().getNumChannels());
         System.out.println("  Rate: " + of.getInfo().getRate());
         System.out.println("");
 
@@ -58,7 +58,7 @@ public class OpusInfoTool extends OggAudioInfoTool {
         System.out.println("");
 
         InfoAudioStats stats = new InfoAudioStats(of, r.getLastSeqNum(), debugging);
-        stats.calculate(of.getInfo().getRate());
+        stats.calculate(of.getInfo());
         System.out.println("");
         System.out.println("Opus Audio:");
         System.out.println("  Total Data Packets: " + stats.getDataPackets());

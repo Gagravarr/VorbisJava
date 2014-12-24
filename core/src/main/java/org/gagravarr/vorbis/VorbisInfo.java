@@ -98,12 +98,18 @@ public class VorbisInfo extends HighLevelOggStreamPacket implements VorbisPacket
 	public void setChannels(int channels) {
 		this.channels = channels;
 	}
+	public int getNumChannels() {
+	    return channels;
+	}
 
 	public long getRate() {
 		return rate;
 	}
 	public void setRate(long rate) {
 		this.rate = rate;
+	}
+	public int getSampleRate() {
+	    return (int)rate;
 	}
 
 	public int getBitrateUpper() {

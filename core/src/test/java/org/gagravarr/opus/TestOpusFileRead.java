@@ -49,7 +49,7 @@ public class TestOpusFileRead extends TestCase {
         assertEquals(0, of.getInfo().getMajorVersion());
         assertEquals(1, of.getInfo().getMinorVersion());
 
-        assertEquals(2, of.getInfo().getChannels());
+        assertEquals(2, of.getInfo().getNumChannels());
 
         assertEquals(44100, of.getInfo().getRate());
         assertEquals(0x164, of.getInfo().getPreSkip());
@@ -92,7 +92,7 @@ public class TestOpusFileRead extends TestCase {
         assertEquals(0, of.getInfo().getMajorVersion());
         assertEquals(1, of.getInfo().getMinorVersion());
 
-        assertEquals(2, of.getInfo().getChannels());
+        assertEquals(2, of.getInfo().getNumChannels());
 
         assertEquals(44100, of.getInfo().getRate());
         assertEquals(0x164, of.getInfo().getPreSkip());

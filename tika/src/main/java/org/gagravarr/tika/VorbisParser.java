@@ -75,7 +75,7 @@ public class VorbisParser extends OggAudioParser {
       //  return the lyrics etc from within there
 
       // Extract the audio length
-      extractDuration(metadata, xhtml, vorbis.getInfo().getRate(), vorbis);
+      extractDuration(metadata, xhtml, vorbis.getInfo(), vorbis);
 
       // Finish
       xhtml.endDocument();
@@ -86,6 +86,6 @@ public class VorbisParser extends OggAudioParser {
       metadata.set(XMPDM.AUDIO_SAMPLE_RATE, (int)info.getRate());
       metadata.add("version", "Vorbis " + info.getVersion());
     
-      extractChannelInfo(metadata, info.getChannels());
+      extractChannelInfo(metadata, info);
    }
 }

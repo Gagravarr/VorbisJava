@@ -39,11 +39,8 @@ public class OggAudioStatistics {
 
     /**
      * Calculate the statistics
-     *
-     * TODO Push more things onto {@link OggAudioInfoHeader}, then
-     *  accept that instead
      */
-    public void calculate(long sampleRate) throws IOException {
+    public void calculate(OggAudioInfoHeader info) throws IOException {
         OggStreamAudioData data;
 
         // Have each audio packet handled, tracking at least granules
@@ -53,7 +50,7 @@ public class OggAudioStatistics {
 
         // Calculate the duration from the granules, if found
         if (lastGranule > 0) {
-            durationSeconds = ((double)lastGranule)/sampleRate;
+            durationSeconds = ((double)lastGranule) / info.getSampleRate();
         }
     }
 

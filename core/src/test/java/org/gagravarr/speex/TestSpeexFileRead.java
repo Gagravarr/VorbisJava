@@ -46,7 +46,7 @@ public class TestSpeexFileRead extends TestCase {
         assertEquals(44100, sf.getInfo().getRate());
         assertEquals(2, sf.getInfo().getMode());
         assertEquals(4, sf.getInfo().getModeBitstreamVersion());
-        assertEquals(2, sf.getInfo().getChannels());
+        assertEquals(2, sf.getInfo().getNumChannels());
 
         assertEquals(-1, sf.getInfo().getBitrate());
         assertEquals(0x280, sf.getInfo().getFrameSize());

@@ -66,7 +66,7 @@ public class VorbisInfoTool extends OggAudioInfoTool {
         System.out.println("");
 
         InfoAudioStats stats = new InfoAudioStats(vf, r.getLastSeqNum(), debugging);
-        stats.calculate(vf.getInfo().getRate());
+        stats.calculate(vf.getInfo());
         System.out.println("");
         System.out.println("Vorbis Audio:");
         System.out.println("  Total Data Packets: " + stats.getDataPackets());

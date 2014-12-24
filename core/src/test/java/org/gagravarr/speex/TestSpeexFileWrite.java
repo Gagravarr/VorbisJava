@@ -85,7 +85,7 @@ public class TestSpeexFileWrite extends TestCase {
         ));
 
         // And check
-        assertEquals(2, spIN.getInfo().getChannels());
+        assertEquals(2, spIN.getInfo().getNumChannels());
         assertEquals(44100, spIN.getInfo().getRate());
 
         assertEquals("Test Title", spIN.getTags().getTitle());

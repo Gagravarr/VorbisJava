@@ -102,7 +102,7 @@ public class TestOpusFileWrite extends TestCase {
             ));
 
             // And check
-            assertEquals(2, opIN.getInfo().getChannels());
+            assertEquals(2, opIN.getInfo().getNumChannels());
             assertEquals(44100, opIN.getInfo().getRate());
 
             assertEquals("Test Title", opIN.getTags().getTitle());

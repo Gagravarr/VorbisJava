@@ -74,7 +74,7 @@ public class SpeexParser extends OggAudioParser {
       extractComments(metadata, xhtml, speex.getTags());
 
       // Extract the audio length
-      extractDuration(metadata, xhtml, speex.getInfo().getRate(), speex);
+      extractDuration(metadata, xhtml, speex.getInfo(), speex);
 
       // Finish
       xhtml.endDocument();
@@ -85,6 +85,6 @@ public class SpeexParser extends OggAudioParser {
       metadata.set(XMPDM.AUDIO_SAMPLE_RATE, (int)info.getRate());
       metadata.add("version", "Speex " + info.getVersionId() + " - " + info.getVersionString());
     
-      extractChannelInfo(metadata, info.getChannels());
+      extractChannelInfo(metadata, info);
    }
 }
