@@ -75,6 +75,13 @@ public abstract class OggAudioInfoTool {
         }
     }
 
+    protected static String format2(double d) {
+        return String.format("%8.1f",d);
+    }
+    protected static String format1(double d) {
+        return String.format("%.2f",d);
+    }
+
     protected static class InfoAudioStats extends OggAudioStatistics {
         private boolean debugging;
         private int lastSeqNum;
