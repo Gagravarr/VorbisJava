@@ -20,5 +20,5 @@ package org.gagravarr.ogg;
  *  a {@link OggStreamListener} 
  */
 public interface OggStreamReader {
-	public void processPacket(OggPacket packet);
+    public void processPacket(OggPacket packet);
 }

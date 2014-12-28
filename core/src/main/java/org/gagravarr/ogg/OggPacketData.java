@@ -23,16 +23,16 @@ package org.gagravarr.ogg;
  *  {@link OggPage}.
  */
 public class OggPacketData {
-	private byte[] data;
-	
-	protected OggPacketData(byte[] data) {
-		this.data = data;
-	}
-	
-	/**
-	 * Returns the data that makes up the packet.
-	 */
-	public byte[] getData() {
-		return data;
-	}
+    private byte[] data;
+
+    protected OggPacketData(byte[] data) {
+        this.data = data;
+    }
+
+    /**
+     * Returns the data that makes up the packet.
+     */
+    public byte[] getData() {
+        return data;
+    }
 }

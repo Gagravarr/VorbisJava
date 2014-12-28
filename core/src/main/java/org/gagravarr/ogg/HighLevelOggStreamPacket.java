@@ -21,35 +21,35 @@ package org.gagravarr.ogg;
  *  new and existing OggPacket instances.
  */
 public abstract class HighLevelOggStreamPacket implements OggStreamPacket {
-	private OggPacket oggPacket;
-	private byte[] data;
-	
-	protected HighLevelOggStreamPacket(OggPacket oggPacket) {
-		this.oggPacket = oggPacket;
-	}
-	protected HighLevelOggStreamPacket() {
-		this.oggPacket = null;
-	}
-	
-	protected OggPacket getOggPacket() {
-		return oggPacket;
-	}
-	
-	public byte[] getData() {
-		if(data != null) {
-			return data;
-		}
-		if(oggPacket != null) {
-			return oggPacket.getData();
-		}
-		return null;
-	}
-	public void setData(byte[] data) {
-		this.data = data;
-	}
-	
-	public OggPacket write() {
-		this.oggPacket = new OggPacket(getData());
-		return this.oggPacket;
-	}
+    private OggPacket oggPacket;
+    private byte[] data;
+
+    protected HighLevelOggStreamPacket(OggPacket oggPacket) {
+        this.oggPacket = oggPacket;
+    }
+    protected HighLevelOggStreamPacket() {
+        this.oggPacket = null;
+    }
+
+    protected OggPacket getOggPacket() {
+        return oggPacket;
+    }
+
+    public byte[] getData() {
+        if(data != null) {
+            return data;
+        }
+        if(oggPacket != null) {
+            return oggPacket.getData();
+        }
+        return null;
+    }
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
+    public OggPacket write() {
+        this.oggPacket = new OggPacket(getData());
+        return this.oggPacket;
+    }
 }

@@ -29,30 +29,30 @@ import org.gagravarr.vorbis.VorbisPacketFactory;
  *  with those in Apache Tika
  */
 public class OggStreamIdentifier {
-   public static class OggStreamType {
-       public final String mimetype;
-       public final String description;
-       public final Kind kind;
-       public enum Kind { GENERAL, AUDIO, VIDEO, METADATA };
-       protected OggStreamType(String mimetype, String description, Kind kind) {
-           this.mimetype = mimetype;
-           this.description = description;
-           this.kind = kind;
-       }
-       public String toString() {
-           return kind + " - " + description + " as " + mimetype;
-       }
-   }
+    public static class OggStreamType {
+        public final String mimetype;
+        public final String description;
+        public final Kind kind;
+        public enum Kind { GENERAL, AUDIO, VIDEO, METADATA };
+        protected OggStreamType(String mimetype, String description, Kind kind) {
+            this.mimetype = mimetype;
+            this.description = description;
+            this.kind = kind;
+        }
+        public String toString() {
+            return kind + " - " + description + " as " + mimetype;
+        }
+    }
 
-   // General types
-   public static final OggStreamType OGG_GENERAL = new OggStreamType(
-                                     "application/ogg", "Ogg", Kind.GENERAL);
-   public static final OggStreamType OGG_VIDEO = new OggStreamType(
-                                     "video/ogg", "Ogg Video", Kind.VIDEO);
-   public static final OggStreamType OGG_AUDIO = new OggStreamType(
-                                     "audio/ogg", "Ogg Audio", Kind.AUDIO);
-   public static final OggStreamType UNKNOWN = new OggStreamType(
-                                     "application/octet-stream", "Unknown", Kind.GENERAL);
+    // General types
+    public static final OggStreamType OGG_GENERAL = new OggStreamType(
+                                      "application/ogg", "Ogg", Kind.GENERAL);
+    public static final OggStreamType OGG_VIDEO = new OggStreamType(
+                                      "video/ogg", "Ogg Video", Kind.VIDEO);
+    public static final OggStreamType OGG_AUDIO = new OggStreamType(
+                                      "audio/ogg", "Ogg Audio", Kind.AUDIO);
+    public static final OggStreamType UNKNOWN = new OggStreamType(
+                                      "application/octet-stream", "Unknown", Kind.GENERAL);
    
    // Audio types
    public static final OggStreamType OGG_VORBIS = new OggStreamType(
