@@ -84,6 +84,36 @@ public class OggPacket extends OggPacketData {
     }
 
     /**
+     * Returns the number of bytes overhead of the {@link OggPage}
+     *  we belong to, if we're the only packet in the page, or
+     *  a rough guess if we span multiple pages / share a page.
+     */
+    public int getOverheadBytes() {
+        if (parent == null) return 0;
+
+        double ourShare = 1.0;
+        int ourDataLen = getData().length;
+        int pageDataLen = parent.getDataSize();
+        if (pageDataLen != ourDataLen) {
+            // We don't have a page to ourselves, so we can't come up
+            //  with a fully accurate overhead at this stage, so get close
+
+            // Do we span multiple pages?
+            if (ourDataLen > pageDataLen) {
+                // Take a best guess, rounding up
+                int approxPages = (int)Math.ceil(ourDataLen/pageDataLen);
+                ourShare = approxPages;
+            } else {
+                // We're probably just a part of a larger page
+                // Take a rough guess
+                ourShare = ourDataLen / pageDataLen;
+            }
+        }
+        // Take the current page's overhead, scale as needed, and return
+        return (int)(ourShare * (parent.getPageSize() - ourDataLen));
+    }
+
+    /**
      * Is this the first packet in the stream?
      * If so, the data should hold the magic
      *  information required to identify which
