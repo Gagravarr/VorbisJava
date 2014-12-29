@@ -63,16 +63,16 @@ public class OggPage {
         granulePosition = IOUtils.getInt(
                 inp.read(), inp.read(), inp.read(), inp.read(),
                 inp.read(), inp.read(), inp.read(), inp.read()
-                );
+        );
         sid = (int)IOUtils.getInt(
                 inp.read(), inp.read(), inp.read(), inp.read()
-                );
+        );
         seqNum = (int)IOUtils.getInt(
                 inp.read(), inp.read(), inp.read(), inp.read()
-                );
+        );
         checksum = IOUtils.getInt(
                 inp.read(), inp.read(), inp.read(), inp.read()
-                );
+        );
 
         numLVs = inp.read();
         lvs = new byte[numLVs];
