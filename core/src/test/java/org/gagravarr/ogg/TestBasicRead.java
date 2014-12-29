@@ -225,6 +225,7 @@ public class TestBasicRead extends TestCase {
         assertEquals(0x0473b45c, p.getSid());
         assertEquals(0, p.getGranulePosition());
         assertEquals(0, p.getSequenceNumber());
+        assertEquals(28, p.getOverheadBytes());
 
         // Page 2
         p = r.getNextPacket();
@@ -234,6 +235,7 @@ public class TestBasicRead extends TestCase {
         assertEquals(0x0473b45c, p.getSid());
         assertEquals(0, p.getGranulePosition());
         assertEquals(1, p.getSequenceNumber());
+        assertEquals(2, p.getOverheadBytes()); // Most of the overhead isn't ours
 
         p = r.getNextPacket();
         assertEquals(255*13+0xa9, p.getData().length);
@@ -242,6 +244,7 @@ public class TestBasicRead extends TestCase {
         assertEquals(0x0473b45c, p.getSid());
         assertEquals(0, p.getGranulePosition());
         assertEquals(1, p.getSequenceNumber());
+        assertEquals(39, p.getOverheadBytes()); // Most of the overhead is us
 
         // Page 3
         p = r.getNextPacket();
@@ -251,6 +254,7 @@ public class TestBasicRead extends TestCase {
         assertEquals(0x0473b45c, p.getSid());
         assertEquals(0x3c0, p.getGranulePosition());
         assertEquals(2, p.getSequenceNumber());
+        assertEquals(3, p.getOverheadBytes());
 
         p = r.getNextPacket();
         assertEquals(0x1c, p.getData().length);
@@ -259,6 +263,7 @@ public class TestBasicRead extends TestCase {
         assertEquals(0x0473b45c, p.getSid());
         assertEquals(0x3c0, p.getGranulePosition());
         assertEquals(2, p.getSequenceNumber());
+        assertEquals(2, p.getOverheadBytes());
 
         p = r.getNextPacket();
         assertEquals(0x1e, p.getData().length);

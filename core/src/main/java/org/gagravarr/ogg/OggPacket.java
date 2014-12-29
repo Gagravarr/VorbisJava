@@ -106,11 +106,11 @@ public class OggPacket extends OggPacketData {
             } else {
                 // We're probably just a part of a larger page
                 // Take a rough guess
-                ourShare = ourDataLen / pageDataLen;
+                ourShare = ((double)ourDataLen) / pageDataLen;
             }
         }
         // Take the current page's overhead, scale as needed, and return
-        return (int)(ourShare * (parent.getPageSize() - ourDataLen));
+        return (int)(ourShare * (parent.getPageSize() - pageDataLen));
     }
 
     /**
