@@ -13,7 +13,6 @@
  */
 package org.gagravarr.ogg;
 
-
 /**
  * A high level stream packet sat atop
  *  of an OggPacket.
@@ -46,6 +45,22 @@ public abstract class HighLevelOggStreamPacket implements OggStreamPacket {
     }
     public void setData(byte[] data) {
         this.data = data;
+    }
+
+    /**
+     * Returns the approximate number of bytes overhead
+     *  from the underlying {@link OggPacket} / {@link OggPage}
+     *  structures into which this data is stored.
+     * <p>Will return 0 for packets not yet associated with a page.
+     * <p>This information is normally only of interest to information,
+     *  diagnostic and debugging tools.
+     */
+    public int getOggOverheadSize() {
+        if (oggPacket != null) {
+            return oggPacket.getOverheadBytes();
+        } else {
+            return 0;
+        }
     }
 
     public OggPacket write() {
