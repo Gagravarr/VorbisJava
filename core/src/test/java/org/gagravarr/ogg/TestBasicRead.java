@@ -80,6 +80,7 @@ public class TestBasicRead extends TestCase {
         OggPacket p = (OggPacket)i.next();
 
         assertEquals(0x1e, p.getData().length);
+        assertEquals(28, p.getOverheadBytes());
         assertEquals(true, p.isBeginningOfStream());
         assertEquals(false, p.isEndOfStream());
         assertEquals(0x0473b45c, p.getSid());
@@ -111,6 +112,7 @@ public class TestBasicRead extends TestCase {
         p = (OggPacket)i.next();
 
         assertEquals(0xdb, p.getData().length);
+        assertEquals(2, p.getOverheadBytes());
         assertEquals(false, p.isBeginningOfStream());
         assertEquals(false, p.isEndOfStream());
         assertEquals(0x0473b45c, p.getSid());
@@ -120,6 +122,7 @@ public class TestBasicRead extends TestCase {
         p = (OggPacket)i.next();
 
         assertEquals(255*13+0xa9, p.getData().length);
+        assertEquals(39, p.getOverheadBytes());
         assertEquals(false, p.isBeginningOfStream());
         assertEquals(false, p.isEndOfStream());
         assertEquals(0x0473b45c, p.getSid());
