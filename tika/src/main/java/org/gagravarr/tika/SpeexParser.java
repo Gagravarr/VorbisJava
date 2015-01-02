@@ -74,7 +74,7 @@ public class SpeexParser extends OggAudioParser {
       extractComments(metadata, xhtml, speex.getTags());
 
       // Extract the audio length
-      extractDuration(metadata, xhtml, speex.getInfo(), speex);
+      extractDuration(metadata, xhtml, speex, speex);
 
       // Finish
       xhtml.endDocument();

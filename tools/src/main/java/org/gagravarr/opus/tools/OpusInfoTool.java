@@ -57,12 +57,12 @@ public class OpusInfoTool extends OggAudioInfoTool {
         listTags(of);
         System.out.println("");
 
-        InfoAudioStats stats = new InfoAudioStats(of, r.getLastSeqNum(), debugging);
-        stats.calculate(of.getInfo());
+        InfoAudioStats stats = new InfoAudioStats(of, of, r.getLastSeqNum(), debugging);
+        stats.calculate();
         System.out.println("");
         System.out.println("Opus Audio:");
-        System.out.println("  Total Data Packets: " + stats.getDataPackets());
-        System.out.println("  Total Data Length: " + stats.getDataSize());
+        System.out.println("  Total Data Packets: " + stats.getAudioPacketsCount());
+        System.out.println("  Total Data Length: " + stats.getAudioDataSize());
         System.out.println("  Audio Length Seconds: " + stats.getDurationSeconds());
         System.out.println("  Audio Length: " + stats.getDuration());
     }

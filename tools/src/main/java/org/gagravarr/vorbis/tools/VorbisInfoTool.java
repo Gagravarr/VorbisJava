@@ -65,12 +65,12 @@ public class VorbisInfoTool extends OggAudioInfoTool {
         System.out.println("  Codebooks: " + vf.getSetup().getNumberOfCodebooks());
         System.out.println("");
 
-        InfoAudioStats stats = new InfoAudioStats(vf, r.getLastSeqNum(), debugging);
-        stats.calculate(vf.getInfo());
+        InfoAudioStats stats = new InfoAudioStats(vf, vf, r.getLastSeqNum(), debugging);
+        stats.calculate();
         System.out.println("");
         System.out.println("Vorbis Audio:");
-        System.out.println("  Total Data Packets: " + stats.getDataPackets());
-        System.out.println("  Total Data Length: " + stats.getDataSize());
+        System.out.println("  Total Data Packets: " + stats.getAudioPacketsCount());
+        System.out.println("  Total Data Length: " + stats.getAudioDataSize());
         System.out.println("  Audio Length Seconds: " + stats.getDurationSeconds());
         System.out.println("  Audio Length: " + stats.getDuration());
     }

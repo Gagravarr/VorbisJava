@@ -27,21 +27,30 @@ import org.gagravarr.ogg.OggStreamAudioData;
  */
 public class OggAudioStatistics {
     private final OggAudioStream audio;
+    private final OggAudioHeaders headers;
 
-    private int dataPackets = 0;
-    private long dataSize = 0;
+    private int audioPackets = 0;
     private long lastGranule = -1;
     private double durationSeconds = 0;
 
-    public OggAudioStatistics(OggAudioStream audio) throws IOException {
+    private long oggOverheadSize = 0;
+    private long headerOverheadSize = 0;
+    private long audioDataSize = 0;
+
+    public OggAudioStatistics(OggAudioHeaders headers, OggAudioStream audio) throws IOException {
         this.audio = audio;
+        this.headers = headers;
     }
 
     /**
      * Calculate the statistics
      */
-    public void calculate(OggAudioInfoHeader info) throws IOException {
+    public void calculate() throws IOException {
         OggStreamAudioData data;
+
+        // Calculate the headers sizing
+        OggAudioInfoHeader info = headers.getInfo();
+        // TODO Complete
 
         // Have each audio packet handled, tracking at least granules
         while ((data = audio.getNextAudioPacket()) != null) {
@@ -55,8 +64,8 @@ public class OggAudioStatistics {
     }
 
     protected void handleAudioData(OggStreamAudioData audioData) {
-        dataPackets++;
-        dataSize += audioData.getData().length;
+        audioPackets++;
+        audioDataSize += audioData.getData().length;
 
         if (audioData.getGranulePosition() > lastGranule) {
             lastGranule = audioData.getGranulePosition();
@@ -91,13 +100,13 @@ public class OggAudioStatistics {
     /**
      * The number of audio packets in the stream
      */
-    public int getDataPackets() {
-        return dataPackets;
+    public int getAudioPacketsCount() {
+        return audioPackets;
     }
     /**
      * The size, in bytes, of all the audio data
      */
-    public long getDataSize() {
-        return dataSize;
+    public long getAudioDataSize() {
+        return audioDataSize;
     }
 }

@@ -74,7 +74,7 @@ public class OpusParser extends OggAudioParser {
       extractComments(metadata, xhtml, opus.getTags());
 
       // Extract the audio length
-      extractDuration(metadata, xhtml, opus.getInfo(), opus);
+      extractDuration(metadata, xhtml, opus, opus);
 
       // Finish
       xhtml.endDocument();

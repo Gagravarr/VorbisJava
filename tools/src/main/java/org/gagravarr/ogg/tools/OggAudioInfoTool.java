@@ -86,9 +86,9 @@ public abstract class OggAudioInfoTool {
         private boolean debugging;
         private int lastSeqNum;
 
-        public InfoAudioStats(OggAudioStream audio, int lastSeqNum,
-                   boolean debugging) throws IOException {
-            super(audio);
+        public InfoAudioStats(OggAudioHeaders headers, OggAudioStream audio, 
+                   int lastSeqNum, boolean debugging) throws IOException {
+            super(headers, audio);
             this.debugging = debugging;
             this.lastSeqNum = lastSeqNum;
         }

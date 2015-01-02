@@ -25,6 +25,7 @@ import org.apache.tika.metadata.XMP;
 import org.apache.tika.metadata.XMPDM;
 import org.apache.tika.parser.AbstractParser;
 import org.apache.tika.sax.XHTMLContentHandler;
+import org.gagravarr.ogg.audio.OggAudioHeaders;
 import org.gagravarr.ogg.audio.OggAudioInfoHeader;
 import org.gagravarr.ogg.audio.OggAudioStatistics;
 import org.gagravarr.ogg.audio.OggAudioStream;
@@ -107,10 +108,10 @@ public abstract class OggAudioParser extends AbstractParser {
     }
 
     protected void extractDuration(Metadata metadata, XHTMLContentHandler xhtml,
-            OggAudioInfoHeader info, OggAudioStream audio) throws IOException, SAXException {
+            OggAudioHeaders headers, OggAudioStream audio) throws IOException, SAXException {
         // Have the statistics calculated
-        OggAudioStatistics stats = new OggAudioStatistics(audio);
-        stats.calculate(info);
+        OggAudioStatistics stats = new OggAudioStatistics(headers, audio);
+        stats.calculate();
 
         // Record the duration, if available
         double duration = stats.getDurationSeconds();

@@ -75,7 +75,7 @@ public class VorbisParser extends OggAudioParser {
       //  return the lyrics etc from within there
 
       // Extract the audio length
-      extractDuration(metadata, xhtml, vorbis.getInfo(), vorbis);
+      extractDuration(metadata, xhtml, vorbis, vorbis);
 
       // Finish
       xhtml.endDocument();
