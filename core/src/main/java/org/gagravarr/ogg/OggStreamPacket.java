@@ -21,5 +21,6 @@ package org.gagravarr.ogg;
 public interface OggStreamPacket {
     public byte[] getData();
     public void setData(byte[] data);
+    public int getOggOverheadSize();
     public OggPacket write();
 }

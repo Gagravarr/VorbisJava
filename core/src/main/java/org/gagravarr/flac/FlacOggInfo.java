@@ -57,6 +57,12 @@ public class FlacOggInfo extends FlacInfo implements OggAudioInfoHeader {
         throw new IllegalStateException("Not supported for FLAC");
     }
     /**
+     * The overhead comes from the parent packet
+     */
+    public int getOggOverheadSize() {
+        return parent.getOggOverheadSize();
+    }
+    /**
      * Data writing passes through to the parent packet
      */
     public OggPacket write() {

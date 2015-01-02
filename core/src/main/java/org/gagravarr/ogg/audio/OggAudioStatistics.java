@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.gagravarr.ogg.OggStreamAudioData;
+import org.gagravarr.ogg.OggStreamPacket;
 
 
 /**
@@ -50,7 +51,9 @@ public class OggAudioStatistics {
 
         // Calculate the headers sizing
         OggAudioInfoHeader info = headers.getInfo();
-        // TODO Complete
+        handleHeader(info);
+        handleHeader(headers.getTags());
+        handleHeader(headers.getSetup());
 
         // Have each audio packet handled, tracking at least granules
         while ((data = audio.getNextAudioPacket()) != null) {
@@ -63,9 +66,17 @@ public class OggAudioStatistics {
         }
     }
 
+    protected void handleHeader(OggStreamPacket header) {
+        if (header != null) {
+            oggOverheadSize += header.getOggOverheadSize();
+            headerOverheadSize += header.getData().length;
+        }
+    }
+
     protected void handleAudioData(OggStreamAudioData audioData) {
         audioPackets++;
         audioDataSize += audioData.getData().length;
+        headerOverheadSize += audioData.getOggOverheadSize();
 
         if (audioData.getGranulePosition() > lastGranule) {
             lastGranule = audioData.getGranulePosition();
@@ -108,5 +119,19 @@ public class OggAudioStatistics {
      */
     public long getAudioDataSize() {
         return audioDataSize;
+    }
+    /**
+     * The size, in bytes, of the ogg page overhead of all
+     *  the packets (audio data and audio headers)
+     */
+    public long getOggOverheadSize() {
+        return oggOverheadSize;
+    }
+    /**
+     * The size, in bytes, of the audio headers at the
+     *  start of the file
+     */
+    public long getHeaderOverheadSize() {
+        return headerOverheadSize;
     }
 }
