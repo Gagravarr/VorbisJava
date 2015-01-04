@@ -82,8 +82,13 @@ public class OggInfoTool {
 
                 System.out.println("\t"+type.description+" detected ("+type.mimetype+")");
             } else if(p.isEndOfStream()) {
+                if (pc > 0) {
+                    System.out.println("(" + pc + " mid-stream packets of " +
+                                       Integer.toHexString(p.getSid()) + ")");
+                }
                 System.out.println("Stream " + Integer.toHexString(p.getSid()) + 
                                    " of " + streamTypes.get(p.getSid()) + " ended");
+                pc = 0;
             } else {
                 if(p.getSid() != lastSid) {
                     System.out.println("(" + pc + " packets of stream " +
