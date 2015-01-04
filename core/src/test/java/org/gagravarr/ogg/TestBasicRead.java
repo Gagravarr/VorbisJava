@@ -122,7 +122,7 @@ public class TestBasicRead extends TestCase {
         p = (OggPacket)i.next();
 
         assertEquals(255*13+0xa9, p.getData().length);
-        assertEquals(39, p.getOverheadBytes());
+        assertEquals(40, p.getOverheadBytes());
         assertEquals(false, p.isBeginningOfStream());
         assertEquals(false, p.isEndOfStream());
         assertEquals(0x0473b45c, p.getSid());
@@ -247,7 +247,7 @@ public class TestBasicRead extends TestCase {
         assertEquals(0x0473b45c, p.getSid());
         assertEquals(0, p.getGranulePosition());
         assertEquals(1, p.getSequenceNumber());
-        assertEquals(39, p.getOverheadBytes()); // Most of the overhead is us
+        assertEquals(40, p.getOverheadBytes()); // Most of the overhead is us
 
         // Page 3
         p = r.getNextPacket();
@@ -266,7 +266,7 @@ public class TestBasicRead extends TestCase {
         assertEquals(0x0473b45c, p.getSid());
         assertEquals(0x3c0, p.getGranulePosition());
         assertEquals(2, p.getSequenceNumber());
-        assertEquals(2, p.getOverheadBytes());
+        assertEquals(3, p.getOverheadBytes());
 
         p = r.getNextPacket();
         assertEquals(0x1e, p.getData().length);
