@@ -85,8 +85,10 @@ public class TestOggAudioStatistics extends TestCase {
         stats.calculate();
 
         // Check the resulting values
-        // opus-info reports:
-        //    ????
+        // opusinfo reports:
+        //    Total data length: 1059 bytes (overhead: 23%)
+        //    Playback length: 0m:00.021s
+        //    Average bitrate: 389.1 kb/s, w/o overhead: 299.5 kb/s
         // oggz-info reports:
         //    2 packets in 3 pages, 0.7 packets/page, 8.215% Ogg overhead
         // TODO
