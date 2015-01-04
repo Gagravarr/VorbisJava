@@ -76,7 +76,7 @@ public class OggAudioStatistics {
     protected void handleAudioData(OggStreamAudioData audioData) {
         audioPackets++;
         audioDataSize += audioData.getData().length;
-        headerOverheadSize += audioData.getOggOverheadSize();
+        oggOverheadSize += audioData.getOggOverheadSize();
 
         if (audioData.getGranulePosition() > lastGranule) {
             lastGranule = audioData.getGranulePosition();
