@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import org.gagravarr.ogg.tools.OggAudioInfoTool;
 import org.gagravarr.opus.OpusFile;
+import org.gagravarr.opus.OpusStatistics;
 
 /**
  * A tool for looking at the innards of an Opus File
@@ -57,7 +58,7 @@ public class OpusInfoTool extends OggAudioInfoTool {
         listTags(of);
         System.out.println("");
 
-        InfoAudioStats stats = new InfoAudioStats(of, of, r.getLastSeqNum(), debugging);
+        OpusStatistics stats = new OpusStatistics(of);
         stats.calculate();
         System.out.println("");
         System.out.println("Opus Audio:");
@@ -65,5 +66,22 @@ public class OpusInfoTool extends OggAudioInfoTool {
         System.out.println("  Total Data Length: " + stats.getAudioDataSize());
         System.out.println("  Audio Length Seconds: " + stats.getDurationSeconds());
         System.out.println("  Audio Length: " + stats.getDuration());
+        System.out.println("  Packet duration: "+ format2(stats.getMaxPacketDuration())+"ms (max), "
+                           +format2(stats.getAvgPacketDuration())+"ms (avg), "
+                           +format2(stats.getMinPacketDuration())+"ms (min)");
+        System.out.println("  Page duration:   "+ format2(stats.getMaxPageDuration())+"ms (max), "
+                           +format2(stats.getAvgPageDuration())+"ms (avg), "
+                           +format2(stats.getMinPageDuration())+"ms (min)");
+        System.out.println("  Total data length: "+ stats.getAudioDataSize() + 
+                           " (overhead: " + format1(stats.getOggOverheadPercentage())+"%)");
+        System.out.println("  Playback length: "+ stats.getDuration());
+//        double avgbr = (stats.getAudioDataSize()*8) / stats.getDurationSeconds();
+//        double avgbrover = ((stats.getBytes()-stats.getOverheadBytes())*8) / stats.getPlayTime();
+//        String cbr = "";
+//        if (stats.getMinPacketDuration() == stats.getMaxPacketDuration()
+//                && stats.getMinPacketBytes() == stats.getMaxPacketBytes()) {
+//            cbr= " (hard-CBR)";
+//        }
+//        System.out.println("  Average bitrate: "+ format1(avgbr) + " kb/s, w/o overhead: "+format1(avgbrover)+" kb/s"+cbr);
     }
 }
