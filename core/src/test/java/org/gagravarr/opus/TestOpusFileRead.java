@@ -14,33 +14,13 @@
 package org.gagravarr.opus;
 
 import java.io.IOException;
-import java.io.InputStream;
-
-import junit.framework.TestCase;
 
 import org.gagravarr.ogg.OggFile;
 
 /**
  * Tests for reading things using OpusFile
  */
-public class TestOpusFileRead extends TestCase {
-    /** Get a test file created with libopus 0.9.x */
-    private InputStream getTest09File() throws IOException {
-        return this.getClass().getResourceAsStream("/testOPUS_09.opus");
-    }
-    /** Get a test file created with libopus 1.1.x */
-    private InputStream getTest11File() throws IOException {
-        return this.getClass().getResourceAsStream("/testOPUS_11.opus");
-    }
-
-    private OpusFile of;
-    @Override
-    protected void tearDown() throws IOException {
-        if (of != null) {
-            of.close();
-        }
-    }
-
+public class TestOpusFileRead extends AbstractOpusTest {
     public void testRead09() throws IOException {
         OggFile ogg = new OggFile(getTest09File());
         of = new OpusFile(ogg);

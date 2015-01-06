@@ -18,21 +18,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import junit.framework.TestCase;
-
 import org.gagravarr.ogg.OggFile;
 
 /**
  * Tests for round-tripping with OpusFile
  */
-public class TestOpusFileWrite extends TestCase {
-    private InputStream getTest09File() throws IOException {
-        return this.getClass().getResourceAsStream("/testOPUS_09.opus");
-    }
-    private InputStream getTest11File() throws IOException {
-        return this.getClass().getResourceAsStream("/testOPUS_11.opus");
-    }
-
+public class TestOpusFileWrite extends AbstractOpusTest {
     public void testReadWrite() throws IOException {
         OggFile in = new OggFile(getTest09File());
         OpusFile opIN = new OpusFile(in);
