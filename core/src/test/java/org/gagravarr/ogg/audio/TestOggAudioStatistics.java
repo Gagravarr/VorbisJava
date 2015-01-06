@@ -67,7 +67,9 @@ public class TestOggAudioStatistics extends TestCase {
         // File is 4241 bytes long
         assertEquals(9,    stats.getAudioPacketsCount());
         assertEquals(402,  stats.getAudioDataSize());
-        assertEquals(21,   (int)(stats.getDurationSeconds()*1000));
+
+        assertEquals(21, (int)(stats.getDurationSeconds()*1000));
+        assertEquals("00:00:00.02", stats.getDuration());
 
         assertEquals(30, vf.getInfo().getData().length);
         assertEquals(219, vf.getTags().getData().length);
@@ -78,6 +80,7 @@ public class TestOggAudioStatistics extends TestCase {
         assertEquals(4242, stats.getAudioDataSize() +   // Rounding on overhead 
                            stats.getOggOverheadSize() +
                            stats.getHeaderOverheadSize());
+        assertEquals(2.499, stats.getOggOverheadPercentage(), 0.03);
     }
 
     public void testOpusStats() throws IOException {
@@ -109,8 +112,8 @@ public class TestOggAudioStatistics extends TestCase {
         assertEquals(815, stats.getAudioDataSize());
 
         // TODO Fix me to get this right - pre-roll or similar?
-        assertEquals(31,   (int)(stats.getDurationSeconds()*1000));
-        //assertEquals(21,   (int)(stats.getDurationSeconds()*1000));
+        //assertEquals(21,   (int)(stats.getDurationSeconds()*1000)); // Shows as 31
+        //assertEquals("00:00:00.02", stats.getDuration()); // Shows as .03
 
         assertEquals(19, of.getInfo().getData().length);
         assertEquals(138, of.getTags().getData().length);
@@ -121,5 +124,6 @@ public class TestOggAudioStatistics extends TestCase {
         assertEquals(1059, stats.getAudioDataSize() +
                            stats.getOggOverheadSize() +
                            stats.getHeaderOverheadSize());
+        assertEquals(8.215, stats.getOggOverheadPercentage(), 0.001);
     }
 }

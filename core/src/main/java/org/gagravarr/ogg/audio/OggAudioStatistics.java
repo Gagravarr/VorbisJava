@@ -121,17 +121,25 @@ public class OggAudioStatistics {
         return audioDataSize;
     }
     /**
-     * The size, in bytes, of the ogg page overhead of all
-     *  the packets (audio data and audio headers)
-     */
-    public long getOggOverheadSize() {
-        return oggOverheadSize;
-    }
-    /**
      * The size, in bytes, of the audio headers at the
      *  start of the file
      */
     public long getHeaderOverheadSize() {
         return headerOverheadSize;
+    }
+    /**
+     * The percentage, from 0 to 100, of the ogg page overhead 
+     *  of all the packets (audio data and audio headers)
+     */
+    public float getOggOverheadPercentage() {
+        long total = audioDataSize+headerOverheadSize+oggOverheadSize;
+        return (100f * oggOverheadSize) / total;
+    }
+    /**
+     * The size, in bytes, of the ogg page overhead of all
+     *  the packets (audio data and audio headers)
+     */
+    public long getOggOverheadSize() {
+        return oggOverheadSize;
     }
 }
