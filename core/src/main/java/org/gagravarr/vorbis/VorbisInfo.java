@@ -112,6 +112,10 @@ public class VorbisInfo extends HighLevelOggStreamPacket implements VorbisPacket
         return (int)rate;
     }
 
+    public int getPreSkip() {
+        return 0;
+    }
+
     public int getBitrateUpper() {
         return bitrateUpper;
     }

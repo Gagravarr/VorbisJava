@@ -36,4 +36,8 @@ public interface OggAudioInfoHeader extends OggStreamPacket {
      * @return Sample rate in Hz
      */
     public int getSampleRate();
+    /**
+     * @return The number of samples to be skipped from the beginning of the stream
+     */
+    public int getPreSkip();
 }

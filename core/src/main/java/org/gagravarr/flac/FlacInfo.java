@@ -198,6 +198,10 @@ public class FlacInfo extends FlacMetadataBlock {
       this.numberOfSamples = numberOfSamples;
    }
 
+   public int getPreSkip() {
+       return 0;
+   }
+
    public byte[] getSignature() {
       return signature;
    }

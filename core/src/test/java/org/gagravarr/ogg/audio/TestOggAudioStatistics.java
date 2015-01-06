@@ -111,9 +111,8 @@ public class TestOggAudioStatistics extends TestCase {
         assertEquals(2, stats.getAudioPacketsCount());
         assertEquals(815, stats.getAudioDataSize());
 
-        // TODO Fix me to get this right - pre-roll or similar?
-        //assertEquals(21,   (int)(stats.getDurationSeconds()*1000)); // Shows as 31
-        //assertEquals("00:00:00.02", stats.getDuration()); // Shows as .03
+        assertEquals(21, (int)(stats.getDurationSeconds()*1000));
+        assertEquals("00:00:00.02", stats.getDuration());
 
         assertEquals(19, of.getInfo().getData().length);
         assertEquals(138, of.getTags().getData().length);

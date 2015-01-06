@@ -156,6 +156,10 @@ public class SpeexInfo extends HighLevelOggStreamPacket implements SpeexPacket, 
         this.bitrate = bitrate;
     }
 
+    public int getPreSkip() {
+        return 0;
+    }
+
     public int getFrameSize() {
         return frameSize;
     }

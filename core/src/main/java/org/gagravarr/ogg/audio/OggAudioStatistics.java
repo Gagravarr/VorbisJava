@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.gagravarr.ogg.OggStreamAudioData;
 import org.gagravarr.ogg.OggStreamPacket;
+import org.gagravarr.opus.OpusInfo;
 
 
 /**
@@ -62,7 +63,13 @@ public class OggAudioStatistics {
 
         // Calculate the duration from the granules, if found
         if (lastGranule > 0) {
-            durationSeconds = ((double)lastGranule) / info.getSampleRate();
+            long samples = lastGranule - info.getPreSkip();
+            double sampleRate = info.getSampleRate();
+            if (info instanceof OpusInfo) {
+                // Opus is a special case - granule *always* runs at 48kHz
+                sampleRate = 48000.0;
+            }
+            durationSeconds = samples / sampleRate;
         }
     }
 
@@ -93,12 +100,12 @@ public class OggAudioStatistics {
      * Returns the duration, in Hours:Minutes:Seconds.MS
      */
     public String getDuration() {
-        long duration = (long)getDurationSeconds();
+        long durationL = (long)durationSeconds;
 
         // Output as Hours / Minutes / Seconds / Parts
-        long hours = TimeUnit.SECONDS.toHours(duration);
-        long mins = TimeUnit.SECONDS.toMinutes(duration) - (hours*60);
-        double secs = getDurationSeconds() - (((hours*60)+mins)*60);
+        long hours = TimeUnit.SECONDS.toHours(durationL);
+        long mins = TimeUnit.SECONDS.toMinutes(durationL) - (hours*60);
+        double secs = durationSeconds - (((hours*60)+mins)*60);
 
         return String.format("%02d:%02d:%05.2f", hours, mins, secs);
     }

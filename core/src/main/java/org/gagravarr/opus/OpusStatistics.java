@@ -21,7 +21,6 @@ import org.gagravarr.ogg.audio.OggAudioStatistics;
 import org.gagravarr.ogg.audio.OggAudioStream;
 
 public class OpusStatistics extends OggAudioStatistics {
-    private double durationSeconds;
     private int total_pages;
     private int total_packets;
     private int total_samples;
@@ -32,7 +31,6 @@ public class OpusStatistics extends OggAudioStatistics {
     private int max_packet_bytes;
     private int min_packet_bytes;
     private int sid;
-    private int preSkip;
 
     private long lastlastgranulepos = -1;
     private long lastgranulepos = 0;
@@ -60,7 +58,6 @@ public class OpusStatistics extends OggAudioStatistics {
     }
     private void init(OggAudioHeaders headers) throws IOException {
         sid = headers.getSid();
-        preSkip = info.getPreSkip();
         max_packet_duration = 0;
         min_packet_duration = 5760;
         total_samples = 0;
@@ -79,11 +76,6 @@ public class OpusStatistics extends OggAudioStatistics {
         if (min_page_duration>page_samples) min_page_duration=page_samples;
 
         total_pages = page_count;
-
-        // Opus can have a pre-skip of a certain number of samples
-        // TODO Can we make this generic?
-        durationSeconds = ((lastgranulepos-preSkip) / 48000.0);
-        //durationSeconds = ((lastgranulepos-firstgranulepos-getPreSkip()) / 48);
     }
 
     @Override
@@ -225,11 +217,6 @@ public class OpusStatistics extends OggAudioStatistics {
     }
     public double getMinPageDuration() {
         return min_page_duration/48.0;
-    }
-
-    @Override
-    public double getDurationSeconds() {
-        return durationSeconds;
     }
 
     public int getMaxPacketBytes() {
