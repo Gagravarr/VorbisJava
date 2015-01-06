@@ -81,6 +81,9 @@ public class TestOggAudioStatistics extends TestCase {
                            stats.getOggOverheadSize() +
                            stats.getHeaderOverheadSize());
         assertEquals(2.499, stats.getOggOverheadPercentage(), 0.03);
+
+        assertEquals(1558.9, stats.getAverageOverallBitrate() / 1000, 0.1);
+        assertEquals(147.7, stats.getAverageAudioBitrate() / 1000, 0.1);
     }
 
     public void testOpusStats() throws IOException {
@@ -124,5 +127,8 @@ public class TestOggAudioStatistics extends TestCase {
                            stats.getOggOverheadSize() +
                            stats.getHeaderOverheadSize());
         assertEquals(8.215, stats.getOggOverheadPercentage(), 0.001);
+
+        assertEquals(389.1, stats.getAverageOverallBitrate() / 1000, 0.1);
+        assertEquals(299.5, stats.getAverageAudioBitrate() / 1000, 0.1);
     }
 }

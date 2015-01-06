@@ -151,4 +151,20 @@ public class OggAudioStatistics {
     public long getOggOverheadSize() {
         return oggOverheadSize;
     }
+
+    /**
+     * The average bitrate, in bits per second, of all data
+     *  in the file (audio, headers, overhead)
+     */
+    public double getAverageOverallBitrate() {
+        long total = audioDataSize+headerOverheadSize+oggOverheadSize;
+        return total * 8.0 / durationSeconds;
+    }
+    /**
+     * The average audio bitrate, in bits per second, of the
+     *  audio data, but excluding headers and ogg overhead
+     */
+    public double getAverageAudioBitrate() {
+        return audioDataSize * 8.0 / durationSeconds;
+    }
 }
