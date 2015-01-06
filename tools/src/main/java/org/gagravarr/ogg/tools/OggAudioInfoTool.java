@@ -81,6 +81,15 @@ public abstract class OggAudioInfoTool {
     protected static String format1(double d) {
         return String.format("%.2f",d);
     }
+    protected static String formatBitrate(double bitrate) {
+        if (bitrate < 512) {
+            return String.format("%.2f", bitrate) + " b/s";
+        } else if (bitrate < 768*1024) {
+            return String.format("%.2f", bitrate/1024) + " kb/s";
+        } else {
+            return String.format("%.2f", bitrate/1024/1024) + " mb/s";
+        }
+    }
 
     protected static class InfoAudioStats extends OggAudioStatistics {
         private boolean debugging;

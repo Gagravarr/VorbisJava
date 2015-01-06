@@ -51,7 +51,9 @@ public class OpusInfoTool extends OggAudioInfoTool {
         System.out.println("  Version: " + of.getInfo().getVersion());
         System.out.println("  Vendor: " + of.getTags().getVendor());
         System.out.println("  Channels: " + of.getInfo().getNumChannels());
-        System.out.println("  Rate: " + of.getInfo().getRate());
+        System.out.println("  Rate: " + of.getInfo().getRate() + "Hz");
+        System.out.println("  Pre-Skip: " + of.getInfo().getPreSkip());
+        System.out.println("  Playback Gain: " + of.getInfo().getOutputGain() + "dB");
         System.out.println("");
 
         System.out.println("User Comments:");
@@ -75,13 +77,14 @@ public class OpusInfoTool extends OggAudioInfoTool {
         System.out.println("  Total data length: "+ stats.getAudioDataSize() + 
                            " (overhead: " + format1(stats.getOggOverheadPercentage())+"%)");
         System.out.println("  Playback length: "+ stats.getDuration());
-//        double avgbr = (stats.getAudioDataSize()*8) / stats.getDurationSeconds();
-//        double avgbrover = ((stats.getBytes()-stats.getOverheadBytes())*8) / stats.getPlayTime();
-//        String cbr = "";
-//        if (stats.getMinPacketDuration() == stats.getMaxPacketDuration()
-//                && stats.getMinPacketBytes() == stats.getMaxPacketBytes()) {
-//            cbr= " (hard-CBR)";
-//        }
-//        System.out.println("  Average bitrate: "+ format1(avgbr) + " kb/s, w/o overhead: "+format1(avgbrover)+" kb/s"+cbr);
+        String cbr = "";
+        if (stats.getMinPacketDuration() == stats.getMaxPacketDuration()
+                && stats.getMinPacketBytes() == stats.getMaxPacketBytes()) {
+            cbr= " (hard-CBR)";
+        }
+        System.out.println("  Average bitrate: "
+                           +formatBitrate(stats.getAverageOverallBitrate())
+                           +", w/o overhead: "
+                           +formatBitrate(stats.getAverageAudioBitrate())+cbr);
     }
 }
