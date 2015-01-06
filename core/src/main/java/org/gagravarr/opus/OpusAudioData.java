@@ -26,4 +26,8 @@ public class OpusAudioData extends OggStreamAudioData implements OpusPacket {
     public OpusAudioData(byte[] data) {
         super(data);
     }
+
+    protected boolean isEndOfStream() {
+        return getOggPacket().isEndOfStream();
+    }
 }

@@ -21,7 +21,7 @@ import junit.framework.TestCase;
 /**
  * Parent class of Opus read and write tests
  */
-public class AbstractOpusTest extends TestCase {
+public abstract class AbstractOpusTest extends TestCase {
     /** Get a test file created with libopus 0.9.x */
     protected InputStream getTest09File() throws IOException {
         return this.getClass().getResourceAsStream("/testOPUS_09.opus");

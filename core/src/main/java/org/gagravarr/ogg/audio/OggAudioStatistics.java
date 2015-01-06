@@ -93,10 +93,12 @@ public class OggAudioStatistics {
      * Returns the duration, in Hours:Minutes:Seconds.MS
      */
     public String getDuration() {
+        long duration = (long)getDurationSeconds();
+
         // Output as Hours / Minutes / Seconds / Parts
-        long hours = TimeUnit.SECONDS.toHours((long)durationSeconds);
-        long mins = TimeUnit.SECONDS.toMinutes((long)durationSeconds) - (hours*60);
-        double secs = durationSeconds - (((hours*60)+mins)*60);
+        long hours = TimeUnit.SECONDS.toHours(duration);
+        long mins = TimeUnit.SECONDS.toMinutes(duration) - (hours*60);
+        double secs = getDurationSeconds() - (((hours*60)+mins)*60);
 
         return String.format("%02d:%02d:%05.2f", hours, mins, secs);
     }
