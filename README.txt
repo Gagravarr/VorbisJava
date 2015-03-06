@@ -139,6 +139,6 @@ Information Resources
    and http://xiph.org/vorbis/doc/framing.html
  * Vorbis - http://xiph.org/vorbis/doc/
  * Opus - http://www.opus-codec.org/docs/
- * FLAC - http://flac.sourceforge.net/format.html
- * FLAC in Ogg - http://flac.sourceforge.net/ogg_mapping.html
+ * FLAC - https://xiph.org/flac/format.html
+ * FLAC in Ogg - https://xiph.org/flac/ogg_mapping.html
  * Tika - http://tika.apache.org/
