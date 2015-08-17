@@ -17,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.gagravarr.ogg.BitsReader;
 import org.gagravarr.ogg.IOUtils;
 
 /**
@@ -152,9 +153,34 @@ public class FlacAudioFrame extends FlacFrame {
        stream.read();
 
        // One sub-frame per channel
+       BitsReader br = new BitsReader(stream);
        for (int cn=0; cn<numChannels; cn++) {
-           int type = stream.read();
-           // TODO Decode and get the rest
+           // Zero
+           br.read(1);
+           // Type
+           int type = br.read(6);
+           // Wasted Bits per Sample
+           int wb = br.read(1);
+           if (wb == 1) {
+               while (br.read(1) == 0) {
+                   wb++;
+               }
+           }
+
+           if (type == 0) {
+               // TODO Constant
+           } else if (type == 1) {
+               // TODO Verbatim
+           } else if (type >= 8 && type <16) {
+               // Fixed
+               int order = type & 7;
+               int size = order * sampleSizeBits;
+               //System.err.println(type + " " + order + " " + size);
+           } else if (type >= 32) {
+               // TODO LPC
+           } else {
+               // Reserved, no data
+           }
        }
 
        // Footer CRC, not checked
