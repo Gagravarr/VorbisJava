@@ -164,4 +164,75 @@ public class TestWriteBoundaries extends TestCase {
         p = r.getNextPacket();
         assertEquals(null, p);
     }
+
+    public void testGranulePosition() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        OggFile ogg = new OggFile(baos);
+        OggPacketWriter w = ogg.getPacketWriter(0x123456);
+
+        OggPacket p;
+
+        // First packet will be at 0, as that's the default
+        p = new OggPacket(new byte[] {
+                0, 1, 2, 3, 4, 5
+        });
+        w.bufferPacket(p, true);
+        assertEquals(0, p._getParent().getGranulePosition());
+
+        // One without buffering can be changed with a subsequent
+        //  set before a flush
+        p = new OggPacket(getBytes(131072)); // 2-and-a-bit pages
+        w.bufferPacket(p);
+        assertEquals(0, p._getParent().getGranulePosition());
+        w.setGranulePosition(0x1111l);
+        assertEquals(0x1111l, p._getParent().getGranulePosition());
+        w.setGranulePosition(0x12345l);
+        assertEquals(0x12345l, p._getParent().getGranulePosition());
+        w.flush();
+
+        // If we set the granule as we go, the last set on
+        //  a given page wins
+        p = new OggPacket(getBytes(15));
+        w.bufferPacket(p, 0x23456l);
+        p = new OggPacket(getBytes(21));
+        w.bufferPacket(p, 0x34567l);
+        p = new OggPacket(getBytes(144077));
+        w.bufferPacket(p, 0x45678l);
+        w.close();
+
+        // Check
+        ogg = new OggFile(new ByteArrayInputStream(baos.toByteArray()));
+        OggPacketReader r = ogg.getPacketReader();
+
+        // Empty packet/page at 0
+        p = r.getNextPacket();
+        assertEquals(0, p.getSequenceNumber());
+        assertEquals(0, p.getGranulePosition());
+        assertEquals(6, p.getData().length);
+
+        // 2-and-a-bit packet all at last value
+        p = r.getNextPacket();
+        assertEquals(3, p.getSequenceNumber());
+        assertEquals(0x12345l, p.getGranulePosition());
+        assertEquals(131072, p.getData().length);
+
+        // Next two both take value set on the
+        //  last whole one in the page
+        p = r.getNextPacket();
+        assertEquals(4, p.getSequenceNumber());
+        assertEquals(0x34567l, p.getGranulePosition());
+        assertEquals(15, p.getData().length);
+
+        p = r.getNextPacket();
+        assertEquals(4, p.getSequenceNumber());
+        assertEquals(0x34567l, p.getGranulePosition());
+        assertEquals(21, p.getData().length);
+
+        // While the one that spans that page and the
+        //  next two gets its own value
+        p = r.getNextPacket();
+        assertEquals(6, p.getSequenceNumber());
+        assertEquals(0x45678l, p.getGranulePosition());
+        assertEquals(144077, p.getData().length);
+    }
 }

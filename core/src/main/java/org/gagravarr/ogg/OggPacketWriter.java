@@ -106,11 +106,11 @@ public class OggPacketWriter implements Closeable {
             if(pos < size) {
                 page = getCurrentPage(true);
                 page.setIsContinuation();
-                page.setGranulePosition(granulePosition);
             }
+            page.setGranulePosition(granulePosition);
             emptyPacket = false;
         }
-        page.setGranulePosition(granulePosition);
+        currentGranulePosition = granulePosition;
         packet.setParent(page);
     }
 
