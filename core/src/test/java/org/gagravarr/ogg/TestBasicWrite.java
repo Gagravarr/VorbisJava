@@ -91,12 +91,16 @@ public class TestBasicWrite extends TestCase {
         // Add an empty packet
         p = new OggPacket(new byte[0]);
         w.bufferPacket(p);
+        assertEquals(0, w.getSizePendingFlush()); // Excludes headers
+        assertEquals(28, w.getCurrentPageSize()); // Includes
         w.flush();
 
         // And a packet with something in it,
         //  and with a granule position
         p = new OggPacket(new byte[] {22});
         w.bufferPacket(p, 54321l);
+        assertEquals(1, w.getSizePendingFlush()); // Excludes headers
+        assertEquals(29, w.getCurrentPageSize()); // Includes
         w.close();
 
         // Check again
@@ -111,6 +115,7 @@ public class TestBasicWrite extends TestCase {
         assertEquals(0, p.getGranulePosition());
         assertEquals(0, p.getSequenceNumber());
         assertEquals(0, p.getData().length);
+        assertEquals(28, p.getOverheadBytes());
 
         p = r.getNextPacket();
         assertNotNull(p);
@@ -120,6 +125,7 @@ public class TestBasicWrite extends TestCase {
         assertEquals(0, p.getGranulePosition());
         assertEquals(0, p.getSequenceNumber());
         assertEquals(0, p.getData().length);
+        assertEquals(28, p.getOverheadBytes());
 
         p = r.getNextPacket();
         assertNotNull(p);
@@ -129,6 +135,7 @@ public class TestBasicWrite extends TestCase {
         assertEquals(54321l, p.getGranulePosition());
         assertEquals(1, p.getSequenceNumber());
         assertEquals(1, p.getData().length);
+        assertEquals(28, p.getOverheadBytes());
 
         assertNull(r.getNextPacket());
     }

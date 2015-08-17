@@ -144,6 +144,20 @@ public class OggPacketWriter implements Closeable {
     }
 
     /**
+     * Returns the size of the page currently being written
+     *  to, including its headers.
+     * For a new stream, or a stream that has just been
+     *  flushed, will return zero.
+     * @return Current page size, or 0 if no current page
+     */
+    public int getCurrentPageSize() {
+        if (buffer.isEmpty()) return 0;
+
+        OggPage p = buffer.get( buffer.size()-1 );
+        return p.getPageSize();
+    }
+
+    /**
      * Writes all pending packets to the stream,
      *  splitting across pages as needed.
      */
