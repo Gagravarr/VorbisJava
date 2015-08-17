@@ -107,7 +107,7 @@ public abstract class OggAudioParser extends AbstractParser {
         xhtml.element("p", comments.getGenre());
     }
 
-    protected void extractDuration(Metadata metadata, XHTMLContentHandler xhtml,
+    protected static void extractDuration(Metadata metadata, XHTMLContentHandler xhtml,
             OggAudioHeaders headers, OggAudioStream audio) throws IOException, SAXException {
         // Have the statistics calculated
         OggAudioStatistics stats = new OggAudioStatistics(headers, audio);
