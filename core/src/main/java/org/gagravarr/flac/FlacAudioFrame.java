@@ -29,6 +29,7 @@ public class FlacAudioFrame extends FlacFrame {
     * Variable = frame header encodes the sample number
     */
    private boolean blockSizeVariable;
+   private long codedNumber;
 
    private int blockSizeRaw;
    private int blockSize;
@@ -122,35 +123,39 @@ public class FlacAudioFrame extends FlacFrame {
            sampleSizeBits = 0;
        }
 
-       // coded number - TODO
+       // Coded Number - either sample or frame, based on blockSizeVariable
+       codedNumber = IOUtils.readUE7(stream);
 
        // Ext block size
        if (readBlockSize8) {
-           // TODO
+           blockSize = stream.read()+1;
        }
        if (readBlockSize16) {
-           // TODO
+           blockSize = IOUtils.getIntBE(stream.read(), stream.read())+1;
        }
 
        // Ext sample rate
        if (sampleRateRaw == 12) {
            // 8 bit Hz
-           // TODO
+           sampleRate = stream.read();
        }
        if (sampleRateRaw == 13) {
            // 16 bit Hz
-           // TODO
+           sampleRate = IOUtils.getIntBE(stream.read(), stream.read());
        }
        if (sampleRateRaw == 14) {
            // 16 bit tens-of-Hz
-           // TODO
+           sampleRate = 10*IOUtils.getIntBE(stream.read(), stream.read());
        }
 
        // Header CRC, not checked
        stream.read();
 
        // One sub-frame per channel
-       // TODO
+       for (int cn=0; cn<numChannels; cn++) {
+           int type = stream.read();
+           // TODO Decode and get the rest
+       }
 
        // Footer CRC, not checked
        stream.read();
@@ -218,6 +223,13 @@ public class FlacAudioFrame extends FlacFrame {
     */
    public int getNumChannels() {
        return numChannels;
+   }
+   /**
+    * If {@link #isBlockSizeVariable()}, then this is the
+    *  sample number, otherwise the frame number
+    */
+   public long getCodedNumber() {
+       return codedNumber;
    }
 
    protected static class SampleRate {

@@ -74,13 +74,14 @@ public class TestFlacFileRead extends TestCase {
       // TODO Check other metadata
 
 
-      // Has audio data, all with info-based metadata
+      // Has audio data, all with mostly info-based metadata
       FlacAudioFrame audio;
 
       audio = flac.getNextAudioPacket();
       assertNotNull(audio);
       assertEquals(0, audio.getSampleRate());
-      assertEquals(0, audio.getBlockSize());
+      assertEquals(0, audio.getCodedNumber());
+      assertEquals(960, audio.getBlockSize());
       assertEquals(0, audio.getBitsPerSample());
       assertEquals(2, audio.getNumChannels());
       //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
@@ -113,17 +114,37 @@ public class TestFlacFileRead extends TestCase {
       assertEquals("Test Album", tags.getAlbum());
 
 
-      // Has audio data, all with info-based metadata
+      // Has audio data, all with mostly info-based metadata
       FlacAudioFrame audio;
 
       audio = flac.getNextAudioPacket();
       assertNotNull(audio);
       assertEquals(0, audio.getSampleRate());
+      assertEquals(0, audio.getCodedNumber());
+      assertEquals(960, audio.getBlockSize());
+      assertEquals(0, audio.getBitsPerSample());
+      assertEquals(2, audio.getNumChannels());
+      //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
+
+      audio = flac.getNextAudioPacket();
+      assertNotNull(audio);
+      assertEquals(0, audio.getSampleRate());
+//      assertEquals(0, audio.getCodedNumber());
+      assertEquals(0, audio.getBlockSize());
+      assertEquals(0, audio.getBitsPerSample());
+      assertEquals(2, audio.getNumChannels());
+      //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
+
+      audio = flac.getNextAudioPacket();
+      assertNotNull(audio);
+      assertEquals(0, audio.getSampleRate());
+//      assertEquals(0, audio.getCodedNumber());
       assertEquals(0, audio.getBlockSize());
       assertEquals(0, audio.getBitsPerSample());
       assertEquals(2, audio.getNumChannels());
       //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
 
       // TODO Check the rest
+      // TODO Should there really be multiple packets?
    }
 }
