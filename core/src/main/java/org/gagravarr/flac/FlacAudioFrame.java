@@ -13,6 +13,7 @@
  */
 package org.gagravarr.flac;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -20,15 +21,26 @@ import org.gagravarr.ogg.IOUtils;
 
 /**
  * Raw, compressed audio data.
- * TODO Parse into constituent parts
  */
 public class FlacAudioFrame extends FlacFrame {
-   private byte[] data; // TODO Parse
-   private long position; // TODO Is this always there?
-   
-   public FlacAudioFrame(byte[] data) {
-      this.data = data;
+   /**
+    * Fixed or Variable block size?
+    * Fixed = frame header encodes the frame number
+    * Variable = frame header encodes the sample number
+    */
+   private boolean blockSizeVariable;
+
+   private int blockSizeRaw;
+   private int blockSize;
+   private int sampleRateRaw;
+   private int sampleRate;
+
+   private byte[] subframeData;
+
+   public FlacAudioFrame(byte[] data) throws IOException {
+       this(new ByteArrayInputStream(data));
    }
+
    /**
     * Creates the frame from the stream, with header sync checking
     */
@@ -45,7 +57,31 @@ public class FlacAudioFrame extends FlacFrame {
     * Creates the frame from the pre-read 2 bytes and stream, no sync checks
     */
    public FlacAudioFrame(int first2, InputStream stream) throws IOException {
+       // First 14 bits are the sync, 15 is reserved, 16 is block size
+       blockSizeVariable = ((first2 & 1) == 1);
+
+       // Block Size + Sample Rate
+       int bsSr = stream.read();
+       blockSizeRaw = (bsSr >> 4);
+       sampleRate = (bsSr & 15);
+
+       // Channel Assignment + Sample Size + Res
+       int caSs = stream.read();
        // TODO Decode
+
+       // coded number - TODO
+
+       // ext block size or sample rate - TODO
+
+       // Header CRC, not checked
+       stream.read();
+
+       // One sub-frame per channel
+       // TODO
+
+       // Footer CRC, not checked
+       stream.read();
+       stream.read();
    }
 
    private static int getAndCheckFirstTwo(InputStream stream) throws IOException {
@@ -61,7 +97,7 @@ public class FlacAudioFrame extends FlacFrame {
        return first2;
    }
    public static boolean isFrameHeaderStart(int byte1, int byte2) {
-       return isFrameHeaderStart(IOUtils.getInt(byte1, byte2));
+       return isFrameHeaderStart(IOUtils.getIntBE(byte1, byte2));
    }
    public static boolean isFrameHeaderStart(int first2) {
        // First 14 bytes must be 11111111111110
@@ -69,7 +105,29 @@ public class FlacAudioFrame extends FlacFrame {
    }
    private static final int FRAME_SYNC = 0x3ffe;
    
+   @Override
    public byte[] getData() {
-      return data;
+       return subframeData;
+   }
+
+   /**
+    * Is the block size fixed (frame header encodes the frame number)
+    * or variable (frame header encodes the sample number)
+    */
+   public boolean isBlockSizeVariable() {
+       return blockSizeVariable;
+   }
+
+   /**
+    * Block size in inter-channel samples
+    */
+   public int getBlockSize() {
+       return blockSize;
+   }
+   /**
+    * Sample rate in kHz
+    */
+   public int getSampleRate() {
+       return sampleRate;
    }
 }
