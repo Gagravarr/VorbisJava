@@ -73,15 +73,18 @@ public class TestFlacFileRead extends TestCase {
 
       // TODO Check other metadata
 
-      // Has audio data
-      assertNotNull( flac.getNextAudioPacket() );
-      //assertNotNull( flac.getNextAudioPacket() );
-      //assertNotNull( flac.getNextAudioPacket() );
-      //assertNotNull( flac.getNextAudioPacket() );
 
-      @SuppressWarnings("unused")
-      FlacAudioFrame ad = flac.getNextAudioPacket();
+      // Has audio data, all with info-based metadata
+      FlacAudioFrame audio;
+
+      audio = flac.getNextAudioPacket();
+      assertNotNull(audio);
+      assertEquals(0, audio.getSampleRate());
+      assertEquals(0, audio.getBlockSize());
       //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
+
+      // TODO Is this right? Only a single audio frame
+      assertNull( flac.getNextAudioPacket() );
    }
 
    public void testReadFlacNative() throws IOException {
@@ -107,16 +110,16 @@ public class TestFlacFileRead extends TestCase {
       assertEquals(7, tags.getAllComments().size());
       assertEquals("Test Album", tags.getAlbum());
 
-      // TODO Check other metadata
 
-      // Has audio data
-      assertNotNull( flac.getNextAudioPacket() );
-      //assertNotNull( flac.getNextAudioPacket() );
-      //assertNotNull( flac.getNextAudioPacket() );
-      //assertNotNull( flac.getNextAudioPacket() );
+      // Has audio data, all with info-based metadata
+      FlacAudioFrame audio;
 
-      @SuppressWarnings("unused")
-      FlacAudioFrame ad = flac.getNextAudioPacket();
+      audio = flac.getNextAudioPacket();
+      assertNotNull(audio);
+      assertEquals(0, audio.getSampleRate());
+      assertEquals(0, audio.getBlockSize());
       //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
+
+      // TODO Check the rest
    }
 }

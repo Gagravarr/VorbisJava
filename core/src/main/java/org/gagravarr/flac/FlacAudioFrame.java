@@ -65,13 +65,55 @@ public class FlacAudioFrame extends FlacFrame {
        blockSizeRaw = (bsSr >> 4);
        sampleRate = (bsSr & 15);
 
+       // Decode those, as best we can
+       boolean readBlockSize8 = false;
+       boolean readBlockSize16 = false;
+       if (blockSizeRaw == 0) {
+           // Reserved
+           blockSize = 0;
+       } else if (blockSizeRaw == 1) {
+           blockSize = 192;
+       } else if (blockSizeRaw >= 2 && blockSizeRaw < 5) {
+           blockSize = 576 * (int)Math.pow(2, blockSizeRaw-2);
+       } else if (blockSizeRaw == 6) {
+           readBlockSize8 = true;
+       } else if (blockSizeRaw == 7) {
+           readBlockSize16 = true;
+       } else {
+           blockSize = 256 * (int)Math.pow(2, blockSizeRaw-8);
+       }
+
+       if (sampleRateRaw < RATES.length) {
+           sampleRate = RATES[sampleRateRaw].Hz;
+       }
+
        // Channel Assignment + Sample Size + Res
        int caSs = stream.read();
        // TODO Decode
 
        // coded number - TODO
 
-       // ext block size or sample rate - TODO
+       // Ext block size
+       if (readBlockSize8) {
+           // TODO
+       }
+       if (readBlockSize16) {
+           // TODO
+       }
+
+       // Ext sample rate
+       if (sampleRateRaw == 12) {
+           // 8 bit Hz
+           // TODO
+       }
+       if (sampleRateRaw == 13) {
+           // 16 bit Hz
+           // TODO
+       }
+       if (sampleRateRaw == 14) {
+           // 16 bit tens-of-Hz
+           // TODO
+       }
 
        // Header CRC, not checked
        stream.read();
@@ -125,9 +167,28 @@ public class FlacAudioFrame extends FlacFrame {
        return blockSize;
    }
    /**
-    * Sample rate in kHz
+    * Sample rate in Hz
+    * <p>A value of 0 means the value in the {@link FlacInfo} applies.
+    * @return sample rate in HZ, or 0=read from info
     */
    public int getSampleRate() {
        return sampleRate;
    }
+
+   protected static class SampleRate {
+       protected final double kHz;
+       protected final int Hz;
+       private SampleRate(double kHz) {
+           this.kHz = kHz;
+           this.Hz = (int)Math.rint(kHz*1000);
+       }
+   };
+   private SampleRate[] RATES = {
+           new SampleRate(0), new SampleRate(88.2),
+           new SampleRate(176.4), new SampleRate(192),
+           new SampleRate(8), new SampleRate(16),
+           new SampleRate(22.05), new SampleRate(24),
+           new SampleRate(32), new SampleRate(44.1),
+           new SampleRate(48), new SampleRate(96)
+   };
 }
