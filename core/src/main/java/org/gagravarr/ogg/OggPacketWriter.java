@@ -71,9 +71,22 @@ public class OggPacketWriter implements Closeable {
     /**
      * Buffers the given packet up ready for
      *  writing to the stream, but doesn't
-     *  write it to disk yet.
+     *  write it to disk yet. The granule
+     *  position is unchanged.
      */
     public void bufferPacket(OggPacket packet) {
+        bufferPacket(packet, currentGranulePosition);
+    }
+    /**
+     * Buffers the given packet up ready for
+     *  writing to the stream, but doesn't
+     *  write it to disk yet. The granule position
+     *  is updated on the page.
+     * If writing the packet requires a new page,
+     *  then the updated granule position only
+     *  applies to the new page
+     */
+    public void bufferPacket(OggPacket packet, long granulePosition) {
         if(closed) {
             throw new IllegalStateException("Can't buffer packets on a closed stream!");
         }
@@ -93,9 +106,11 @@ public class OggPacketWriter implements Closeable {
             if(pos < size) {
                 page = getCurrentPage(true);
                 page.setIsContinuation();
+                page.setGranulePosition(granulePosition);
             }
             emptyPacket = false;
         }
+        page.setGranulePosition(granulePosition);
         packet.setParent(page);
     }
 

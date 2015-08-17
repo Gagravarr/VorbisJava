@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 /**
  * Test that we can do basic writing without error
  */
+@SuppressWarnings("resource")
 public class TestBasicWrite extends TestCase {
 	public void testOpen() throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -92,9 +93,10 @@ public class TestBasicWrite extends TestCase {
 		w.bufferPacket(p);
 		w.flush();
 		
-		// And a packet with something in it
+		// And a packet with something in it,
+		//  and with a granule position
 		p = new OggPacket(new byte[] {22});
-		w.bufferPacket(p);
+		w.bufferPacket(p, 54321l);
 		w.close();
 		
 		// Check again
@@ -106,6 +108,7 @@ public class TestBasicWrite extends TestCase {
 		assertEquals(true, p.isBeginningOfStream());
 		assertEquals(true, p.isEndOfStream());
 		assertEquals(1234, p.getSid());
+                assertEquals(0, p.getGranulePosition());
 		assertEquals(0, p.getSequenceNumber());
 		assertEquals(0, p.getData().length);
 		
@@ -114,6 +117,7 @@ public class TestBasicWrite extends TestCase {
 		assertEquals(true, p.isBeginningOfStream());
 		assertEquals(false, p.isEndOfStream());
 		assertEquals(54321, p.getSid());
+                assertEquals(0, p.getGranulePosition());
 		assertEquals(0, p.getSequenceNumber());
 		assertEquals(0, p.getData().length);
 		
@@ -122,6 +126,7 @@ public class TestBasicWrite extends TestCase {
 		assertEquals(false, p.isBeginningOfStream());
 		assertEquals(true, p.isEndOfStream());
 		assertEquals(54321, p.getSid());
+                assertEquals(54321l, p.getGranulePosition());
 		assertEquals(1, p.getSequenceNumber());
 		assertEquals(1, p.getData().length);
 		
