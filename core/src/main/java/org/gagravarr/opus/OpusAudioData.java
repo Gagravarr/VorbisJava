@@ -20,6 +20,8 @@ import org.gagravarr.ogg.OggStreamAudioData;
  * Raw, compressed audio data
  */
 public class OpusAudioData extends OggStreamAudioData implements OpusPacket {
+    /** Opus is special - granule always runs at 48kHz */
+    public static final int OPUS_GRANULE_RATE = 48000;
     private int numFrames = -1;
     private int numSamples = -1;
     
@@ -50,7 +52,7 @@ public class OpusAudioData extends OggStreamAudioData implements OpusPacket {
     private void calculateStructure() {
         byte[] d = getData();
         numFrames = packet_get_nb_frames(d);
-        numSamples = numFrames * packet_get_samples_per_frame(d, 48000);
+        numSamples = numFrames * packet_get_samples_per_frame(d, OPUS_GRANULE_RATE);
     }
     
     private static int packet_get_samples_per_frame(byte[] data, int fs) {
