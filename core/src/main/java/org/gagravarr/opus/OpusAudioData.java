@@ -20,6 +20,9 @@ import org.gagravarr.ogg.OggStreamAudioData;
  * Raw, compressed audio data
  */
 public class OpusAudioData extends OggStreamAudioData implements OpusPacket {
+    private int numFrames = -1;
+    private int numSamples = -1;
+    
     public OpusAudioData(OggPacket pkt) {
         super(pkt);
     }
@@ -29,5 +32,57 @@ public class OpusAudioData extends OggStreamAudioData implements OpusPacket {
 
     protected boolean isEndOfStream() {
         return getOggPacket().isEndOfStream();
+    }
+    
+    public int getNumberOfFrames() {
+        if (numFrames == -1) {
+            calculateStructure();
+        }
+        return numFrames;
+    }
+    public int getNumberOfSamples() {
+        if (numSamples == -1) {
+            calculateStructure();
+        }
+        return numSamples;
+    }
+    
+    private void calculateStructure() {
+        byte[] d = getData();
+        numFrames = packet_get_nb_frames(d);
+        numSamples = numFrames * packet_get_samples_per_frame(d, 48000);
+    }
+    
+    private static int packet_get_samples_per_frame(byte[] data, int fs) {
+        int audiosize;
+        if ((data[0]&0x80) != 0) {
+            audiosize = ((data[0]>>3)&0x3);
+            audiosize = (fs<<audiosize)/400;
+        } else if ((data[0]&0x60) == 0x60) {
+            audiosize = ((data[0]&0x08) != 0) ? fs/50 : fs/100;
+        } else {
+            audiosize = ((data[0]>>3)&0x3);
+            if (audiosize == 3)
+                audiosize = fs*60/1000;
+            else
+                audiosize = (fs<<audiosize)/100;
+        }
+        return audiosize;
+    }
+
+    private static int packet_get_nb_frames(byte[] packet) {
+        int count = 0;
+        if (packet.length < 1) {
+            return -1;
+        }
+        count = packet[0]&0x3;
+        if (count==0)
+            return 1;
+        else if (count!=3)
+            return 2;
+        else if (packet.length<2)
+            return -4;
+        else
+            return packet[1]&0x3F;
     }
 }

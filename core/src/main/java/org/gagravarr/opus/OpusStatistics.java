@@ -141,58 +141,21 @@ public class OpusStatistics extends OggAudioStatistics {
             return;
         }
 
-        int spp = packet_get_nb_frames(d);
-        spp *= packet_get_samples_per_frame(d, 48000);
-        if(spp<120 || spp>5760 || (spp%120)!=0) {
+        int samples = audioData.getNumberOfSamples();
+        if (samples<120 || samples>5760 || (samples%120) != 0) {
             System.err.println("WARNING: Invalid packet TOC in stream with sid "+sid);
             return;
         }
-        total_samples += spp;
-        page_samples += spp;
+        total_samples += samples;
+        page_samples += samples;
         total_packets++;
         //last_packet_duration = spp;
-        if (max_packet_duration<spp) max_packet_duration=spp;
-        if (min_packet_duration>spp) min_packet_duration = spp;
+        if (max_packet_duration<samples) max_packet_duration = samples;
+        if (min_packet_duration>samples) min_packet_duration = samples;
         if (max_packet_bytes<d.length) max_packet_bytes = d.length;
         if (min_packet_bytes>d.length) min_packet_bytes = d.length;
     }
 
-
-    private static int packet_get_samples_per_frame(byte[] data, int Fs) {
-        int audiosize;
-        if ((data[0]&0x80) != 0)
-        {
-            audiosize = ((data[0]>>3)&0x3);
-            audiosize = (Fs<<audiosize)/400;
-        } else if ((data[0]&0x60) == 0x60)
-        {
-            audiosize = ((data[0]&0x08) != 0) ? Fs/50 : Fs/100;
-        } else {
-            audiosize = ((data[0]>>3)&0x3);
-            if (audiosize == 3)
-                audiosize = Fs*60/1000;
-            else
-                audiosize = (Fs<<audiosize)/100;
-        }
-        return audiosize;
-
-    }
-
-    private static int packet_get_nb_frames(byte[] packet) {
-        int count = 0;
-        if (packet.length < 1) {
-            return -1;
-        }
-        count = packet[0]&0x3;
-        if (count==0)
-            return 1;
-        else if (count!=3)
-            return 2;
-        else if (packet.length<2)
-            return -4;
-        else
-            return packet[1]&0x3F;
-    }
 
     public double getMaxPacketDuration() {
         return (max_packet_duration/48.0);
