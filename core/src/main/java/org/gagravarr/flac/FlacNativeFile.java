@@ -85,7 +85,7 @@ public class FlacNativeFile extends FlacFile {
                if (skipped > 0)
                    System.err.println("Warning - had to skip " + skipped +
                            " bytes of junk data before finding the next packet header");
-               return new FlacAudioFrame(b1, b2, input);
+               return new FlacAudioFrame(b1, b2, input, info);
            }
            skipped++;
        }

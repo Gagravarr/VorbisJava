@@ -21,9 +21,8 @@ import junit.framework.TestCase;
 import org.gagravarr.ogg.OggFile;
 
 /**
- * Tests for reading things using VorbisFile
- * @author nick
- *
+ * Tests for reading things using FlacFile, both for
+ *  Flac-Native and Flac-in-Ogg
  */
 public class TestFlacFileRead extends TestCase {
    private InputStream getTestOggFile() throws IOException {
@@ -79,10 +78,10 @@ public class TestFlacFileRead extends TestCase {
 
       audio = flac.getNextAudioPacket();
       assertNotNull(audio);
-      assertEquals(0, audio.getSampleRate());
       assertEquals(0, audio.getCodedNumber());
+      assertEquals(44100, audio.getSampleRate());
       assertEquals(960, audio.getBlockSize());
-      assertEquals(0, audio.getBitsPerSample());
+      assertEquals(16, audio.getBitsPerSample());
       assertEquals(2, audio.getNumChannels());
       //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
 
@@ -119,17 +118,17 @@ public class TestFlacFileRead extends TestCase {
 
       audio = flac.getNextAudioPacket();
       assertNotNull(audio);
-      assertEquals(0, audio.getSampleRate());
       assertEquals(0, audio.getCodedNumber());
+      assertEquals(44100, audio.getSampleRate());
       assertEquals(960, audio.getBlockSize());
-      assertEquals(0, audio.getBitsPerSample());
+      assertEquals(16, audio.getBitsPerSample());
       assertEquals(2, audio.getNumChannels());
       //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
 
       audio = flac.getNextAudioPacket();
       assertNotNull(audio);
-      assertEquals(0, audio.getSampleRate());
-//      assertEquals(0, audio.getCodedNumber());
+//    assertEquals(0, audio.getCodedNumber());
+      assertEquals(44100, audio.getSampleRate());
       assertEquals(0, audio.getBlockSize());
       assertEquals(0, audio.getBitsPerSample());
       assertEquals(2, audio.getNumChannels());
@@ -137,8 +136,8 @@ public class TestFlacFileRead extends TestCase {
 
       audio = flac.getNextAudioPacket();
       assertNotNull(audio);
-      assertEquals(0, audio.getSampleRate());
-//      assertEquals(0, audio.getCodedNumber());
+//    assertEquals(0, audio.getCodedNumber());
+      assertEquals(44100, audio.getSampleRate());
       assertEquals(0, audio.getBlockSize());
       assertEquals(0, audio.getBitsPerSample());
       assertEquals(2, audio.getNumChannels());

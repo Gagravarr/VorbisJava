@@ -44,33 +44,37 @@ public class FlacAudioFrame extends FlacFrame {
 
    private byte[] subframeData;
 
-   public FlacAudioFrame(byte[] data) throws IOException {
-       this(new ByteArrayInputStream(data));
+   public FlacAudioFrame(byte[] data, FlacInfo info) throws IOException {
+       this(new ByteArrayInputStream(data), info);
    }
 
    /**
     * Creates the frame from the stream, with header sync checking
     */
-   public FlacAudioFrame(InputStream stream) throws IOException {
-       this(getAndCheckFirstTwo(stream), stream);
+   public FlacAudioFrame(InputStream stream, FlacInfo info) throws IOException {
+       this(getAndCheckFirstTwo(stream), stream, info);
    }
    /**
     * Creates the frame from the pre-read 2 bytes and stream, with header sync checking
     */
-   public FlacAudioFrame(int byte1, int byte2, InputStream stream) throws IOException {
-       this(getAndCheckFirstTwo(byte1, byte2), stream);
+   public FlacAudioFrame(int byte1, int byte2, InputStream stream, FlacInfo info) throws IOException {
+       this(getAndCheckFirstTwo(byte1, byte2), stream, info);
    }
    /**
-    * Creates the frame from the pre-read 2 bytes and stream, no sync checks
+    * Creates the frame from the pre-read 2 bytes and stream, no sync checks.
+    * Info is needed, as values of 0 often mean "as per info defaults".
+    * TODO Track the data, so we can write it back out again
     */
-   public FlacAudioFrame(int first2, InputStream stream) throws IOException {
+   public FlacAudioFrame(int first2, InputStream stream, FlacInfo info) throws IOException {
        // First 14 bits are the sync, 15 is reserved, 16 is block size
        blockSizeVariable = ((first2 & 1) == 1);
 
+       // Mostly, this works in bits not nicely padded bytes
+       BitsReader br = new BitsReader(stream);
+       
        // Block Size + Sample Rate
-       int bsSr = stream.read();
-       blockSizeRaw = (bsSr >> 4);
-       sampleRate = (bsSr & 15);
+       blockSizeRaw = br.read(4); 
+       sampleRate = br.read(4);
 
        // Decode those, as best we can
        boolean readBlockSize8 = false;
@@ -90,36 +94,38 @@ public class FlacAudioFrame extends FlacFrame {
            blockSize = 256 * (int)Math.pow(2, blockSizeRaw-8);
        }
 
-       if (sampleRateRaw < RATES.length) {
+       if (sampleRateRaw == 0) {
+           sampleRate = info.getSampleRate();
+       } else if (sampleRateRaw < RATES.length) {
            sampleRate = RATES[sampleRateRaw].Hz;
        }
 
        // Channel Assignment + Sample Size + Res
-       int caSs = stream.read();
-       channelType = (caSs >> 4);
+       channelType = br.read(4);
        if (channelType < 8) {
            numChannels = channelType + 1;
        } else {
            numChannels = 2;
        }
-       sampleSizeRaw = ((caSs&15)>>1);
+       
+       sampleSizeRaw = br.read(3);
+       br.read(1);
        if (sampleSizeRaw == 0) {
-           // From Info
-           sampleSizeBits = 0;
-       } else if (sampleRateRaw == 1) {
+           sampleSizeBits = info.getBitsPerSample();
+       } else if (sampleSizeRaw == 1) {
            sampleSizeBits = 8;
-       } else if (sampleRateRaw == 2) {
+       } else if (sampleSizeRaw == 2) {
            sampleSizeBits = 12;
-       } else if (sampleRateRaw == 3) {
+       } else if (sampleSizeRaw == 3) {
            // Reserved
            sampleSizeBits = 0;
-       } else if (sampleRateRaw == 4) {
+       } else if (sampleSizeRaw == 4) {
            sampleSizeBits = 16;
-       } else if (sampleRateRaw == 5) {
+       } else if (sampleSizeRaw == 5) {
            sampleSizeBits = 20;
-       } else if (sampleRateRaw == 6) {
+       } else if (sampleSizeRaw == 6) {
            sampleSizeBits = 24;
-       } else if (sampleRateRaw == 7) {
+       } else if (sampleSizeRaw == 7) {
            // Reserved
            sampleSizeBits = 0;
        }
@@ -153,7 +159,6 @@ public class FlacAudioFrame extends FlacFrame {
        stream.read();
 
        // One sub-frame per channel
-       BitsReader br = new BitsReader(stream);
        for (int cn=0; cn<numChannels; cn++) {
            // Zero
            br.read(1);
@@ -175,7 +180,10 @@ public class FlacAudioFrame extends FlacFrame {
                // Fixed
                int order = type & 7;
                int size = order * sampleSizeBits;
-               //System.err.println(type + " " + order + " " + size);
+               
+               // TODO Save this
+               br.read(size);
+               // TODO Read the rest
            } else if (type >= 32) {
                // TODO LPC
            } else {
@@ -230,16 +238,12 @@ public class FlacAudioFrame extends FlacFrame {
    }
    /**
     * Sample rate in Hz
-    * <p>A value of 0 means the value in the {@link FlacInfo} applies.
-    * @return sample rate in HZ, or 0=read from info
     */
    public int getSampleRate() {
        return sampleRate;
    }
    /**
     * Sample size in bits
-    * <p>A value of 0 means the value in the {@link FlacInfo} applies.
-    * @return sample size in bits, or 0=read from info
     */
    public int getBitsPerSample() {
        return sampleSizeBits;
@@ -266,7 +270,7 @@ public class FlacAudioFrame extends FlacFrame {
            this.Hz = (int)Math.rint(kHz*1000);
        }
    };
-   private SampleRate[] RATES = {
+   private static final SampleRate[] RATES = {
            new SampleRate(0), new SampleRate(88.2),
            new SampleRate(176.4), new SampleRate(192),
            new SampleRate(8), new SampleRate(16),

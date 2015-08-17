@@ -141,7 +141,7 @@ public class FlacOggFile extends FlacFile implements OggAudioHeaders {
     public FlacAudioFrame getNextAudioPacket() throws IOException {
         OggPacket p = null;
         while( (p = r.getNextPacketWithSid(sid)) != null ) {
-            return new FlacAudioFrame(p.getData());
+            return new FlacAudioFrame(p.getData(), info);
         }
         return null;
     }
