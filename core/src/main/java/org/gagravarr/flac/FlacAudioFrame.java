@@ -35,6 +35,11 @@ public class FlacAudioFrame extends FlacFrame {
    private int sampleRateRaw;
    private int sampleRate;
 
+   private int numChannels;
+   private int channelType;
+   private int sampleSizeRaw;
+   private int sampleSizeBits;
+
    private byte[] subframeData;
 
    public FlacAudioFrame(byte[] data) throws IOException {
@@ -89,7 +94,33 @@ public class FlacAudioFrame extends FlacFrame {
 
        // Channel Assignment + Sample Size + Res
        int caSs = stream.read();
-       // TODO Decode
+       channelType = (caSs >> 4);
+       if (channelType < 8) {
+           numChannels = channelType + 1;
+       } else {
+           numChannels = 2;
+       }
+       sampleSizeRaw = ((caSs&15)>>1);
+       if (sampleSizeRaw == 0) {
+           // From Info
+           sampleSizeBits = 0;
+       } else if (sampleRateRaw == 1) {
+           sampleSizeBits = 8;
+       } else if (sampleRateRaw == 2) {
+           sampleSizeBits = 12;
+       } else if (sampleRateRaw == 3) {
+           // Reserved
+           sampleSizeBits = 0;
+       } else if (sampleRateRaw == 4) {
+           sampleSizeBits = 16;
+       } else if (sampleRateRaw == 5) {
+           sampleSizeBits = 20;
+       } else if (sampleRateRaw == 6) {
+           sampleSizeBits = 24;
+       } else if (sampleRateRaw == 7) {
+           // Reserved
+           sampleSizeBits = 0;
+       }
 
        // coded number - TODO
 
@@ -173,6 +204,20 @@ public class FlacAudioFrame extends FlacFrame {
     */
    public int getSampleRate() {
        return sampleRate;
+   }
+   /**
+    * Sample size in bits
+    * <p>A value of 0 means the value in the {@link FlacInfo} applies.
+    * @return sample size in bits, or 0=read from info
+    */
+   public int getBitsPerSample() {
+       return sampleSizeBits;
+   }
+   /**
+    * Number of channels
+    */
+   public int getNumChannels() {
+       return numChannels;
    }
 
    protected static class SampleRate {

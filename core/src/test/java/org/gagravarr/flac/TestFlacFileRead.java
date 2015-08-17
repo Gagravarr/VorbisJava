@@ -81,6 +81,8 @@ public class TestFlacFileRead extends TestCase {
       assertNotNull(audio);
       assertEquals(0, audio.getSampleRate());
       assertEquals(0, audio.getBlockSize());
+      assertEquals(0, audio.getBitsPerSample());
+      assertEquals(2, audio.getNumChannels());
       //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
 
       // TODO Is this right? Only a single audio frame
@@ -118,6 +120,8 @@ public class TestFlacFileRead extends TestCase {
       assertNotNull(audio);
       assertEquals(0, audio.getSampleRate());
       assertEquals(0, audio.getBlockSize());
+      assertEquals(0, audio.getBitsPerSample());
+      assertEquals(2, audio.getNumChannels());
       //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
 
       // TODO Check the rest
