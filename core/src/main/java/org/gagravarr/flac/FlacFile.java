@@ -64,34 +64,34 @@ public abstract class FlacFile implements Closeable {
       }
       throw new IllegalArgumentException("File type not recognised");
    }
-	/**
-	 * Opens the given file for reading
-	 */
-	public static FlacFile open(OggFile ogg) throws IOException {
-		return new FlacOggFile(ogg);
-	}
-	
-	public abstract FlacAudioFrame getNextAudioPacket() throws IOException;
-	
-	/**
-	 * Skips the audio data to the next packet with a granule
-	 *  of at least the given granule position.
-	 * Note that skipping backwards is not currently supported!
-	 */
-	public abstract void skipToGranule(long granulePosition) throws IOException;
-	
-	public FlacInfo getInfo() {
-		return info;
-	}
-	public FlacTags getTags() {
-		return tags;
-	}
+   /**
+    * Opens the given file for reading
+    */
+   public static FlacFile open(OggFile ogg) throws IOException {
+       return new FlacOggFile(ogg);
+   }
 
-	/**
-	 * In Reading mode, will close the underlying ogg/flac
-	 *  file and free its resources.
-	 * In Writing mode, will write out the Info and 
-	 *  Comments objects, and then the audio data.
-	 */
-	public abstract void close() throws IOException;
+   public abstract FlacAudioFrame getNextAudioPacket() throws IOException;
+
+   /**
+    * Skips the audio data to the next packet with a granule
+    *  of at least the given granule position.
+    * Note that skipping backwards is not currently supported!
+    */
+   public abstract void skipToGranule(long granulePosition) throws IOException;
+
+   public FlacInfo getInfo() {
+       return info;
+   }
+   public FlacTags getTags() {
+       return tags;
+   }
+
+   /**
+    * In Reading mode, will close the underlying ogg/flac
+    *  file and free its resources.
+    * In Writing mode, will write out the Info and 
+    *  Comments objects, and then the audio data.
+    */
+   public abstract void close() throws IOException;
 }
