@@ -74,32 +74,32 @@ public class FlacNativeFile extends FlacFile {
    }
    
 	
-	public FlacAudioFrame getNextAudioPacket() throws IOException {
-	   // TODO How to know how long the frames are?
-	   return new FlacAudioFrame(null);
-	}
-	
-	/**
-	 * Skips the audio data to the next packet with a granule
-	 *  of at least the given granule position.
-	 * Note that skipping backwards is not currently supported!
-	 */
-	public void skipToGranule(long granulePosition) throws IOException {
-      throw new RuntimeException("Not supported");
-	}
+   public FlacAudioFrame getNextAudioPacket() throws IOException {
+       // TODO How to know how long the frames are?
+       return new FlacAudioFrame(null);
+   }
 
-	/**
-	 * In Reading mode, will close the underlying ogg/flac
-	 *  file and free its resources.
-	 * In Writing mode, will write out the Info and 
-	 *  Comments objects, and then the audio data.
-	 */
-	public void close() throws IOException {
-	   if(input != null) {
-	      input.close();
-	      input = null;
-	   } else {
-	      throw new RuntimeException("Not supported");
-	   }
-	}
+   /**
+    * Skips the audio data to the next packet with a granule
+    *  of at least the given granule position.
+    * Note that skipping backwards is not currently supported!
+    */
+   public void skipToGranule(long granulePosition) throws IOException {
+       throw new RuntimeException("Not supported");
+   }
+
+   /**
+    * In Reading mode, will close the underlying ogg/flac
+    *  file and free its resources.
+    * In Writing mode, will write out the Info and 
+    *  Comments objects, and then the audio data.
+    */
+   public void close() throws IOException {
+       if(input != null) {
+           input.close();
+           input = null;
+       } else {
+           throw new RuntimeException("Not supported");
+       }
+   }
 }
