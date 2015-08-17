@@ -74,9 +74,10 @@ public class FlacParser extends AbstractParser {
           metadata.set(Metadata.CONTENT_TYPE, NATIVE_FLAC.toString());
       }
       
-      // Extract any Vorbis comments
-      VorbisParser.extractComments(metadata, xhtml, flac.getTags());
+      // Extract any Vorbis-style comments
+      OggAudioParser.extractComments(metadata, xhtml, flac.getTags());
       
+      // Calculate the song length
       // TODO Work out the song length, and return that
 
       // Finish

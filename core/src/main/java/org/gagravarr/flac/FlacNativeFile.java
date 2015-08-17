@@ -75,8 +75,21 @@ public class FlacNativeFile extends FlacFile {
    
 	
    public FlacAudioFrame getNextAudioPacket() throws IOException {
-       // TODO How to know how long the frames are?
-       return new FlacAudioFrame(null);
+       int skipped = 0;
+       int b1 = 0;
+       int b2 = input.read();
+       while (b1 != -1 && b2 != -1) {
+           b1 = b2;
+           b2 = input.read();
+           if (FlacAudioFrame.isFrameHeaderStart(b1, b2)) {
+               if (skipped > 0)
+                   System.err.println("Warning - had to skip " + skipped +
+                           " bytes of junk data before finding the next packet header");
+               return new FlacAudioFrame(b1, b2, input);
+           }
+           skipped++;
+       }
+       return null;
    }
 
    /**
