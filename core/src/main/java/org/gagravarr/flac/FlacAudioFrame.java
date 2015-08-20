@@ -172,25 +172,8 @@ public class FlacAudioFrame extends FlacFrame {
                }
            }
 
-           if (type == 0) {
-               // TODO Constant
-           } else if (type == 1) {
-               // TODO Verbatim
-           } else if (type >= 2 && type <= 7) {
-               // Reserved, skip
-           } else if (type >= 8 && type <16) {
-               // Fixed
-               int order = type & 7;
-               int size = order * sampleSizeBits;
-               
-               // TODO Save this
-               br.read(size);
-               // TODO Read the rest
-           } else if (type >= 16 && type <= 31) {
-               // Reserved, skip
-           } else if (type >= 32) {
-               // TODO LPC
-           }
+           // Sub-Frame data
+           FlacAudioSubFrame.create(type, sampleSizeBits, br);
        }
 
        // Footer CRC, not checked
