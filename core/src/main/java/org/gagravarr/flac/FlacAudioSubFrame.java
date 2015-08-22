@@ -38,18 +38,18 @@ public abstract class FlacAudioSubFrame {
         return new SubFrameReserved();
     }
 
+    protected final int predictorOrder;
     protected final int sampleSizeBits;
     protected final int blockSize;
-    protected final int order;
-    protected FlacAudioSubFrame(int sampleSizeBits, int blockSize, int order) {
+    protected FlacAudioSubFrame(int predictorOrder, int sampleSizeBits, int blockSize) {
+        this.predictorOrder = predictorOrder;
         this.sampleSizeBits = sampleSizeBits;
         this.blockSize = blockSize;
-        this.order = order;
     }
 
     public static class SubFrameConstant extends FlacAudioSubFrame {
         protected SubFrameConstant(int sampleSizeBits, int blockSize, BitsReader data) throws IOException {
-            super(sampleSizeBits, blockSize, -1);
+            super(-1, sampleSizeBits, blockSize);
             data.read(sampleSizeBits);
         }
         public static boolean matchesType(final int type) {
@@ -59,7 +59,7 @@ public abstract class FlacAudioSubFrame {
     }
     public static class SubFrameVerbatim extends FlacAudioSubFrame {
         protected SubFrameVerbatim(int sampleSizeBits, int blockSize, BitsReader data) throws IOException {
-            super(sampleSizeBits, blockSize, -1);
+            super(-1, sampleSizeBits, blockSize);
             for (int i=0; i<blockSize; i++) {
                 data.read(sampleSizeBits);
             }
@@ -71,10 +71,10 @@ public abstract class FlacAudioSubFrame {
     }
     public static class SubFrameFixed extends FlacAudioSubFrame {
         protected SubFrameFixed(int type, int sampleSizeBits, int blockSize, BitsReader data) throws IOException {
-            super(sampleSizeBits, blockSize, (type & 8));
+            super((type & 8), sampleSizeBits, blockSize);
 
-            int[] warmUpSamples = new int[order];
-            for (int i=0; i<order; i++) {
+            int[] warmUpSamples = new int[predictorOrder];
+            for (int i=0; i<predictorOrder; i++) {
                 warmUpSamples[i] = data.read(sampleSizeBits);
             }
 
@@ -89,18 +89,18 @@ public abstract class FlacAudioSubFrame {
         protected final int linearPredictorCoefficientPrecision;
         protected final int linearPredictorCoefficientShift;
         protected SubFrameLPC(int type, int sampleSizeBits, int blockSize, BitsReader data) throws IOException {
-            super(sampleSizeBits, blockSize, (type & 32) + 1);
+            super((type & 32) + 1, sampleSizeBits, blockSize);
 
-            int[] warmUpSamples = new int[order];
-            for (int i=0; i<order; i++) {
+            int[] warmUpSamples = new int[predictorOrder];
+            for (int i=0; i<predictorOrder; i++) {
                 warmUpSamples[i] = data.read(sampleSizeBits);
             }
 
             this.linearPredictorCoefficientPrecision = data.read(4)+1;
             this.linearPredictorCoefficientShift = data.read(5);
 
-            int[] coefficients = new int[order];
-            for (int i=0; i<order; i++) {
+            int[] coefficients = new int[predictorOrder];
+            for (int i=0; i<predictorOrder; i++) {
                 coefficients[i] = data.read(linearPredictorCoefficientPrecision);
             }
 
@@ -129,26 +129,37 @@ public abstract class FlacAudioSubFrame {
             return null;
         }
         
-        int order = data.read(4);
+        int partitionOrder = data.read(4);
         if (type == 0) {
-            return new SubFrameResidualRice(order, data);
+            return new SubFrameResidualRice(partitionOrder, data);
         } else {
-            return new SubFrameResidualRice2(order, data);
+            return new SubFrameResidualRice2(partitionOrder, data);
         }
     }
 
     public class SubFrameResidual {
-        private SubFrameResidual(int order, int bits, int escapeCode, BitsReader data) throws IOException {
-            int riceParam = data.read(bits);
-            if (riceParam == escapeCode) {
-                int numUnencoded = data.read(5);
-                for (int i=0; i<numUnencoded; i++) {
-                    data.read(sampleSizeBits);
-                }
-            } else {
-                int numSamples = 0;
-                if (order == 0) {
-                    numSamples = blockSize - order; 
+        private SubFrameResidual(int partitionOrder, int bits, int escapeCode, BitsReader data) throws IOException {
+            int numPartitions = 1<<partitionOrder;
+            for (int pn=0; pn<numPartitions; pn++) {
+                int riceParam = data.read(bits);
+                if (riceParam == escapeCode) {
+                    int numUnencoded = data.read(5);
+                    for (int i=0; i<numUnencoded; i++) {
+                        data.read(sampleSizeBits);
+                    }
+                } else {
+                    int numSamples = 0;
+                    if (partitionOrder == 0) {
+                        numSamples = blockSize - predictorOrder;
+                    } else if (pn > 0) {
+                        numSamples = blockSize / numPartitions;
+                    } else {
+                        numSamples = (blockSize / numPartitions) - predictorOrder;
+                    }
+
+                    for (int sn=0; sn<numSamples; sn++) {
+                        data.read(riceParam);
+                    }
                 }
             }
         }
@@ -156,15 +167,15 @@ public abstract class FlacAudioSubFrame {
     public class SubFrameResidualRice extends SubFrameResidual {
         private static final int PARAM_BITS = 4;
         private static final int ESCAPE_CODE = 15;
-        public SubFrameResidualRice(int order, BitsReader data) throws IOException {
-            super(order, PARAM_BITS, ESCAPE_CODE, data);
+        public SubFrameResidualRice(int partitionOrder, BitsReader data) throws IOException {
+            super(partitionOrder, PARAM_BITS, ESCAPE_CODE, data);
         }
     }
     public class SubFrameResidualRice2 extends SubFrameResidual {
         private static final int PARAM_BITS = 5;
         private static final int ESCAPE_CODE = 31;
-        public SubFrameResidualRice2(int order, BitsReader data) throws IOException {
-            super(order, PARAM_BITS, ESCAPE_CODE, data);
+        public SubFrameResidualRice2(int partitionOrder, BitsReader data) throws IOException {
+            super(partitionOrder, PARAM_BITS, ESCAPE_CODE, data);
         }
     }
 }
