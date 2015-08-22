@@ -173,8 +173,11 @@ public class FlacAudioFrame extends FlacFrame {
            }
 
            // Sub-Frame data
-           FlacAudioSubFrame.create(type, sampleSizeBits, br);
+           FlacAudioSubFrame.create(type, sampleSizeBits, blockSize, br);
        }
+
+       // Skip any remaining bits, to hit the boundary
+       br.readToByteBoundary();
 
        // Footer CRC, not checked
        stream.read();
