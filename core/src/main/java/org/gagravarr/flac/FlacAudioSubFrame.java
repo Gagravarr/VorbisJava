@@ -21,32 +21,47 @@ import org.gagravarr.ogg.BitsReader;
  * Per-channel, compressed audio
  */
 public abstract class FlacAudioSubFrame {
-    public static FlacAudioSubFrame create(int type, FlacAudioFrame audioFrame,
+    public static FlacAudioSubFrame create(int type, int wastedBits, FlacAudioFrame audioFrame,
                                            BitsReader data) throws IOException {
+        // Sanity check
         if (type < 0 || type >= 64) {
             throw new IllegalArgumentException("Type must be a un-signed 6 bit number, found " + type);
         }
 
+        // Create the right type
+        FlacAudioSubFrame subFrame;
         if (SubFrameConstant.matchesType(type))
-            return new SubFrameConstant(audioFrame, data);
-        if (SubFrameVerbatim.matchesType(type))
-            return new SubFrameVerbatim(audioFrame, data);
-        if (SubFrameFixed.matchesType(type))
-            return new SubFrameFixed(type, audioFrame, data);
-        if (SubFrameLPC.matchesType(type))
-            return new SubFrameLPC(type, audioFrame, data);
-        return new SubFrameReserved(audioFrame);
+            subFrame = new SubFrameConstant(audioFrame, data);
+        else if (SubFrameVerbatim.matchesType(type))
+            subFrame =  new SubFrameVerbatim(audioFrame, data);
+        else if (SubFrameFixed.matchesType(type))
+            subFrame =  new SubFrameFixed(type, audioFrame, data);
+        else if (SubFrameLPC.matchesType(type))
+            subFrame =  new SubFrameLPC(type, audioFrame, data);
+        else subFrame =  new SubFrameReserved(audioFrame);
+
+        // Record details, and return
+        subFrame.wastedBits = wastedBits;
+        return subFrame;
     }
 
     protected final FlacAudioFrame audioFrame;
     protected final int predictorOrder;
     protected final int sampleSizeBits;
     protected final int blockSize;
+    private int wastedBits;
+
     protected FlacAudioSubFrame(int predictorOrder, FlacAudioFrame audioFrame) {
         this.predictorOrder = predictorOrder;
         this.audioFrame = audioFrame;
         this.sampleSizeBits = audioFrame.getBitsPerSample();
         this.blockSize = audioFrame.getBlockSize();
+    }
+    /**
+     * The number of wasted bits per sample
+     */
+    public int getWastedBits() {
+        return wastedBits;
     }
 
     public static class SubFrameConstant extends FlacAudioSubFrame {

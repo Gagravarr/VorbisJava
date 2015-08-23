@@ -183,7 +183,7 @@ public class FlacAudioFrame extends FlacFrame {
                                                   + (cn+1) + " of " + numChannels);
 
            // Sub-Frame data
-           subFrames[cn] = FlacAudioSubFrame.create(type, this, br);
+           subFrames[cn] = FlacAudioSubFrame.create(type, wb, this, br);
        }
 
        // Skip any remaining bits, to hit the boundary

@@ -18,6 +18,7 @@ import java.io.InputStream;
 
 import junit.framework.TestCase;
 
+import org.gagravarr.flac.FlacAudioSubFrame.SubFrameFixed;
 import org.gagravarr.ogg.OggFile;
 import org.gagravarr.ogg.OggPacket;
 import org.gagravarr.ogg.OggPacketReader;
@@ -88,6 +89,12 @@ public class TestFlacFileRead extends TestCase {
        assertFlacContents(flac);
    }
 
+   /**
+    * Checks that the right information is stored in the file,
+    *  both header and audio contents
+    * Information for these tests generated from running "flac -a"
+    *  against the test files.
+    */
    protected void assertFlacContents(FlacFile flac) throws IOException {
       // Check the info
       FlacInfo info = flac.getInfo();
@@ -128,10 +135,16 @@ public class TestFlacFileRead extends TestCase {
       // Should have one subframe per channel
       // First should be Fixed, second LPC
       assertEquals(2, audio.getSubFrames().length);
+
       sf = audio.getSubFrames()[0];
-      assertEquals(FlacAudioSubFrame.SubFrameFixed.class, sf.getClass());
+      assertEquals(SubFrameFixed.class, sf.getClass());
+      assertEquals(0, sf.getWastedBits());
+      SubFrameFixed sff = (SubFrameFixed)sf;
+      assertEquals(1, sff.predictorOrder);
+
       sf = audio.getSubFrames()[1];
       assertEquals(FlacAudioSubFrame.SubFrameLPC.class, sf.getClass());
+      assertEquals(0, sf.getWastedBits());
 
       // TODO Is this right? Only a single audio frame
       // TODO Is this right? Different between formats?
