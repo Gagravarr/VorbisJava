@@ -19,6 +19,8 @@ import java.io.InputStream;
 import junit.framework.TestCase;
 
 import org.gagravarr.ogg.OggFile;
+import org.gagravarr.ogg.OggPacket;
+import org.gagravarr.ogg.OggPacketReader;
 
 /**
  * Tests for reading things using FlacFile, both for
@@ -38,6 +40,29 @@ public class TestFlacFileRead extends TestCase {
        if (flac != null) {
            flac.close();
        }
+   }
+
+   /**
+    * Test that the first audio frame used all the data
+    *  from it's ogg packet, and it's all still available
+    *  unchanged for if you wanted to write it back out again
+    */
+   public void testOggFirstAudioFrame() throws IOException {
+      // Find the first audio packet
+      OggFile ogg = new OggFile(getTestOggFile());
+      OggPacketReader r = ogg.getPacketReader();
+      // Will have Info then tags
+      OggPacket p = r.getNextPacket();
+      FlacInfo info = (new FlacFirstOggPacket(p)).getInfo();
+      p = r.getNextPacket();
+      // Next are other metadata
+      while ((p = r.getNextPacket()) != null) {
+          if (p.getData()[0] == -1) break;
+      }
+      // Decode audio as Flac
+      FlacAudioFrame audio = new FlacAudioFrame(p.getData(), info);
+      // Check same
+      assertEquals(p.getData().length, audio.getData().length);
    }
 
    public void testReadOgg() throws IOException {
