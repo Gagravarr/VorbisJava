@@ -24,7 +24,7 @@ public abstract class FlacAudioSubFrame {
     public static FlacAudioSubFrame create(int type, int sampleSizeBits, int blockSize, 
                                            BitsReader data) throws IOException {
         if (type < 0 || type >= 64) {
-            throw new IllegalArgumentException("Type must be a un-signed 6 bit number");
+            throw new IllegalArgumentException("Type must be a un-signed 6 bit number, found " + type);
         }
 
         if (SubFrameConstant.matchesType(type))

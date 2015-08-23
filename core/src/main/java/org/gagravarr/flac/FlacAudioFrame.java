@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.gagravarr.ogg.BitsReader;
+import org.gagravarr.ogg.BytesCapturingInputStream;
 import org.gagravarr.ogg.IOUtils;
 
 /**
@@ -42,7 +43,7 @@ public class FlacAudioFrame extends FlacFrame {
    private int sampleSizeRaw;
    private int sampleSizeBits;
 
-   private byte[] subframeData;
+   private byte[] frameData;
 
    public FlacAudioFrame(byte[] data, FlacInfo info) throws IOException {
        this(new ByteArrayInputStream(data), info);
@@ -63,9 +64,11 @@ public class FlacAudioFrame extends FlacFrame {
    /**
     * Creates the frame from the pre-read 2 bytes and stream, no sync checks.
     * Info is needed, as values of 0 often mean "as per info defaults".
-    * TODO Track the data, so we can write it back out again
     */
-   public FlacAudioFrame(int first2, InputStream stream, FlacInfo info) throws IOException {
+   public FlacAudioFrame(int first2, InputStream rawStream, FlacInfo info) throws IOException {
+       // Wrap the InputStream so that it captures the contents
+       BytesCapturingInputStream stream = new BytesCapturingInputStream(rawStream);
+
        // First 14 bits are the sync, 15 is reserved, 16 is block size
        blockSizeVariable = ((first2 & 1) == 1);
 
@@ -182,6 +185,9 @@ public class FlacAudioFrame extends FlacFrame {
        // Footer CRC, not checked
        stream.read();
        stream.read();
+
+       // Capture the raw bytes read
+       frameData = stream.getData();
    }
 
    private static int getAndCheckFirstTwo(InputStream stream) throws IOException {
@@ -205,9 +211,20 @@ public class FlacAudioFrame extends FlacFrame {
    }
    private static final int FRAME_SYNC = 0x3ffe;
    
+   /**
+    * Returns the contents, including the sync header
+    */
    @Override
    public byte[] getData() {
-       return subframeData;
+       byte[] data = new byte[frameData.length+2];
+
+       int first2 = (FRAME_SYNC<<2);
+       if (blockSizeVariable) first2++;
+
+       IOUtils.putInt2BE(data, 0, first2);
+       System.arraycopy(frameData, 0, data, 2, frameData.length);
+
+       return data;
    }
 
    /**
