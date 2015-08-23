@@ -27,6 +27,7 @@ public class BitsReader {
     
     private int tmp = 0;
     private int remaining = 0;
+    private boolean eof = false;
     
     public BitsReader(InputStream input) {
         this.input = input;
@@ -50,7 +51,10 @@ public class BitsReader {
             remaining -= toNibble;
             numBits -= toNibble;
         }
-        if (tmp == -1) return -1;
+        if (tmp == -1) {
+            eof = true;
+            return -1;
+        }
         return res;
     }
     
@@ -61,5 +65,12 @@ public class BitsReader {
     public int readToByteBoundary() throws IOException {
         if (remaining == 0) return -1;
         return read(remaining);
+    }
+
+    /**
+     * Has the End-Of-File / End-of-Stream been hit?
+     */
+    public boolean isEOF() {
+        return eof;
     }
 }

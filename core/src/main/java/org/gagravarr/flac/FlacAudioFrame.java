@@ -174,9 +174,13 @@ public class FlacAudioFrame extends FlacFrame {
                    wb++;
                }
            }
+           // Check there's data
+           if (br.isEOF())
+               throw new IllegalArgumentException("No data left to read subframe for channel "
+                                                  + (cn+1) + " of " + numChannels);
 
            // Sub-Frame data
-           FlacAudioSubFrame.create(type, sampleSizeBits, blockSize, br);
+           FlacAudioSubFrame.create(type, this, br);
        }
 
        // Skip any remaining bits, to hit the boundary

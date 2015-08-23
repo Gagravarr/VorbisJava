@@ -21,35 +21,37 @@ import org.gagravarr.ogg.BitsReader;
  * Per-channel, compressed audio
  */
 public abstract class FlacAudioSubFrame {
-    public static FlacAudioSubFrame create(int type, int sampleSizeBits, int blockSize, 
+    public static FlacAudioSubFrame create(int type, FlacAudioFrame audioFrame,
                                            BitsReader data) throws IOException {
         if (type < 0 || type >= 64) {
             throw new IllegalArgumentException("Type must be a un-signed 6 bit number, found " + type);
         }
 
         if (SubFrameConstant.matchesType(type))
-            return new SubFrameConstant(sampleSizeBits, blockSize, data);
+            return new SubFrameConstant(audioFrame, data);
         if (SubFrameVerbatim.matchesType(type))
-            return new SubFrameVerbatim(sampleSizeBits, blockSize, data);
+            return new SubFrameVerbatim(audioFrame, data);
         if (SubFrameFixed.matchesType(type))
-            return new SubFrameFixed(type, sampleSizeBits, blockSize, data);
+            return new SubFrameFixed(type, audioFrame, data);
         if (SubFrameLPC.matchesType(type))
-            return new SubFrameLPC(type, sampleSizeBits, blockSize, data);
-        return new SubFrameReserved();
+            return new SubFrameLPC(type, audioFrame, data);
+        return new SubFrameReserved(audioFrame);
     }
 
+    protected final FlacAudioFrame audioFrame;
     protected final int predictorOrder;
     protected final int sampleSizeBits;
     protected final int blockSize;
-    protected FlacAudioSubFrame(int predictorOrder, int sampleSizeBits, int blockSize) {
+    protected FlacAudioSubFrame(int predictorOrder, FlacAudioFrame audioFrame) {
         this.predictorOrder = predictorOrder;
-        this.sampleSizeBits = sampleSizeBits;
-        this.blockSize = blockSize;
+        this.audioFrame = audioFrame;
+        this.sampleSizeBits = audioFrame.getBitsPerSample();
+        this.blockSize = audioFrame.getBlockSize();
     }
 
     public static class SubFrameConstant extends FlacAudioSubFrame {
-        protected SubFrameConstant(int sampleSizeBits, int blockSize, BitsReader data) throws IOException {
-            super(-1, sampleSizeBits, blockSize);
+        protected SubFrameConstant(FlacAudioFrame audioFrame, BitsReader data) throws IOException {
+            super(-1, audioFrame);
             data.read(sampleSizeBits);
         }
         public static boolean matchesType(final int type) {
@@ -58,8 +60,8 @@ public abstract class FlacAudioSubFrame {
         }
     }
     public static class SubFrameVerbatim extends FlacAudioSubFrame {
-        protected SubFrameVerbatim(int sampleSizeBits, int blockSize, BitsReader data) throws IOException {
-            super(-1, sampleSizeBits, blockSize);
+        protected SubFrameVerbatim(FlacAudioFrame audioFrame, BitsReader data) throws IOException {
+            super(-1, audioFrame);
             for (int i=0; i<blockSize; i++) {
                 data.read(sampleSizeBits);
             }
@@ -70,8 +72,8 @@ public abstract class FlacAudioSubFrame {
         }
     }
     public static class SubFrameFixed extends FlacAudioSubFrame {
-        protected SubFrameFixed(int type, int sampleSizeBits, int blockSize, BitsReader data) throws IOException {
-            super((type & 8), sampleSizeBits, blockSize);
+        protected SubFrameFixed(int type, FlacAudioFrame audioFrame, BitsReader data) throws IOException {
+            super((type & 8), audioFrame);
 
             int[] warmUpSamples = new int[predictorOrder];
             for (int i=0; i<predictorOrder; i++) {
@@ -88,8 +90,8 @@ public abstract class FlacAudioSubFrame {
     public static class SubFrameLPC extends FlacAudioSubFrame {
         protected final int linearPredictorCoefficientPrecision;
         protected final int linearPredictorCoefficientShift;
-        protected SubFrameLPC(int type, int sampleSizeBits, int blockSize, BitsReader data) throws IOException {
-            super((type & 32) + 1, sampleSizeBits, blockSize);
+        protected SubFrameLPC(int type, FlacAudioFrame audioFrame, BitsReader data) throws IOException {
+            super((type & 32) + 1, audioFrame);
 
             int[] warmUpSamples = new int[predictorOrder];
             for (int i=0; i<predictorOrder; i++) {
@@ -117,8 +119,8 @@ public abstract class FlacAudioSubFrame {
             if (type >= 16 && type <= 31) return true;
             return false;
         }
-        private SubFrameReserved() {
-            super(-1,-1,-1);
+        private SubFrameReserved(FlacAudioFrame audioFrame) {
+            super(-1, audioFrame);
         }
     }
 
