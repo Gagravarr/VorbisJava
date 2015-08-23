@@ -89,6 +89,7 @@ public class TestFlacFileRead extends TestCase {
 
       // Has audio data, all with mostly info-based metadata
       FlacAudioFrame audio;
+      FlacAudioSubFrame sf;
 
       audio = flac.getNextAudioPacket();
       assertNotNull(audio);
@@ -98,6 +99,14 @@ public class TestFlacFileRead extends TestCase {
       assertEquals(16, audio.getBitsPerSample());
       assertEquals(2, audio.getNumChannels());
       //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
+
+      // Should have one subframe per channel
+      // First should be Fixed, second LPC
+      assertEquals(2, audio.getSubFrames().length);
+      sf = audio.getSubFrames()[0];
+      assertEquals(FlacAudioSubFrame.SubFrameFixed.class, sf.getClass());
+      sf = audio.getSubFrames()[1];
+      assertEquals(FlacAudioSubFrame.SubFrameLPC.class, sf.getClass());
 
       // TODO Is this right? Only a single audio frame
       // TODO Is this right? Different between formats?

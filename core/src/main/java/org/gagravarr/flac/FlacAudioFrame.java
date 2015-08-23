@@ -43,6 +43,8 @@ public class FlacAudioFrame extends FlacFrame {
    private int sampleSizeRaw;
    private int sampleSizeBits;
 
+   private FlacAudioSubFrame[] subFrames;
+
    private byte[] frameData;
 
    public FlacAudioFrame(byte[] data, FlacInfo info) throws IOException {
@@ -162,6 +164,7 @@ public class FlacAudioFrame extends FlacFrame {
        stream.read();
 
        // One sub-frame per channel
+       subFrames = new FlacAudioSubFrame[numChannels];
        for (int cn=0; cn<numChannels; cn++) {
            // Zero
            br.read(1);
@@ -180,7 +183,7 @@ public class FlacAudioFrame extends FlacFrame {
                                                   + (cn+1) + " of " + numChannels);
 
            // Sub-Frame data
-           FlacAudioSubFrame.create(type, this, br);
+           subFrames[cn] = FlacAudioSubFrame.create(type, this, br);
        }
 
        // Skip any remaining bits, to hit the boundary
@@ -269,6 +272,13 @@ public class FlacAudioFrame extends FlacFrame {
     */
    public long getCodedNumber() {
        return codedNumber;
+   }
+
+   /**
+    * SubFrames hold the encoded audio data on a per-channel basis
+    */
+   public FlacAudioSubFrame[] getSubFrames() {
+       return subFrames;
    }
 
    protected static class SampleRate {
