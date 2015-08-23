@@ -50,6 +50,20 @@ public class TestFlacFileRead extends TestCase {
       assertEquals(1, first.getMajorVersion());
       assertEquals(0, first.getMinorVersion());
 
+      // Check the rest
+      assertFlacContents(flac);
+   }
+
+   public void testReadFlacNative() throws IOException {
+       flac = new FlacNativeFile(getTestFlacFile());
+
+       // TODO Check some native-specific parts
+
+       // Check the rest
+       assertFlacContents(flac);
+   }
+
+   protected void assertFlacContents(FlacFile flac) throws IOException {
       // Check the info
       FlacInfo info = flac.getInfo();
       assertNotNull(info);
@@ -86,64 +100,27 @@ public class TestFlacFileRead extends TestCase {
       //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
 
       // TODO Is this right? Only a single audio frame
-      assertNull( flac.getNextAudioPacket() );
-   }
+      // TODO Is this right? Different between formats?
+      if (flac instanceof FlacOggFile) {
+          assertNull( flac.getNextAudioPacket() );
+      } else {
+          audio = flac.getNextAudioPacket();
+          assertNotNull(audio);
+    //    assertEquals(0, audio.getCodedNumber());
+          assertEquals(44100, audio.getSampleRate());
+          assertEquals(0, audio.getBlockSize());
+          assertEquals(0, audio.getBitsPerSample());
+          assertEquals(2, audio.getNumChannels());
+          //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
 
-   public void testReadFlacNative() throws IOException {
-      flac = new FlacNativeFile(getTestFlacFile());
-
-      // Check the info
-      FlacInfo info = flac.getInfo();
-      assertNotNull(info);
-      
-      assertEquals(0x1000, info.getMinimumBlockSize());
-      assertEquals(0x1000, info.getMaximumBlockSize());
-      assertEquals(0x084e, info.getMinimumFrameSize());
-      assertEquals(0x084e, info.getMaximumFrameSize());
-      
-      assertEquals(44100, info.getSampleRate());
-      assertEquals(16, info.getBitsPerSample());
-      assertEquals(2, info.getNumChannels());
-      assertEquals(0x3c0, info.getNumberOfSamples());
-
-      // Check the basics of the comments
-      FlacTags tags = flac.getTags();
-      assertNotNull(tags);
-      assertEquals(7, tags.getAllComments().size());
-      assertEquals("Test Album", tags.getAlbum());
-
-
-      // Has audio data, all with mostly info-based metadata
-      FlacAudioFrame audio;
-
-      audio = flac.getNextAudioPacket();
-      assertNotNull(audio);
-      assertEquals(0, audio.getCodedNumber());
-      assertEquals(44100, audio.getSampleRate());
-      assertEquals(960, audio.getBlockSize());
-      assertEquals(16, audio.getBitsPerSample());
-      assertEquals(2, audio.getNumChannels());
-      //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
-
-      audio = flac.getNextAudioPacket();
-      assertNotNull(audio);
-//    assertEquals(0, audio.getCodedNumber());
-      assertEquals(44100, audio.getSampleRate());
-      assertEquals(0, audio.getBlockSize());
-      assertEquals(0, audio.getBitsPerSample());
-      assertEquals(2, audio.getNumChannels());
-      //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
-
-      audio = flac.getNextAudioPacket();
-      assertNotNull(audio);
-//    assertEquals(0, audio.getCodedNumber());
-      assertEquals(44100, audio.getSampleRate());
-      assertEquals(0, audio.getBlockSize());
-      assertEquals(0, audio.getBitsPerSample());
-      assertEquals(2, audio.getNumChannels());
-      //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
-
-      // TODO Check the rest
-      // TODO Should there really be multiple packets?
+          audio = flac.getNextAudioPacket();
+          assertNotNull(audio);
+    //    assertEquals(0, audio.getCodedNumber());
+          assertEquals(44100, audio.getSampleRate());
+          assertEquals(0, audio.getBlockSize());
+          assertEquals(0, audio.getBitsPerSample());
+          assertEquals(2, audio.getNumChannels());
+          //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
+      }
    }
 }
