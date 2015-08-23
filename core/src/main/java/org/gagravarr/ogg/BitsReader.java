@@ -35,9 +35,13 @@ public class BitsReader {
     
     public int read(int numBits) throws IOException {
         int res = 0;
-        while (numBits > 0 && tmp != -1) {
+        while (numBits > 0 && !eof) {
             if (remaining == 0) {
                 tmp = input.read();
+                if (tmp == -1) {
+                    eof = true;
+                    return -1;
+                }
                 remaining = 8;
             }
             int toNibble = Math.min(remaining, numBits);
@@ -51,10 +55,7 @@ public class BitsReader {
             remaining -= toNibble;
             numBits -= toNibble;
         }
-        if (tmp == -1) {
-            eof = true;
-            return -1;
-        }
+        if (eof) return -1;
         return res;
     }
     
