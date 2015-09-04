@@ -183,7 +183,7 @@ public class FlacAudioFrame extends FlacFrame {
                                                   + (cn+1) + " of " + numChannels);
 
            // Sub-Frame data
-           subFrames[cn] = FlacAudioSubFrame.create(type, wb, this, br);
+           subFrames[cn] = FlacAudioSubFrame.create(type, cn, wb, this, br);
        }
 
        // Skip any remaining bits, to hit the boundary
@@ -266,6 +266,9 @@ public class FlacAudioFrame extends FlacFrame {
    public int getNumChannels() {
        return numChannels;
    }
+   protected int getChannelType() {
+       return channelType;
+   }
    /**
     * If {@link #isBlockSizeVariable()}, then this is the
     *  sample number, otherwise the frame number
@@ -297,4 +300,7 @@ public class FlacAudioFrame extends FlacFrame {
            new SampleRate(32), new SampleRate(44.1),
            new SampleRate(48), new SampleRate(96)
    };
+   protected static final int CHANNEL_TYPE_LEFT  = 0x9;
+   protected static final int CHANNEL_TYPE_RIGHT = 0xa;
+   protected static final int CHANNEL_TYPE_MID   = 0xb;
 }
