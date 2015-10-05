@@ -60,6 +60,33 @@ public class BitsReader {
     }
     
     /**
+     * Counts the number of bits until the next zero (false)
+     *  bit is set
+     * <p>eg 1110 is 3, 0 is 0, 10 is 1.
+     * @return the number of bits until the next zero
+     */
+    public int bitsToNextZero() throws IOException {
+        int count = 0;
+        while (read(1) == 1) {
+            count++;
+        }
+        return count;
+    }
+    /**
+     * Counts the number of bits until the next one (true)
+     *  bit is set
+     * <p>eg b1 is 0, b001 is 2, b0000001 is 6
+     * @return the number of bits until the next one
+     */
+    public int bitsToNextOne() throws IOException {
+        int count = 0;
+        while (read(1) == 0) {
+            count++;
+        }
+        return count;
+    }
+    
+    /**
      * Reads the number to the next byte boundary,
      *  or -1 if already there.
      */

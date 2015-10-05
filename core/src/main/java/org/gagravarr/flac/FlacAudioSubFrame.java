@@ -57,6 +57,7 @@ public abstract class FlacAudioSubFrame {
         this.blockSize = audioFrame.getBlockSize();
 
         // Adjust sample size for channel number, if needed
+        // TODO Is this the right adjustment amount?
         int sampleSizeBits = audioFrame.getBitsPerSample();
         if (audioFrame.getChannelType() == FlacAudioFrame.CHANNEL_TYPE_LEFT && channelNumber == 1) {
             sampleSizeBits++;

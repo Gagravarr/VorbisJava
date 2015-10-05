@@ -173,9 +173,7 @@ public class FlacAudioFrame extends FlacFrame {
            // Wasted Bits per Sample
            int wb = br.read(1);
            if (wb == 1) {
-               while (br.read(1) == 0) {
-                   wb++;
-               }
+               wb = br.bitsToNextOne() + 1;
            }
            // Check there's data
            if (br.isEOF())
