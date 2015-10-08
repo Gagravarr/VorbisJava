@@ -174,25 +174,38 @@ public abstract class FlacAudioSubFrame {
     public class SubFrameResidual {
         private SubFrameResidual(int partitionOrder, int bits, int escapeCode, BitsReader data) throws IOException {
             int numPartitions = 1<<partitionOrder;
+            
+            int numSamples = 0;
+            if (partitionOrder > 0) {
+                numSamples = blockSize >> partitionOrder;
+            } else {
+                numSamples = blockSize - predictorOrder;
+            }
+            
             for (int pn=0; pn<numPartitions; pn++) {
                 int riceParam = data.read(bits);
+                
+                int partitionSamples = 0;
+                if (partitionOrder == 0 || pn > 0) {
+                    partitionSamples = numSamples;
+                } else {
+                    partitionSamples = numSamples - predictorOrder;
+                }
+                
                 if (riceParam == escapeCode) {
-                    int numUnencoded = data.read(5);
-                    for (int i=0; i<numUnencoded; i++) {
-                        data.read(sampleSizeBits);
+                    // Partition holds un-encoded binary form
+                    riceParam = data.read(5);
+                    for (int i=0; i<partitionSamples; i++) {
+                        data.read(riceParam);
                     }
                 } else {
-                    int numSamples = 0;
-                    if (partitionOrder == 0) {
-                        numSamples = blockSize - predictorOrder;
-                    } else if (pn > 0) {
-                        numSamples = blockSize / numPartitions;
-                    } else {
-                        numSamples = (blockSize / numPartitions) - predictorOrder;
-                    }
-
+                    // Partition holds Rice encoded data
                     for (int sn=0; sn<numSamples; sn++) {
-                        data.read(riceParam);
+                        // Q value stored as unary
+                        data.bitsToNextZero();
+                        // R value stored as truncated binary
+                        // TODO Is this the right way to read it?
+                        data.read(bits);
                     }
                 }
             }
