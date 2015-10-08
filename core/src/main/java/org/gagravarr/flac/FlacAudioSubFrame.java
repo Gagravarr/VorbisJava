@@ -213,11 +213,10 @@ public abstract class FlacAudioSubFrame {
                 } else {
                     // Partition holds Rice encoded data
                     for (int sn=0; sn<numSamples; sn++) {
-                        // Q value stored as unary
-                        data.bitsToNextZero();
+                        // Q value stored as zero-based unary
+                        data.bitsToNextOne();
                         // R value stored as truncated binary
-                        // TODO Is this the right way to read it?
-                        data.read(bits);
+                        data.read(riceParam);
                     }
                 }
 

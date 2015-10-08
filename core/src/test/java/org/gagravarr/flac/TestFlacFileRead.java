@@ -159,28 +159,7 @@ public class TestFlacFileRead extends TestCase {
       assertEquals(1, sff.residual.numPartitions);
       assertEquals(13, sff.residual.riceParams[0]);
 
-      // TODO Is this right? Only a single audio frame
-      // TODO Is this right? Different between formats?
-      if (flac instanceof FlacOggFile) {
-          assertNull( flac.getNextAudioPacket() );
-      } else {
-          audio = flac.getNextAudioPacket();
-          assertNotNull(audio);
-    //    assertEquals(0, audio.getCodedNumber());
-          assertEquals(44100, audio.getSampleRate());
-          assertEquals(0, audio.getBlockSize());
-          assertEquals(0, audio.getBitsPerSample());
-          assertEquals(2, audio.getNumChannels());
-          //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
-
-          audio = flac.getNextAudioPacket();
-          assertNotNull(audio);
-    //    assertEquals(0, audio.getCodedNumber());
-          assertEquals(44100, audio.getSampleRate());
-          assertEquals(0, audio.getBlockSize());
-          assertEquals(0, audio.getBitsPerSample());
-          assertEquals(2, audio.getNumChannels());
-          //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
-      }
+      // There is only a single audio frame
+      assertNull( flac.getNextAudioPacket() );
    }
 }
