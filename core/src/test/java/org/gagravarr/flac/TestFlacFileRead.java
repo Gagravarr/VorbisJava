@@ -122,6 +122,7 @@ public class TestFlacFileRead extends TestCase {
       // Has audio data, all with mostly info-based metadata
       FlacAudioFrame audio;
       FlacAudioSubFrame sf;
+      SubFrameFixed sff;
 
       audio = flac.getNextAudioPacket();
       assertNotNull(audio);
@@ -133,18 +134,30 @@ public class TestFlacFileRead extends TestCase {
       //assertEquals(0x3c0, ad.getGranulePosition()); // TODO Check granule
 
       // Should have one subframe per channel
-      // First should be Fixed, second LPC
+      // First should be Fixed with Warmup, Second Fixed no Warmup
+      // (You can check this using "flac -a" on the test files)
       assertEquals(2, audio.getSubFrames().length);
 
       sf = audio.getSubFrames()[0];
       assertEquals(SubFrameFixed.class, sf.getClass());
       assertEquals(0, sf.getWastedBits());
-      SubFrameFixed sff = (SubFrameFixed)sf;
+      sff = (SubFrameFixed)sf;
       assertEquals(1, sff.predictorOrder);
+      assertEquals(1, sff.warmUpSamples.length);
+      assertEquals(1, sff.warmUpSamples[0]);
+      assertEquals(FlacAudioSubFrame.SubFrameResidualRice.class, sff.residual.getClass());
+      assertEquals(1, sff.residual.numPartitions);
+      assertEquals(1, sff.residual.riceParams[0]);
 
       sf = audio.getSubFrames()[1];
-      assertEquals(FlacAudioSubFrame.SubFrameLPC.class, sf.getClass());
+      assertEquals(SubFrameFixed.class, sf.getClass());
       assertEquals(0, sf.getWastedBits());
+      sff = (SubFrameFixed)sf;
+      assertEquals(0, sff.predictorOrder);
+      assertEquals(0, sff.warmUpSamples.length);
+      assertEquals(FlacAudioSubFrame.SubFrameResidualRice.class, sff.residual.getClass());
+      assertEquals(1, sff.residual.numPartitions);
+      assertEquals(13, sff.residual.riceParams[0]);
 
       // TODO Is this right? Only a single audio frame
       // TODO Is this right? Different between formats?

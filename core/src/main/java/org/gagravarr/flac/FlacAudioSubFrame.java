@@ -102,16 +102,19 @@ public abstract class FlacAudioSubFrame {
         }
     }
     public static class SubFrameFixed extends FlacAudioSubFrame {
+        protected final int[] warmUpSamples;
+        protected final SubFrameResidual residual;
+
         protected SubFrameFixed(int type, int channelNumber, FlacAudioFrame audioFrame,
                                 BitsReader data) throws IOException {
-            super((type & 8), channelNumber, audioFrame);
+            super((type & 7), channelNumber, audioFrame);
 
-            int[] warmUpSamples = new int[predictorOrder];
+            warmUpSamples = new int[predictorOrder];
             for (int i=0; i<predictorOrder; i++) {
                 warmUpSamples[i] = data.read(sampleSizeBits);
             }
 
-            createResidual(data);
+            residual = createResidual(data);
         }
         public static boolean matchesType(final int type) {
             if (type >= 8  && type <= 15) return true;
@@ -121,11 +124,16 @@ public abstract class FlacAudioSubFrame {
     public static class SubFrameLPC extends FlacAudioSubFrame {
         protected final int linearPredictorCoefficientPrecision;
         protected final int linearPredictorCoefficientShift;
+
+        protected final int[] warmUpSamples;
+        protected final int[] coefficients;
+        protected final SubFrameResidual residual;
+
         protected SubFrameLPC(int type, int channelNumber, FlacAudioFrame audioFrame,
                               BitsReader data) throws IOException {
-            super((type & 32) + 1, channelNumber, audioFrame);
+            super((type & 31) + 1, channelNumber, audioFrame);
 
-            int[] warmUpSamples = new int[predictorOrder];
+            warmUpSamples = new int[predictorOrder];
             for (int i=0; i<predictorOrder; i++) {
                 warmUpSamples[i] = data.read(sampleSizeBits);
             }
@@ -133,12 +141,12 @@ public abstract class FlacAudioSubFrame {
             this.linearPredictorCoefficientPrecision = data.read(4)+1;
             this.linearPredictorCoefficientShift = data.read(5);
 
-            int[] coefficients = new int[predictorOrder];
+            coefficients = new int[predictorOrder];
             for (int i=0; i<predictorOrder; i++) {
                 coefficients[i] = data.read(linearPredictorCoefficientPrecision);
             }
 
-            createResidual(data);
+            residual = createResidual(data);
         }
         public static boolean matchesType(final int type) {
             if (type >= 32) return true;
@@ -162,7 +170,7 @@ public abstract class FlacAudioSubFrame {
             // Un-supported / reserved type
             return null;
         }
-        
+
         int partitionOrder = data.read(4);
         if (type == 0) {
             return new SubFrameResidualRice(partitionOrder, data);
@@ -172,26 +180,30 @@ public abstract class FlacAudioSubFrame {
     }
 
     public class SubFrameResidual {
+        protected final int numPartitions;
+        protected final int[] riceParams;
+
         private SubFrameResidual(int partitionOrder, int bits, int escapeCode, BitsReader data) throws IOException {
-            int numPartitions = 1<<partitionOrder;
-            
+            numPartitions = 1<<partitionOrder;
+            riceParams = new int[numPartitions];
+
             int numSamples = 0;
             if (partitionOrder > 0) {
                 numSamples = blockSize >> partitionOrder;
             } else {
                 numSamples = blockSize - predictorOrder;
             }
-            
+
             for (int pn=0; pn<numPartitions; pn++) {
                 int riceParam = data.read(bits);
-                
+
                 int partitionSamples = 0;
                 if (partitionOrder == 0 || pn > 0) {
                     partitionSamples = numSamples;
                 } else {
                     partitionSamples = numSamples - predictorOrder;
                 }
-                
+
                 if (riceParam == escapeCode) {
                     // Partition holds un-encoded binary form
                     riceParam = data.read(5);
@@ -208,6 +220,9 @@ public abstract class FlacAudioSubFrame {
                         data.read(bits);
                     }
                 }
+
+                // Record the Rice Parameter for use in unit tests etc
+                riceParams[pn] = riceParam;
             }
         }
     }
