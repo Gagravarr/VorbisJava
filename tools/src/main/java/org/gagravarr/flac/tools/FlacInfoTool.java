@@ -91,6 +91,10 @@ public class FlacInfoTool {
                 FlacAudioSubFrame sf = audio.getSubFrames()[sfn];
                 System.out.print("   ");
                 System.out.print("subframe="+sfn);
+                System.out.print("  ");
+                System.out.print("wasted_bits="+sf.getWastedBits());
+                System.out.print("  ");
+                System.out.print("type="+sf.getType());
                 // Rest TODO
                 System.out.println();
             }

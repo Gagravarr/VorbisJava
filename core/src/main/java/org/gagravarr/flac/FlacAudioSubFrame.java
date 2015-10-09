@@ -77,6 +77,8 @@ public abstract class FlacAudioSubFrame {
         return wastedBits;
     }
 
+    public abstract String getType();
+
     public static class SubFrameConstant extends FlacAudioSubFrame {
         protected SubFrameConstant(int channelNumber, FlacAudioFrame audioFrame,
                                    BitsReader data) throws IOException {
@@ -87,6 +89,7 @@ public abstract class FlacAudioSubFrame {
             if (type == 0) return true;
             return false;
         }
+        public String getType() { return "CONSTANT"; }
     }
     public static class SubFrameVerbatim extends FlacAudioSubFrame {
         protected SubFrameVerbatim(int channelNumber, FlacAudioFrame audioFrame,
@@ -100,11 +103,17 @@ public abstract class FlacAudioSubFrame {
             if (type == 1) return true;
             return false;
         }
+        public String getType() { return "VERBATIM"; }
     }
-    public static class SubFrameFixed extends FlacAudioSubFrame {
-        protected final int[] warmUpSamples;
-        protected final SubFrameResidual residual;
-
+    public static class SubFrameWithResidual extends FlacAudioSubFrame {
+        protected int[] warmUpSamples;
+        protected SubFrameResidual residual;
+        protected SubFrameWithResidual(int predictorOrder, int channelNumber, FlacAudioFrame audioFrame) {
+            super(predictorOrder, channelNumber, audioFrame);
+        }
+        public String getType() { return "UNKNOWN"; }
+    }
+    public static class SubFrameFixed extends SubFrameWithResidual {
         protected SubFrameFixed(int type, int channelNumber, FlacAudioFrame audioFrame,
                                 BitsReader data) throws IOException {
             super((type & 7), channelNumber, audioFrame);
@@ -120,14 +129,13 @@ public abstract class FlacAudioSubFrame {
             if (type >= 8  && type <= 15) return true;
             return false;
         }
+        public String getType() { return "FIXED"; }
     }
-    public static class SubFrameLPC extends FlacAudioSubFrame {
+    public static class SubFrameLPC extends SubFrameWithResidual {
         protected final int linearPredictorCoefficientPrecision;
         protected final int linearPredictorCoefficientShift;
 
-        protected final int[] warmUpSamples;
         protected final int[] coefficients;
-        protected final SubFrameResidual residual;
 
         protected SubFrameLPC(int type, int channelNumber, FlacAudioFrame audioFrame,
                               BitsReader data) throws IOException {
@@ -152,6 +160,7 @@ public abstract class FlacAudioSubFrame {
             if (type >= 32) return true;
             return false;
         }
+        public String getType() { return "LPC"; }
     }
     public static class SubFrameReserved extends FlacAudioSubFrame {
         public static boolean matchesType(final int type) {
@@ -162,6 +171,7 @@ public abstract class FlacAudioSubFrame {
         private SubFrameReserved(FlacAudioFrame audioFrame) {
             super(-1, -1, audioFrame);
         }
+        public String getType() { return "RESERVED"; }
     }
 
     protected SubFrameResidual createResidual(BitsReader data) throws IOException {
@@ -224,6 +234,7 @@ public abstract class FlacAudioSubFrame {
                 riceParams[pn] = riceParam;
             }
         }
+        public String getType() { return "UNKNOWN"; }
     }
     public class SubFrameResidualRice extends SubFrameResidual {
         private static final int PARAM_BITS = 4;
@@ -231,6 +242,7 @@ public abstract class FlacAudioSubFrame {
         public SubFrameResidualRice(int partitionOrder, BitsReader data) throws IOException {
             super(partitionOrder, PARAM_BITS, ESCAPE_CODE, data);
         }
+        public String getType() { return "RICE"; }
     }
     public class SubFrameResidualRice2 extends SubFrameResidual {
         private static final int PARAM_BITS = 5;
@@ -238,5 +250,6 @@ public abstract class FlacAudioSubFrame {
         public SubFrameResidualRice2(int partitionOrder, BitsReader data) throws IOException {
             super(partitionOrder, PARAM_BITS, ESCAPE_CODE, data);
         }
+        public String getType() { return "RICE2"; }
     }
 }
