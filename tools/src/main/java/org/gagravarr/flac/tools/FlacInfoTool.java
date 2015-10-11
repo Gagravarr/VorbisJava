@@ -66,6 +66,9 @@ public class FlacInfoTool {
         System.out.println(flac.getTags());
     }
 
+    private static final String SPACER = "  ";
+    private static final String INDENT1 = "   ";
+    private static final String INDENT2 = "      ";
     public void printFrameInfo() throws IOException {
         int fn = -1;
         FlacAudioFrame audio;
@@ -73,61 +76,61 @@ public class FlacInfoTool {
             fn++;
 
             System.out.print("frame="+fn);
-            System.out.print("  ");
+            System.out.print(SPACER);
             System.out.print("offset=??");
-            System.out.print("  ");
+            System.out.print(SPACER);
             System.out.print("bits="+(audio.getData().length*8));
-            System.out.print("  ");
+            System.out.print(SPACER);
             System.out.print("blocksize="+audio.getBlockSize());
-            System.out.print("  ");
+            System.out.print(SPACER);
             System.out.print("sample_rate="+audio.getSampleRate());
-            System.out.print("  ");
+            System.out.print(SPACER);
             System.out.print("channels="+audio.getNumChannels());
-            System.out.print("  ");
+            System.out.print(SPACER);
             System.out.print("channel_assignment=??");
             System.out.println();
 
             for (int sfn=0; sfn<audio.getSubFrames().length; sfn++) {
                 FlacAudioSubFrame sf = audio.getSubFrames()[sfn];
-                System.out.print("   ");
+                System.out.print(INDENT1);
                 System.out.print("subframe="+sfn);
-                System.out.print("  ");
+                System.out.print(SPACER);
                 System.out.print("wasted_bits="+sf.getWastedBits());
-                System.out.print("  ");
+                System.out.print(SPACER);
                 System.out.print("type="+sf.getType());
-                System.out.print("  ");
+                System.out.print(SPACER);
                 System.out.print("order="+sf.getPredictorOrder());
 
                 if (sf instanceof SubFrameLPC) {
                     SubFrameLPC sflpc = (SubFrameLPC)sf;
-                    System.out.print("  ");
+                    System.out.print(SPACER);
                     System.out.print("qlp_coeff_precision="+sflpc.getLinearPredictorCoefficientPrecision());
-                    System.out.print("  ");
+                    System.out.print(SPACER);
                     System.out.print("quantization_level="+sflpc.getLinearPredictorCoefficientShift());
                 }
                 if (sf instanceof SubFrameWithResidual) {
                     SubFrameWithResidual sfr = (SubFrameWithResidual)sf;
-                    System.out.print("  ");
+                    System.out.print(SPACER);
                     System.out.print("residual_type="+sfr.getResidual().getType());
-                    System.out.print("  ");
+                    System.out.print(SPACER);
                     System.out.print("partition_order="+sfr.getResidual().getPartitionOrder());
                     System.out.println();
 
                     if (sf instanceof SubFrameLPC) {
                         SubFrameLPC sflpc = (SubFrameLPC)sf;
                         for (int qc=0; qc<sflpc.getCoefficients().length; qc++) {
-                            System.out.print("    ");
+                            System.out.print(INDENT2);
                             System.out.print("qlp_coeff["+qc+"]="+sflpc.getCoefficients()[qc]);
                             System.out.println();
                         }
                     }
                     for (int wn=0; wn<sfr.getWarmUpSamples().length; wn++) {
-                        System.out.print("    ");
+                        System.out.print(INDENT2);
                         System.out.print("warmup["+wn+"]="+sfr.getWarmUpSamples()[wn]);
                         System.out.println();
                     }
                     for (int pn=0; pn<sfr.getResidual().getNumPartitions(); pn++) {
-                        System.out.print("    ");
+                        System.out.print(INDENT2);
                         System.out.print("parameter["+pn+"]="+sfr.getResidual().getRiceParams()[pn]);
                         System.out.println();
                     }
