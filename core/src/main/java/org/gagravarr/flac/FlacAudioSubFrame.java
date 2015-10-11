@@ -76,7 +76,15 @@ public abstract class FlacAudioSubFrame {
     public int getWastedBits() {
         return wastedBits;
     }
-
+    public int getPredictorOrder() {
+        return predictorOrder;
+    }
+    public int getSampleSizeBits() {
+        return sampleSizeBits;
+    }
+    public int getBlockSize() {
+        return blockSize;
+    }
     public abstract String getType();
 
     public static class SubFrameConstant extends FlacAudioSubFrame {
@@ -110,6 +118,13 @@ public abstract class FlacAudioSubFrame {
         protected SubFrameResidual residual;
         protected SubFrameWithResidual(int predictorOrder, int channelNumber, FlacAudioFrame audioFrame) {
             super(predictorOrder, channelNumber, audioFrame);
+        }
+
+        public SubFrameResidual getResidual() {
+            return residual;
+        }
+        public int[] getWarmUpSamples() {
+            return warmUpSamples;
         }
         public String getType() { return "UNKNOWN"; }
     }
@@ -160,6 +175,16 @@ public abstract class FlacAudioSubFrame {
             if (type >= 32) return true;
             return false;
         }
+
+        public int getLinearPredictorCoefficientPrecision() {
+            return linearPredictorCoefficientPrecision;
+        }
+        public int getLinearPredictorCoefficientShift() {
+            return linearPredictorCoefficientShift;
+        }
+        public int[] getCoefficients() {
+            return coefficients;
+        }
         public String getType() { return "LPC"; }
     }
     public static class SubFrameReserved extends FlacAudioSubFrame {
@@ -190,10 +215,12 @@ public abstract class FlacAudioSubFrame {
     }
 
     public class SubFrameResidual {
+        protected final int partitionOrder;
         protected final int numPartitions;
         protected final int[] riceParams;
 
         private SubFrameResidual(int partitionOrder, int bits, int escapeCode, BitsReader data) throws IOException {
+            this.partitionOrder = partitionOrder;
             numPartitions = 1<<partitionOrder;
             riceParams = new int[numPartitions];
 
@@ -233,6 +260,16 @@ public abstract class FlacAudioSubFrame {
                 // Record the Rice Parameter for use in unit tests etc
                 riceParams[pn] = riceParam;
             }
+        }
+
+        public int getPartitionOrder() {
+            return partitionOrder;
+        }
+        public int getNumPartitions() {
+            return numPartitions;
+        }
+        public int[] getRiceParams() {
+            return riceParams;
         }
         public String getType() { return "UNKNOWN"; }
     }

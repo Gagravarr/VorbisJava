@@ -19,6 +19,8 @@ import java.io.IOException;
 
 import org.gagravarr.flac.FlacAudioFrame;
 import org.gagravarr.flac.FlacAudioSubFrame;
+import org.gagravarr.flac.FlacAudioSubFrame.SubFrameLPC;
+import org.gagravarr.flac.FlacAudioSubFrame.SubFrameWithResidual;
 import org.gagravarr.flac.FlacFile;
 import org.gagravarr.flac.FlacOggFile;
 
@@ -43,14 +45,12 @@ public class FlacInfoTool {
         }
     }
 
-    private File file;
     private FlacFile flac;
     public FlacInfoTool(File f) throws FileNotFoundException, IOException {
         if(! f.exists()) {
             throw new FileNotFoundException(f.toString());
         }
 
-        file = f;
         flac = FlacFile.open(f);
     }
 
@@ -95,8 +95,46 @@ public class FlacInfoTool {
                 System.out.print("wasted_bits="+sf.getWastedBits());
                 System.out.print("  ");
                 System.out.print("type="+sf.getType());
-                // Rest TODO
-                System.out.println();
+                System.out.print("  ");
+                System.out.print("order="+sf.getPredictorOrder());
+
+                if (sf instanceof SubFrameLPC) {
+                    SubFrameLPC sflpc = (SubFrameLPC)sf;
+                    System.out.print("  ");
+                    System.out.print("qlp_coeff_precision="+sflpc.getLinearPredictorCoefficientPrecision());
+                    System.out.print("  ");
+                    System.out.print("quantization_level="+sflpc.getLinearPredictorCoefficientShift());
+                }
+                if (sf instanceof SubFrameWithResidual) {
+                    SubFrameWithResidual sfr = (SubFrameWithResidual)sf;
+                    System.out.print("  ");
+                    System.out.print("residual_type="+sfr.getResidual().getType());
+                    System.out.print("  ");
+                    System.out.print("partition_order="+sfr.getResidual().getPartitionOrder());
+                    System.out.println();
+
+                    if (sf instanceof SubFrameLPC) {
+                        SubFrameLPC sflpc = (SubFrameLPC)sf;
+                        for (int qc=0; qc<sflpc.getCoefficients().length; qc++) {
+                            System.out.print("    ");
+                            System.out.print("qlp_coeff["+qc+"]="+sflpc.getCoefficients()[qc]);
+                            System.out.println();
+                        }
+                    }
+                    for (int wn=0; wn<sfr.getWarmUpSamples().length; wn++) {
+                        System.out.print("    ");
+                        System.out.print("warmup["+wn+"]="+sfr.getWarmUpSamples()[wn]);
+                        System.out.println();
+                    }
+                    for (int pn=0; pn<sfr.getResidual().getNumPartitions(); pn++) {
+                        System.out.print("    ");
+                        System.out.print("parameter["+pn+"]="+sfr.getResidual().getRiceParams()[pn]);
+                        System.out.println();
+                    }
+                } else {
+                    // Rest TODO
+                    System.out.println();
+                }
             }
         }
     }
