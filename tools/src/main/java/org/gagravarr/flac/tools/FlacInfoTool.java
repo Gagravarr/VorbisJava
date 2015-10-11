@@ -22,7 +22,9 @@ import org.gagravarr.flac.FlacAudioSubFrame;
 import org.gagravarr.flac.FlacAudioSubFrame.SubFrameLPC;
 import org.gagravarr.flac.FlacAudioSubFrame.SubFrameWithResidual;
 import org.gagravarr.flac.FlacFile;
+import org.gagravarr.flac.FlacInfo;
 import org.gagravarr.flac.FlacOggFile;
+import org.gagravarr.flac.FlacTags;
 
 /**
  * Prints out information on the contents of a FLAC file,
@@ -54,6 +56,10 @@ public class FlacInfoTool {
         flac = FlacFile.open(f);
     }
 
+    private static final String SPACER = "  ";
+    private static final String INDENT1 = "   ";
+    private static final String INDENT2 = "      ";
+
     public void printMetadataInfo() throws IOException {
         if (flac instanceof FlacOggFile) {
             FlacOggFile ogg = (FlacOggFile)flac;
@@ -61,14 +67,31 @@ public class FlacInfoTool {
         } else {
             System.out.println("FLAC Native");
         }
-        // TODO Output more of this
-        System.out.println(flac.getInfo());
-        System.out.println(flac.getTags());
+
+        // Output The information
+        FlacInfo info = flac.getInfo();
+        System.out.println(INDENT1 + "Min Block Size=" + info.getMinimumBlockSize());
+        System.out.println(INDENT1 + "Max Block Size=" + info.getMaximumBlockSize());
+        System.out.println(INDENT1 + "Min Frame Size=" + info.getMinimumFrameSize());
+        System.out.println(INDENT1 + "Max Frame Size=" + info.getMaximumFrameSize());
+        System.out.println(INDENT1 + "Num Channels=" + info.getNumChannels());
+        System.out.println(INDENT1 + "Bits Per Sample=" + info.getBitsPerSample());
+        System.out.println(INDENT1 + "Sample Rate=" + info.getSampleRate());
+        System.out.println(INDENT1 + "Num Samples=" + info.getNumberOfSamples());
+        System.out.println(INDENT1 + "Pre Skip=" + info.getPreSkip());
+
+        // Output a comments summary
+        FlacTags tags = flac.getTags();
+        System.out.println(tags.getAllComments().size() + " Comments:");
+        for (String tag : tags.getAllComments().keySet()) {
+            System.out.println(INDENT1 + tag);
+            for (String value : tags.getAllComments().get(tag)) {
+                System.out.println(INDENT2 + value);
+            }
+        }
+        System.out.println();
     }
 
-    private static final String SPACER = "  ";
-    private static final String INDENT1 = "   ";
-    private static final String INDENT2 = "      ";
     public void printFrameInfo() throws IOException {
         int fn = -1;
         FlacAudioFrame audio;
