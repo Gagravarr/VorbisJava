@@ -103,6 +103,7 @@ public class FlacInfo extends FlacMetadataBlock {
         );
 
         // The next bit is stored LE, bit packed
+        // TODO Switch to using BitsReader to read this nicer
         int[] next = new int[8];
         for(int i=0; i<8; i++) {
             next[i] = IOUtils.toInt(data[i+offset]);

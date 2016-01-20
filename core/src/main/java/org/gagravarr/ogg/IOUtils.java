@@ -293,6 +293,29 @@ public class IOUtils {
        data[i+0] = (byte)((v >>> 24) & 0xFF);
    }
 
+   /**
+    * Gets the integer value that is stored in UTF-8 like fashion, in Big Endian
+    *   but with the high bit on each number indicating if it continues or not
+    */
+   public static long readUE7(InputStream stream) throws IOException {
+       int i;
+       long v = 0;
+       while ((i = stream.read()) >= 0) {
+           v = v << 7;
+           if ((i & 128) == 128) {
+               // Continues
+               v += (i&127);
+           } else {
+               // Last value
+               v += i;
+               break;
+           }
+       }
+       return v;
+   }
+//   public static void writeUE7(OutputStream out, long value) throws IOException {
+//       // TODO Implement
+//   }
 
    /**
     * @param length The length in BYTES
