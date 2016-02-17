@@ -11,9 +11,10 @@ To release:
 http://central.sonatype.org/pages/ossrh-guide.html
 http://central.sonatype.org/pages/apache-maven.html#performing-a-release-deployment-with-the-maven-release-plugin
  * Key steps are:
+  * mvn -DdryRun=true release:clean release:prepare
   * mvn release:clean release:prepare
   * Fix up release.properties if it's broken again...
-  * mvn -Psonatype-nexus-staging release:perform
+  * mvn release:perform
 
 After the release:
  * Upgrade the dependency in Apache Tika
