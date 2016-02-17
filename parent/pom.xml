@@ -35,15 +35,9 @@
   </licenses>
 
   <scm>
-    <url>
-       https://github.com/Gagravarr/VorbisJava
-    </url>
-    <connection>
-       scm:git:https://github.com/Gagravarr/VorbisJava.git
-    </connection>
-    <developerConnection>
-       scm:git:https://gagravarr@github.com/Gagravarr/VorbisJava.git
-    </developerConnection>
+    <url>https://github.com/Gagravarr/VorbisJava</url>
+    <connection>scm:git:https://github.com/Gagravarr/VorbisJava.git</connection>
+    <developerConnection>scm:git:https://gagravarr@github.com/Gagravarr/VorbisJava.git</developerConnection>
   </scm>
 
   <developers>
