@@ -33,4 +33,8 @@
     <module>tools</module>
     <module>tika</module>
   </modules>
+
+  <scm>
+    <connection>scm:git:https://github.com/Gagravarr/VorbisJava</connection>
+  </scm>
 </project>
