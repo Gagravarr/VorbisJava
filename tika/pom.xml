@@ -28,7 +28,7 @@
   <url>https://github.com/Gagravarr/VorbisJava</url>
 
   <properties>
-    <tika.version>1.10</tika.version>
+    <tika.version>1.12</tika.version>
   </properties>
 
   <dependencies>
