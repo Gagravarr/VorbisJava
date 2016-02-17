@@ -19,7 +19,7 @@
      <groupId>org.gagravarr</groupId>
      <artifactId>vorbis-java-parent</artifactId>
      <relativePath>parent/pom.xml</relativePath>
-     <version>0.8</version>
+     <version>0.9-SNAPSHOT</version>
   </parent>
 
   <name>Ogg and Vorbis toolkit for Java</name>
