@@ -62,6 +62,13 @@ public class IOUtils {
     }
 
 
+    public static int readOrEOF(InputStream stream) throws IOException {
+        int data = stream.read();
+        if (data == -1) throw new EOFException("No data remains");
+        return data;
+    }
+
+
     public static int getInt2(byte[] data) {
         return getInt2(data, 0);
     }

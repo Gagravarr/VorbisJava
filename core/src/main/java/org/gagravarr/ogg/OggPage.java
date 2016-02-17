@@ -19,6 +19,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
+import static org.gagravarr.ogg.IOUtils.readOrEOF;
+
 public class OggPage {
     private int sid;
     private int seqNum;
@@ -44,12 +46,12 @@ public class OggPage {
      *  the OggS capture pattern.
      */
     protected OggPage(InputStream inp) throws IOException {
-        int version = inp.read();
+        int version = readOrEOF(inp);
         if(version != 0) {
             throw new IllegalArgumentException("Found Ogg page in format " + version + " but we only support version 0");
         }
 
-        int flags = inp.read();
+        int flags = readOrEOF(inp);
         if((flags & 0x01) == 0x01) {
             isContinue = true;
         }
@@ -61,20 +63,20 @@ public class OggPage {
         }
 
         granulePosition = IOUtils.getInt(
-                inp.read(), inp.read(), inp.read(), inp.read(),
-                inp.read(), inp.read(), inp.read(), inp.read()
+                readOrEOF(inp), readOrEOF(inp), readOrEOF(inp), readOrEOF(inp),
+                readOrEOF(inp), readOrEOF(inp), readOrEOF(inp), readOrEOF(inp)
         );
         sid = (int)IOUtils.getInt(
-                inp.read(), inp.read(), inp.read(), inp.read()
+                readOrEOF(inp), readOrEOF(inp), readOrEOF(inp), readOrEOF(inp)
         );
         seqNum = (int)IOUtils.getInt(
-                inp.read(), inp.read(), inp.read(), inp.read()
+                readOrEOF(inp), readOrEOF(inp), readOrEOF(inp), readOrEOF(inp)
         );
         checksum = IOUtils.getInt(
-                inp.read(), inp.read(), inp.read(), inp.read()
+                readOrEOF(inp), readOrEOF(inp), readOrEOF(inp), readOrEOF(inp)
         );
 
-        numLVs = inp.read();
+        numLVs = readOrEOF(inp);
         lvs = new byte[numLVs];
         IOUtils.readFully(inp, lvs);
 

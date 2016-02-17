@@ -168,6 +168,10 @@ public class TestOggDetector extends AbstractIdentificationTest {
                 TheoraParser.THEORA_VIDEO,
                 d.detect(TikaInputStream.get(truncate(getTestTheoraSkeletonCMMLFile(), 1000)), m)
         );
+        assertEquals(
+                TheoraParser.THEORA_VIDEO,
+                d.detect(TikaInputStream.get(truncate(getTestTheoraSkeletonCMMLFile(), 300)), m)
+        );
         // Without the first packet, can't identify properly
         assertEquals(
                 OggDetector.OGG_GENERAL,
@@ -175,7 +179,15 @@ public class TestOggDetector extends AbstractIdentificationTest {
         );
         assertEquals(
                 OggDetector.OGG_GENERAL,
-                d.detect(TikaInputStream.get(truncate(getTestTheoraSkeletonCMMLFile(), 100)), m)
+                d.detect(TikaInputStream.get(truncate(getTestVorbisFile(), 20)), m)
+        );
+        assertEquals(
+                OggDetector.OGG_GENERAL,
+                d.detect(TikaInputStream.get(truncate(getTestTheoraSkeletonCMMLFile(), 50)), m)
+        );
+        assertEquals(
+                OggDetector.OGG_GENERAL,
+                d.detect(TikaInputStream.get(truncate(getTestTheoraSkeletonCMMLFile(), 20)), m)
         );
     }
 
