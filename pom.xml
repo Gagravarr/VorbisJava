@@ -35,6 +35,11 @@
   </modules>
 
   <scm>
-    <connection>scm:git:https://github.com/Gagravarr/VorbisJava</connection>
+    <connection>
+        scm:git:https://github.com/Gagravarr/VorbisJava
+    </connection>
+    <developerConnection>
+        scm:git:https://gagravarr@github.com/Gagravarr/VorbisJava.git
+    </developerConnection>
   </scm>
 </project>
