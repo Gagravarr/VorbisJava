@@ -13,6 +13,7 @@
  */
 package org.gagravarr.ogg;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -38,7 +39,7 @@ public class IOUtils {
         while(read < length) {
             r = inp.read(destination, offset+read, length-read);
             if(r == -1) {
-                throw new IOException("Asked to read " + length + " bytes from " + offset + " but hit EoF at " + read);
+                throw new EOFException("Asked to read " + length + " bytes from " + offset + " but hit EoF at " + read);
             }
             read += r;
         }

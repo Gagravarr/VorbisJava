@@ -13,6 +13,7 @@
  */
 package org.gagravarr.ogg;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -113,15 +114,20 @@ public class OggPacketReader {
         }
 
         // Create the page, and prime the iterator on it
-        OggPage page = new OggPage(inp);
-        if(!page.isChecksumValid()) {
-            System.err.println("Warning - invalid checksum on page " +
-                               page.getSequenceNumber() + " of stream " +
-                               Integer.toHexString(page.getSid()) + " (" +
-                               page.getSid() + ")");
+        try {
+            OggPage page = new OggPage(inp);
+            if (!page.isChecksumValid()) {
+                System.err.println("Warning - invalid checksum on page " +
+                                   page.getSequenceNumber() + " of stream " +
+                                   Integer.toHexString(page.getSid()) + " (" +
+                                   page.getSid() + ")");
+            }
+            it = page.getPacketIterator(leftOver);
+            return getNextPacket();
+        } catch (EOFException eof) {
+            System.err.println("Warning - data ended mid-page: " + eof.getMessage());
+            return null;
         }
-        it = page.getPacketIterator(leftOver);
-        return getNextPacket();
     }
 
     /**

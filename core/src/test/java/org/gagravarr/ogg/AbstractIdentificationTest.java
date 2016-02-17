@@ -65,6 +65,15 @@ public abstract class AbstractIdentificationTest extends TestCase {
         return new ByteArrayInputStream(new byte[] { 0,1,2,3,4,5,6,7 });
     }
 
+    /**
+     * Truncates the given stream at a certain size
+     */
+    protected static InputStream truncate(InputStream source, int truncateAt) throws IOException {
+        byte[] data = new byte[truncateAt];
+        IOUtils.readFully(source, data);
+        return new ByteArrayInputStream(data);
+    }
+
     public static void assertTypeOfFirstStream(String expectedType, OggFile ogg) 
             throws IOException {
         OggPacket p = ogg.getPacketReader().getNextPacket();
