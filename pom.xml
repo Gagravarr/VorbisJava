@@ -34,6 +34,8 @@
     <module>tika</module>
   </modules>
 
+  <!-- Temporary workaround for MRELEASE-942 -->
+  <!-- Duplicate the SCM details in the top level pom too, otherwise the release plugin generates an invalid scm.url in release.properties -->
   <scm>
     <connection>
         scm:git:https://github.com/Gagravarr/VorbisJava
