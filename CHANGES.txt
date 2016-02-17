@@ -1,4 +1,7 @@
-Version 0.8 (In Progress)
+Version 0.9 (In Progress)
+ * (Nothing yet)
+
+Version 0.8 (2016-02-17)
  * Correct close / reset logic for Tika in OggDetector
  * Common logic on audio statistics moved from Tika Parsers
    and InfoTools into OggAudioStatistics
