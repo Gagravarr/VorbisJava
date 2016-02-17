@@ -153,11 +153,20 @@ public class OggPage {
     }
 
     /**
+     * Returns the minimum size of a page, which is 27
+     *  bytes for the headers
+     */
+    public static int getMinimumPageSize() {
+        return MINIMUM_PAGE_SIZE;
+    }
+    private static final int MINIMUM_PAGE_SIZE = 27;
+
+    /**
      * How big is the page, including headers?
      */
     public int getPageSize() {
         // Header is 27 bytes + number of headers
-        int size = 27 + numLVs;
+        int size = MINIMUM_PAGE_SIZE + numLVs;
         // Data size is given by lvs
         size += getDataSize();
         return size;
@@ -265,7 +274,7 @@ public class OggPage {
      * Gets the header, but with a blank CRC field
      */
     protected byte[] getHeader() {
-        byte[] header = new byte[27 + numLVs];
+        byte[] header = new byte[MINIMUM_PAGE_SIZE + numLVs];
         header[0] = (byte)'O';
         header[1] = (byte)'g';
         header[2] = (byte)'g';
@@ -292,7 +301,7 @@ public class OggPage {
         // Checksum @ 22 left blank for now
 
         header[26] = IOUtils.fromInt(numLVs);
-        System.arraycopy(lvs, 0, header, 27, numLVs);
+        System.arraycopy(lvs, 0, header, MINIMUM_PAGE_SIZE, numLVs);
 
         return header;
     }
