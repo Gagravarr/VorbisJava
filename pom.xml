@@ -43,5 +43,6 @@
     <developerConnection>
         scm:git:https://gagravarr@github.com/Gagravarr/VorbisJava.git
     </developerConnection>
+    <tag>HEAD</tag>
   </scm>
 </project>
