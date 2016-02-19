@@ -41,7 +41,6 @@ public abstract class FlacFile implements Closeable {
         // Open, in a way that we can skip backwards a few bytes
         InputStream inp = new BufferedInputStream(new FileInputStream(f), 8);
         FlacFile file = open(inp);
-        inp.close();
         return file;
     }
    /**

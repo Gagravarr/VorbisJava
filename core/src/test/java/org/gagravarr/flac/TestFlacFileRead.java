@@ -26,6 +26,8 @@ import org.gagravarr.ogg.OggPacketReader;
 /**
  * Tests for reading things using FlacFile, both for
  *  Flac-Native and Flac-in-Ogg
+ * 
+ * TODO Lengths and/or Granules
  */
 public class TestFlacFileRead extends TestCase {
    private InputStream getTestOggFile() throws IOException {

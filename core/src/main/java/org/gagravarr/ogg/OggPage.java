@@ -19,6 +19,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
+import static org.gagravarr.ogg.IOUtils.readOrEOF;
+
 public class OggPage {
     private int sid;
     private int seqNum;
@@ -44,12 +46,12 @@ public class OggPage {
      *  the OggS capture pattern.
      */
     protected OggPage(InputStream inp) throws IOException {
-        int version = inp.read();
+        int version = readOrEOF(inp);
         if(version != 0) {
             throw new IllegalArgumentException("Found Ogg page in format " + version + " but we only support version 0");
         }
 
-        int flags = inp.read();
+        int flags = readOrEOF(inp);
         if((flags & 0x01) == 0x01) {
             isContinue = true;
         }
@@ -61,20 +63,20 @@ public class OggPage {
         }
 
         granulePosition = IOUtils.getInt(
-                inp.read(), inp.read(), inp.read(), inp.read(),
-                inp.read(), inp.read(), inp.read(), inp.read()
+                readOrEOF(inp), readOrEOF(inp), readOrEOF(inp), readOrEOF(inp),
+                readOrEOF(inp), readOrEOF(inp), readOrEOF(inp), readOrEOF(inp)
         );
         sid = (int)IOUtils.getInt(
-                inp.read(), inp.read(), inp.read(), inp.read()
+                readOrEOF(inp), readOrEOF(inp), readOrEOF(inp), readOrEOF(inp)
         );
         seqNum = (int)IOUtils.getInt(
-                inp.read(), inp.read(), inp.read(), inp.read()
+                readOrEOF(inp), readOrEOF(inp), readOrEOF(inp), readOrEOF(inp)
         );
         checksum = IOUtils.getInt(
-                inp.read(), inp.read(), inp.read(), inp.read()
+                readOrEOF(inp), readOrEOF(inp), readOrEOF(inp), readOrEOF(inp)
         );
 
-        numLVs = inp.read();
+        numLVs = readOrEOF(inp);
         lvs = new byte[numLVs];
         IOUtils.readFully(inp, lvs);
 
@@ -151,11 +153,20 @@ public class OggPage {
     }
 
     /**
+     * Returns the minimum size of a page, which is 27
+     *  bytes for the headers
+     */
+    public static int getMinimumPageSize() {
+        return MINIMUM_PAGE_SIZE;
+    }
+    private static final int MINIMUM_PAGE_SIZE = 27;
+
+    /**
      * How big is the page, including headers?
      */
     public int getPageSize() {
         // Header is 27 bytes + number of headers
-        int size = 27 + numLVs;
+        int size = MINIMUM_PAGE_SIZE + numLVs;
         // Data size is given by lvs
         size += getDataSize();
         return size;
@@ -263,7 +274,7 @@ public class OggPage {
      * Gets the header, but with a blank CRC field
      */
     protected byte[] getHeader() {
-        byte[] header = new byte[27 + numLVs];
+        byte[] header = new byte[MINIMUM_PAGE_SIZE + numLVs];
         header[0] = (byte)'O';
         header[1] = (byte)'g';
         header[2] = (byte)'g';
@@ -290,7 +301,7 @@ public class OggPage {
         // Checksum @ 22 left blank for now
 
         header[26] = IOUtils.fromInt(numLVs);
-        System.arraycopy(lvs, 0, header, 27, numLVs);
+        System.arraycopy(lvs, 0, header, MINIMUM_PAGE_SIZE, numLVs);
 
         return header;
     }

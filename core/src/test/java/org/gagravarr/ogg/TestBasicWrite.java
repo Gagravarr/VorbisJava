@@ -85,8 +85,14 @@ public class TestBasicWrite extends TestCase {
         // Now add a 2nd stream
         w = ogg.getPacketWriter(54321);
 
-        // Will do nothing as no pages yet
+        // Nothing to write yet
+        assertEquals(0, w.getSizePendingFlush()); // Excludes headers
+        assertEquals(27, w.getCurrentPageSize()); // Includes (but no packets)
+
+
+        // Flush - will do nothing as no pages yet
         w.flush();
+
 
         // Add an empty packet
         p = new OggPacket(new byte[0]);

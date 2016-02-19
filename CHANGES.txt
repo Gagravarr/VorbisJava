@@ -1,10 +1,21 @@
-Version 0.8 (In Progress)
+Version 0.9 (In Progress)
+ * (Nothing yet)
+
+Version 0.8 (2016-02-17)
  * Correct close / reset logic for Tika in OggDetector
  * Common logic on audio statistics moved from Tika Parsers
    and InfoTools into OggAudioStatistics
  * New OpusInfoTool
  * Common logic and support for Ogg Audio info tools,
    used by VorbisInfoTool and OpusInfoTool
+ * Support for updating of granule position while writing packets
+   (thanks to @andrm)
+ * Opus audio packet-level statistics (thanks to @andrm)
+ * New FlacInfoTool and FLAC Comments Tool
+ * Partial FLAC support for reading frames and subframes. Still
+   a work-in-progress, and no audio-decoding support exists
+ * If an EOF is hit during Ogg Page read, log + treat as no
+   further packets rather than giving an Exception
 
 Version 0.7 (2014-12-21)
  * VorbisFile / OpusFile / etc with close methods support

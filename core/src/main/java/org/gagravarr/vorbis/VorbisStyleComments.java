@@ -80,7 +80,7 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
 
     public VorbisStyleComments() {
         super();
-        vendor = "Gagravarr.org Java Vorbis Tools v0.7 20141221";
+        vendor = "Gagravarr.org Java Vorbis Tools v0.8 20160217";
     }
 
     public String getVendor() {

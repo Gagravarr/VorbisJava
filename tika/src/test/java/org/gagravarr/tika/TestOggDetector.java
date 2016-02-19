@@ -146,6 +146,49 @@ public class TestOggDetector extends AbstractIdentificationTest {
                 MediaType.OCTET_STREAM, 
                 d.detect(TikaInputStream.get(getDummy()), m)
         );
+
+
+        // Ogg but broken / truncated files
+
+        // With most of the file, will still work out what it is
+        assertEquals(
+                VorbisParser.OGG_VORBIS,
+                d.detect(TikaInputStream.get(truncate(getTestVorbisFile(), 4000)), m)
+        );
+        assertEquals(
+                TheoraParser.THEORA_VIDEO,
+                d.detect(TikaInputStream.get(truncate(getTestTheoraSkeletonCMMLFile(), 40000)), m)
+        );
+        // With first whole packet, can still get it
+        assertEquals(
+                VorbisParser.OGG_VORBIS,
+                d.detect(TikaInputStream.get(truncate(getTestVorbisFile(), 1000)), m)
+        );
+        assertEquals(
+                TheoraParser.THEORA_VIDEO,
+                d.detect(TikaInputStream.get(truncate(getTestTheoraSkeletonCMMLFile(), 1000)), m)
+        );
+        assertEquals(
+                TheoraParser.THEORA_VIDEO,
+                d.detect(TikaInputStream.get(truncate(getTestTheoraSkeletonCMMLFile(), 300)), m)
+        );
+        // Without the first packet, can't identify properly
+        assertEquals(
+                OggDetector.OGG_GENERAL,
+                d.detect(TikaInputStream.get(truncate(getTestVorbisFile(), 50)), m)
+        );
+        assertEquals(
+                OggDetector.OGG_GENERAL,
+                d.detect(TikaInputStream.get(truncate(getTestVorbisFile(), 20)), m)
+        );
+        assertEquals(
+                OggDetector.OGG_GENERAL,
+                d.detect(TikaInputStream.get(truncate(getTestTheoraSkeletonCMMLFile(), 50)), m)
+        );
+        assertEquals(
+                OggDetector.OGG_GENERAL,
+                d.detect(TikaInputStream.get(truncate(getTestTheoraSkeletonCMMLFile(), 20)), m)
+        );
     }
 
     // These fake up mixed streams

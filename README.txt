@@ -54,6 +54,10 @@ included.
      Prints summary information on the contents of a Opus file, including
      versions, comments, channels and audio rates and file length
 
+  org.gagravarr.flac.tools.FlacInfoTool
+     Prints detailed information on the contents of a FLAC file, including
+     versions, comments, channels, frames and subframes.
+
   org.gagravarr.skeleton.tools.SkeletonInfoTool
      Prints information on a skeleton-described ogg file, reporting on
      a per-bone basis about the streams described and their metadata
@@ -69,19 +73,21 @@ included.
      with libvorbis, except for Opus files
 
   org.gagravarr.flac.tools.FlacCommentTool
-     Allows the listing of comments (user metadata) of a Flac file (native or
+     Allows the listing of comments (user metadata) of a FlAC file (native or
      ogg contained) file. Works similar to *vorbiscomment* commandline tool
-     that ships with libvorbis, except for Flac files, and lists only
+     that ships with libvorbis, except for FLAC files, and only supports listing
 
 
 Apache Tika
 -----------
-Included in the tika module are Parser and Detector plugins for
-Apache Tika for Ogg based file formats. Currently, parsers are only available
-for the Audio formats (Vorbis, Opus, Speex, Flac), but a basic stream info
-outputting parser exists for other Ogg types. Theora video support should
-be available shortly. Detection should handle all the well known Ogg 
-formats (Audio and Video).
+Included in the tika module are Parser and Detector plugins for Apache Tika for
+Ogg based file formats. Currently, parsers are only available for the Audio
+formats (Vorbis, Opus, Speex, Flac), but a basic stream info outputting parser
+exists for other Ogg types. Basic Theora video support exists, but full support
+is blocked pending a Tika decision on the best way to expose metadata for
+multiple streams.
+
+Detection should handle all the well known Ogg formats (Audio and Video).
 
 The parsers and detector include appropriate service registry entries for Tika 
 to allow these plugins to be automatically loaded by Tika. Simply ensure that 

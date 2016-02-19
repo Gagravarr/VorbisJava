@@ -19,7 +19,7 @@
      <groupId>org.gagravarr</groupId>
      <artifactId>vorbis-java-parent</artifactId>
      <relativePath>parent/pom.xml</relativePath>
-     <version>0.8.5-SNAPSHOT</version>
+     <version>0.9-SNAPSHOT</version>
   </parent>
 
   <name>Ogg and Vorbis toolkit for Java</name>
@@ -33,4 +33,16 @@
     <module>tools</module>
     <module>tika</module>
   </modules>
+
+  <!-- Temporary workaround for MRELEASE-942 -->
+  <!-- Duplicate the SCM details in the top level pom too, otherwise the release plugin generates an invalid scm.url in release.properties -->
+  <scm>
+    <connection>
+        scm:git:https://github.com/Gagravarr/VorbisJava
+    </connection>
+    <developerConnection>
+        scm:git:https://gagravarr@github.com/Gagravarr/VorbisJava.git
+    </developerConnection>
+    <tag>HEAD</tag>
+  </scm>
 </project>
