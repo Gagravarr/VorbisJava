@@ -153,7 +153,7 @@ public class OggPacketWriter implements Closeable {
     public int getCurrentPageSize() {
         if (buffer.isEmpty()) return OggPage.getMinimumPageSize();
 
-        OggPage p = buffer.get( buffer.size()-1 );
+        OggPage p = getCurrentPage(false);
         return p.getPageSize();
     }
 
