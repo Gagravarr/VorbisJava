@@ -70,10 +70,9 @@ public class FlacTags extends VorbisStyleComments implements OggAudioTagsHeader 
    
    protected static class FlacTagsAsMetadata extends FlacMetadataBlock {
       private FlacTags tags;
-      
-      protected FlacTagsAsMetadata(byte[] data) {
-         super(VORBIS_COMMENT);
-         
+
+      public FlacTagsAsMetadata(byte type, byte[] data) {
+         super(type);
          // This is the only metadata which needs the type
          //  and length in addition to the main data
          byte[] d = new byte[data.length+4];
@@ -81,7 +80,7 @@ public class FlacTags extends VorbisStyleComments implements OggAudioTagsHeader 
          System.arraycopy(data, 0, d, 4, data.length);
          this.tags = new FlacTags(new OggPacket(d));
       }
-      
+
       @Override
       public byte[] getData() {
          return tags.getData();

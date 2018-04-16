@@ -15,6 +15,7 @@ package org.gagravarr.tika;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 
 import junit.framework.TestCase;
 
@@ -35,14 +36,19 @@ public class TestFlacParser extends TestCase {
      private InputStream getTestFlacFile() throws IOException {
         return this.getClass().getResourceAsStream("/testFLAC.flac");
      }
-
+    private InputStream getTestFlacFileComments() throws IOException {
+        return this.getClass().getResourceAsStream("/testFLACWithoutPadding.flac");
+    }
      public void testFlacNative() throws Exception {
          doTestFlac(getTestFlacFile(), false);
      }
      public void testFlacOgg() throws Exception {
          doTestFlac(getTestOggFile(), true);
      }
-     
+
+    public void testFlacNativeithoutPadding() throws Exception {
+        doTestFlacComments(getTestFlacFileComments(), false);
+    }
     @SuppressWarnings("deprecation")
     public void doTestFlac(InputStream input, boolean hasVersion) throws Exception {
         FlacParser parser = new FlacParser();
@@ -88,5 +94,19 @@ public class TestFlacParser extends TestCase {
         assertTrue(content.contains("2010"));
         assertTrue(content.contains("Test Comment"));
         assertTrue(content.contains("Test Genre"));
+    }
+
+    public void doTestFlacComments(InputStream input, boolean hasVersion) throws Exception {
+        FlacParser parser = new FlacParser();
+
+        ContentHandler handler = new BodyContentHandler();
+        ParseContext context = new ParseContext();
+        Metadata metadata = new Metadata();
+
+        parser.parse(
+                TikaInputStream.get(input), handler, metadata, context
+        );
+
+        assertEquals("Beirut", metadata.get(XMPDM.ARTIST));
     }
 }
