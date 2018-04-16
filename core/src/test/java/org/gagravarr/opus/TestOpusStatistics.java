@@ -41,7 +41,8 @@ public class TestOpusStatistics extends AbstractOpusTest {
         assertEquals(40.0, stats.getMinPageDuration());
 
         assertEquals(0.021, stats.getDurationSeconds(), 0.001);
-        assertEquals("00:00:00.02", stats.getDuration());
+        assertEquals(String.format("%02d:%02d:%05.2f", 0, 0, 0.02f), stats.getDuration());
+
     }
 
     public void testReadInfo09() throws IOException {
@@ -64,6 +65,7 @@ public class TestOpusStatistics extends AbstractOpusTest {
         assertEquals(40.0, stats.getMinPageDuration());
 
         assertEquals(0.021, stats.getDurationSeconds(), 0.001);
-        assertEquals("00:00:00.02", stats.getDuration());
+        assertEquals(String.format("%02d:%02d:%05.2f", 0, 0, 0.02f), stats.getDuration());
+
     }
 }
