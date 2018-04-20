@@ -116,7 +116,7 @@ public class TestOggDetector extends AbstractIdentificationTest {
                 TheoraParser.THEORA_VIDEO,
                 d.detect(TikaInputStream.get(getDoubleTheora()), m)
         );
-        // Theora plus two differnt audio streams is theora
+        // Theora plus two different audio streams is theora
         assertEquals(
                 TheoraParser.THEORA_VIDEO,
                 d.detect(TikaInputStream.get(getTheoraVorbisOpus()), m)
