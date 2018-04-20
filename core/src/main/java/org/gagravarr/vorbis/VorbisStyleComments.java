@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.gagravarr.ogg.HighLevelOggStreamPacket;
@@ -98,7 +99,7 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
      */
     protected static String normaliseTag(String tag) {
         StringBuffer nt = new StringBuffer();
-        for(char c : tag.toLowerCase().toCharArray()) {
+        for(char c : tag.toLowerCase(Locale.ROOT).toCharArray()) {
             if((int)c >= 0x20 && (int)c <= 0x7d &&
                     (int)c != 0x3d) {
                 nt.append(c);

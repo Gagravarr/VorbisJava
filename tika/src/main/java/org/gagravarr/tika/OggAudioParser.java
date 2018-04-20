@@ -15,8 +15,10 @@ package org.gagravarr.tika;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
@@ -39,7 +41,10 @@ import org.xml.sax.SAXException;
  */
 public abstract class OggAudioParser extends AbstractParser {
     private static final long serialVersionUID = 5168743829615945633L;
-    private static final DecimalFormat DURATION_FORMAT = new DecimalFormat("0.0#");
+
+    private static final DecimalFormat DURATION_FORMAT = 
+            (DecimalFormat)NumberFormat.getNumberInstance(Locale.ROOT);
+    static { DURATION_FORMAT.applyPattern("0.0#"); }
 
     protected static void extractChannelInfo(Metadata metadata, OggAudioInfoHeader info) {
         extractChannelInfo(metadata, info.getNumChannels());

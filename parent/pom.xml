@@ -146,6 +146,31 @@
           <goals>deploy</goals>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>de.thetaphi</groupId>
+        <artifactId>forbiddenapis</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <!-- Remove this when we move to Java 1.6 -->
+          <targetVersion>1.6</targetVersion>
+          <failOnUnsupportedJava>false</failOnUnsupportedJava>
+          <bundledSignatures>
+            <!-- Pick the right signatures based on maven.compiler.target -->
+            <bundledSignature>jdk-unsafe</bundledSignature>
+            <bundledSignature>jdk-deprecated</bundledSignature>
+            <!-- Disallow undocumented classes like sun.misc.Unsafe: -->
+            <bundledSignature>jdk-non-portable</bundledSignature>
+          </bundledSignatures>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+              <goal>testCheck</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
