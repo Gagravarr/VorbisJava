@@ -25,41 +25,44 @@ import junit.framework.TestCase;
  * Parent class of tests which perform identification on Ogg files
  */
 public abstract class AbstractIdentificationTest extends TestCase {
+    protected static InputStream getTestFile(String name) throws IOException {
+        return AbstractIdentificationTest.class.getResourceAsStream("/"+name);
+    }
     protected static InputStream getTestOggFile() throws IOException {
-        return AbstractIdentificationTest.class.getResourceAsStream("/testBoundaries.ogg");
+        return getTestFile("testBoundaries.ogg");
     }
     protected static InputStream getTestVorbisFile() throws IOException {
-        return AbstractIdentificationTest.class.getResourceAsStream("/testVORBIS.ogg");
+        return getTestFile("testVORBIS.ogg");
     }
     protected static InputStream getTestSpeexFile() throws IOException {
-        return AbstractIdentificationTest.class.getResourceAsStream("/testSPEEX.spx");
+        return getTestFile("testSPEEX.spx");
     }
     protected static InputStream getTestOpusFile() throws IOException {
-        return AbstractIdentificationTest.class.getResourceAsStream("/testOPUS_09.opus");
+        return getTestFile("testOPUS_09.opus");
     }
     protected static InputStream getTestFlacOggFile() throws IOException {
-        return AbstractIdentificationTest.class.getResourceAsStream("/testFLAC.oga");
+        return getTestFile("testFLAC.oga");
     }
     protected static InputStream getTestFlacNativeFile() throws IOException {
-        return AbstractIdentificationTest.class.getResourceAsStream("/testFLAC.flac");
+        return getTestFile("testFLAC.flac");
     }
     protected static InputStream getTestDaalaFile() throws IOException {
-        return AbstractIdentificationTest.class.getResourceAsStream("/testDaala.ogg");
+        return getTestFile("testDaala.ogg");
     }
     protected static InputStream getTestTheoraFile() throws IOException {
-        return AbstractIdentificationTest.class.getResourceAsStream("/testTheora.ogg");
+        return getTestFile("testTheora.ogg");
     }
     protected static InputStream getTestTheoraSkeletonFile() throws IOException {
-        return AbstractIdentificationTest.class.getResourceAsStream("/testTheoraSkeleton.ogg");
+        return getTestFile("testTheoraSkeleton.ogg");
     }
     protected static InputStream getTestTheoraSkeletonCMMLFile() throws IOException {
-        return AbstractIdentificationTest.class.getResourceAsStream("/testTheoraSkeletonCMML.ogg");
+        return getTestFile("testTheoraSkeletonCMML.ogg");
     }
     protected static InputStream getTestKateFile() throws IOException {
-        return AbstractIdentificationTest.class.getResourceAsStream("/testKate.ogx");
+        return getTestFile("testKate.ogx");
     }
     protected static InputStream getTestKateVorbisFile() throws IOException {
-        return AbstractIdentificationTest.class.getResourceAsStream("/testKateVORBIS.ogg");
+        return getTestFile("testKateVORBIS.ogg");
     }
     protected static InputStream getDummy() throws IOException {
         return new ByteArrayInputStream(new byte[] { 0,1,2,3,4,5,6,7 });
