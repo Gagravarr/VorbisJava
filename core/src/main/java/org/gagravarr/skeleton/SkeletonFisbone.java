@@ -62,7 +62,7 @@ public class SkeletonFisbone extends HighLevelOggStreamPacket implements Skeleto
         // Parse
         messageHeaderOffset = (int)IOUtils.getInt4(data, 8);
         if (messageHeaderOffset != MESSAGE_HEADER_OFFSET) {
-            throw new IllegalArgumentException("Unsupported Skeleton message offset " + messageHeaderOffset + " detected");
+            throw new UnsupportedOperationException("Unsupported Skeleton message offset " + messageHeaderOffset + " detected");
         }
 
         serialNumber = (int)IOUtils.getInt4(data, 12);
@@ -77,7 +77,7 @@ public class SkeletonFisbone extends HighLevelOggStreamPacket implements Skeleto
         // Rest should be the message headers, in html/mime style
         String headers = IOUtils.getUTF8(data, 52, data.length-52);
         if (! headers.contains(HEADER_CONTENT_TYPE)) {
-            throw new IllegalArgumentException("No Content Type header found in " + headers);
+            throw new UnsupportedOperationException("No Content Type header found in " + headers);
         }
         StringTokenizer st = new StringTokenizer(headers, "\r\n");
         while (st.hasMoreElements()) {

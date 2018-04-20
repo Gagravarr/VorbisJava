@@ -48,7 +48,7 @@ public class OggPage {
     protected OggPage(InputStream inp) throws IOException {
         int version = readOrEOF(inp);
         if(version != 0) {
-            throw new IllegalArgumentException("Found Ogg page in format " + version + " but we only support version 0");
+            throw new UnsupportedOperationException("Found Ogg page in format " + version + " but we only support version 0");
         }
 
         int flags = readOrEOF(inp);
