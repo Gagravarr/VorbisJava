@@ -96,39 +96,45 @@ public class OggDetector implements Detector {
          OggPacketReader r = ogg.getPacketReader();
          OggPacket p;
          Integer sid;
-         while( (p = r.getNextPacket()) != null ) {
-            if(p.isBeginningOfStream()) {
-               totalStreams++;
-               sids.add(p.getSid());
+         try {
+             while( (p = r.getNextPacket()) != null ) {
+                if(p.isBeginningOfStream()) {
+                   totalStreams++;
+                   sids.add(p.getSid());
 
-               OggStreamType type = OggStreamIdentifier.identifyType(p);
+                   OggStreamType type = OggStreamIdentifier.identifyType(p);
 
-               // If it's a Skeleton stream, start tracking
-               if (type == OggStreamIdentifier.SKELETON) {
-                   List<SkeletonPacket> sp = new ArrayList<SkeletonPacket>();
-                   sp.add(SkeletonPacketFactory.create(p));
-                   skeletonStreams.put(p.getSid(), sp);
-               }
+                   // If it's a Skeleton stream, start tracking
+                   if (type == OggStreamIdentifier.SKELETON) {
+                       List<SkeletonPacket> sp = new ArrayList<SkeletonPacket>();
+                       sp.add(SkeletonPacketFactory.create(p));
+                       skeletonStreams.put(p.getSid(), sp);
+                   }
 
-               // Increment the per-type count
-               Integer num = streams.get(type);
-               if (num == null) {
-                   num = 1;
-               } else {
-                   num = num + 1;
-               }
-               streams.put(type, num);
-            } else {
-                sid = p.getSid();
-
-                // Is it a skeleton stream?
-                if (skeletonStreams.containsKey(sid)) {
-                    skeletonStreams.get(sid).add(SkeletonPacketFactory.create(p));
+                   // Increment the per-type count
+                   Integer num = streams.get(type);
+                   if (num == null) {
+                       num = 1;
+                   } else {
+                       num = num + 1;
+                   }
+                   streams.put(type, num);
                 } else {
-                    // We don't worry about later packets in non-skeleton
-                    // streams at this stage, only parsers mind about them
+                    sid = p.getSid();
+
+                    // Is it a skeleton stream?
+                    if (skeletonStreams.containsKey(sid)) {
+                        skeletonStreams.get(sid).add(SkeletonPacketFactory.create(p));
+                    } else {
+                        // We don't worry about later packets in non-skeleton
+                        // streams at this stage, only parsers mind about them
+                    }
                 }
-            }
+             }
+         } catch (UnsupportedOperationException e) {
+             // Silently swallow this problem with the file,
+             //  and just say "not ours"
+             return MediaType.OCTET_STREAM;
          }
 
          // Tidy up - reset the stream, but leave it open
@@ -219,7 +225,7 @@ public class OggDetector implements Detector {
                  return OGG_VIDEO;
              }
          }
-         
+
          // Is it only Kate streams, but no video nor audio?
          if (kateCount > 0) {
              return toMediaType(OggStreamIdentifier.KATE);

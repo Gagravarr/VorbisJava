@@ -189,6 +189,12 @@ public class TestOggDetector extends AbstractIdentificationTest {
                 OggDetector.OGG_GENERAL,
                 d.detect(TikaInputStream.get(truncate(getTestTheoraSkeletonCMMLFile(), 20)), m)
         );
+
+        // Invalid (Unsupported) Ogg Page format - will claim not one of ours
+        assertEquals(
+                MediaType.OCTET_STREAM, 
+                d.detect(TikaInputStream.get(getTestFile("invalidPageFormat.ogg")), m)
+        );
     }
 
     // These fake up mixed streams
