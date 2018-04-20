@@ -15,6 +15,7 @@ package org.gagravarr.skeleton;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import org.gagravarr.ogg.HighLevelOggStreamPacket;
 import org.gagravarr.ogg.IOUtils;
@@ -175,7 +176,7 @@ public class SkeletonFishead extends HighLevelOggStreamPacket implements Skeleto
         }
     }
     public void setUtc(Date utcDate) {
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ROOT);
         this.utc = fmt.format(utcDate);
     }
 

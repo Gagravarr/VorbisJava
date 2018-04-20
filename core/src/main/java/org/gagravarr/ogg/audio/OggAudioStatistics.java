@@ -14,6 +14,7 @@
 package org.gagravarr.ogg.audio;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import org.gagravarr.ogg.OggStreamAudioData;
@@ -101,6 +102,13 @@ public class OggAudioStatistics {
      * Returns the duration, in Hours:Minutes:Seconds.MS
      */
     public String getDuration() {
+        return getDuration(Locale.ROOT);
+    }
+    /**
+     * Returns the duration, in Hours:Minutes:Seconds.MS
+     *  or Hours:Minutes:Seconds,MS (depending on Locale)
+     */
+    public String getDuration(Locale locale) {
         long durationL = (long)durationSeconds;
 
         // Output as Hours / Minutes / Seconds / Parts
@@ -108,7 +116,7 @@ public class OggAudioStatistics {
         long mins = TimeUnit.SECONDS.toMinutes(durationL) - (hours*60);
         double secs = durationSeconds - (((hours*60)+mins)*60);
 
-        return String.format("%02d:%02d:%05.2f", hours, mins, secs);
+        return String.format(locale, "%02d:%02d:%05.2f", hours, mins, secs);
     }
 
     /**

@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -141,7 +142,7 @@ public class OggParser extends AbstractParser {
           metadata.add("streams-" + key, Integer.toString(streams.get(type)));
       }
       for (OggStreamType.Kind kind : streamKinds.keySet()) {
-          String key = kind.name().toLowerCase();
+          String key = kind.name().toLowerCase(Locale.ROOT);
           metadata.add("streams-" + key, Integer.toString(streamKinds.get(kind)));
       }
 

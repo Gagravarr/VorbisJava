@@ -14,6 +14,7 @@
 package org.gagravarr.opus;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import org.gagravarr.ogg.OggFile;
 
@@ -65,5 +66,7 @@ public class TestOpusStatistics extends AbstractOpusTest {
 
         assertEquals(0.021, stats.getDurationSeconds(), 0.001);
         assertEquals("00:00:00.02", stats.getDuration());
+        assertEquals("00:00:00.02", stats.getDuration(Locale.ROOT));
+        assertEquals("00:00:00,02", stats.getDuration(Locale.FRENCH));
     }
 }

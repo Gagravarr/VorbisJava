@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.gagravarr.ogg.OggPacket;
@@ -58,6 +59,11 @@ public abstract class OggAudioInfoTool {
     public abstract String getToolName();
     public abstract String getDefaultExtension();
 
+    protected static Locale locale = Locale.ROOT;
+    public static void setLocale(Locale locale) {
+        OggAudioInfoTool.locale = locale;
+    }
+
     public static void printHelp(OggAudioInfoTool tool) {
         System.err.println("Use:");
         System.err.println("   " + tool.getToolName() + 
@@ -76,18 +82,18 @@ public abstract class OggAudioInfoTool {
     }
 
     protected static String format2(double d) {
-        return String.format("%8.1f",d);
+        return String.format(locale, "%8.1f",d);
     }
     protected static String format1(double d) {
-        return String.format("%.2f",d);
+        return String.format(locale, "%.2f",d);
     }
     protected static String formatBitrate(double bitrate) {
         if (bitrate < 512) {
-            return String.format("%.2f", bitrate) + " b/s";
+            return String.format(locale, "%.2f", bitrate) + " b/s";
         } else if (bitrate < 768*1024) {
-            return String.format("%.2f", bitrate/1024) + " kb/s";
+            return String.format(locale, "%.2f", bitrate/1024) + " kb/s";
         } else {
-            return String.format("%.2f", bitrate/1024/1024) + " mb/s";
+            return String.format(locale, "%.2f", bitrate/1024/1024) + " mb/s";
         }
     }
 
