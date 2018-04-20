@@ -68,8 +68,7 @@ public class TestOpusParser extends TestCase {
         assertEquals("Test Comment", metadata.get(XMPDM.LOG_COMMENT));
         assertEquals(null, metadata.get(XMPDM.RELEASE_DATE));
         assertEquals(null, metadata.get(XMPDM.TRACK_NUMBER));
-        assertEquals("0.02", metadata.get(XMPDM.DURATION)); // 0.021s
-
+        assertEquals(String.format("%1.2f",0.02f), metadata.get(XMPDM.DURATION)); // 0.021s
         assertEquals("libopus 0.9.14", metadata.get(XMP.CREATOR_TOOL));
         assertEquals("libopus 0.9.14", metadata.get("vendor"));
         assertEquals("Opus 0.1", metadata.get("version"));
@@ -80,7 +79,8 @@ public class TestOpusParser extends TestCase {
         assertTrue(content.contains("Test Title"));
         assertTrue(content.contains("Test Artist"));
         assertTrue(content.contains("Test Comment"));
-        assertTrue(content.contains("00:00:00.02"));
+        //assertTrue(content.contains("00:00:00.02"));
+        assertTrue(content.contains(String.format("%02d:%02d:%05.2f", 0, 0, 0.02)));
     }
 
     @SuppressWarnings("deprecation")
@@ -113,8 +113,7 @@ public class TestOpusParser extends TestCase {
         assertEquals("Test Comment", metadata.get(XMPDM.LOG_COMMENT));
         assertEquals("2010-01-26", metadata.get(XMPDM.RELEASE_DATE));
         assertEquals("1", metadata.get(XMPDM.TRACK_NUMBER));
-        assertEquals("0.02", metadata.get(XMPDM.DURATION)); // 0.021s
-
+        assertEquals(String.format("%1.2f",0.02f), metadata.get(XMPDM.DURATION)); // 0.021s
         assertEquals("libopus 1.1", metadata.get(XMP.CREATOR_TOOL));
         assertEquals("libopus 1.1", metadata.get("vendor"));
         assertEquals("Opus 0.1", metadata.get("version"));
@@ -128,6 +127,6 @@ public class TestOpusParser extends TestCase {
         assertTrue(content.contains("2010"));
         assertTrue(content.contains("Test Comment"));
         assertTrue(content.contains("Test Genre"));
-        assertTrue(content.contains("00:00:00.02"));
+        assertTrue(content.contains(String.format("%02d:%02d:%05.2f", 0, 0, 0.02)));
     }
 }

@@ -69,7 +69,7 @@ public class TestOggAudioStatistics extends TestCase {
         assertEquals(402,  stats.getAudioDataSize());
 
         assertEquals(21, (int)(stats.getDurationSeconds()*1000));
-        assertEquals("00:00:00.02", stats.getDuration());
+        assertEquals(String.format("%02d:%02d:%05.2f", 0, 0, 0.02f), stats.getDuration());
 
         assertEquals(30, vf.getInfo().getData().length);
         assertEquals(219, vf.getTags().getData().length);
@@ -115,7 +115,7 @@ public class TestOggAudioStatistics extends TestCase {
         assertEquals(815, stats.getAudioDataSize());
 
         assertEquals(21, (int)(stats.getDurationSeconds()*1000));
-        assertEquals("00:00:00.02", stats.getDuration());
+        assertEquals(String.format("%02d:%02d:%05.2f", 0, 0, 0.02f), stats.getDuration());
 
         assertEquals(19, of.getInfo().getData().length);
         assertEquals(138, of.getTags().getData().length);

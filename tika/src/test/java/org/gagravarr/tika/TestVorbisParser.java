@@ -63,7 +63,7 @@ public class TestVorbisParser extends TestCase {
         assertEquals("Test Comment", metadata.get(XMPDM.LOG_COMMENT));
         assertEquals("2010-01-26", metadata.get(XMPDM.RELEASE_DATE));
         assertEquals("1", metadata.get(XMPDM.TRACK_NUMBER));
-        assertEquals("0.02", metadata.get(XMPDM.DURATION));
+        assertEquals(String.format("%1.2f",0.02f), metadata.get(XMPDM.DURATION));
 
         assertEquals("Xiph.Org libVorbis I 20070622", metadata.get(XMP.CREATOR_TOOL));
         assertEquals("Xiph.Org libVorbis I 20070622", metadata.get("vendor"));
@@ -78,6 +78,6 @@ public class TestVorbisParser extends TestCase {
         assertTrue(content.contains("2010"));
         assertTrue(content.contains("Test Comment"));
         assertTrue(content.contains("Test Genre"));
-        assertTrue(content.contains("00:00:00.02"));
+        assertTrue(content.contains(String.format("%02d:%02d:%05.2f", 0, 0, 0.02)));
     }
 }
