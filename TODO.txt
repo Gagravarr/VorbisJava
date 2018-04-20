@@ -1,3 +1,8 @@
+Forbidden APIs check
+ See https://github.com/Gagravarr/VorbisJava/issues/17
+Catch low-level exceptions in Tika code
+ See https://github.com/Gagravarr/VorbisJava/issues/27
+
 Better exceptions
 FLAC Ogg support
 FLAC native support
