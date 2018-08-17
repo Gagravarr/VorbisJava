@@ -185,6 +185,14 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
     }
 
     /**
+     * Same as {@link #writeAudioData(OpusAudioData)}
+     * but replaces the whole list of packets at once
+     */
+    public void setAudioData(List<OpusAudioData> data) {
+        writtenPackets = data;
+    }
+
+    /**
      * In Reading mode, will close the underlying ogg
      *  file and free its resources.
      * In Writing mode, will write out the Info and
