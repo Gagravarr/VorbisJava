@@ -46,6 +46,7 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
     private OpusTags tags;
 
     private List<OpusAudioData> writtenPackets;
+    private int maxPacketsPerPage = 50;
 
     /**
      * Opens the given file for reading
@@ -174,6 +175,17 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
     }
 
     /**
+     * Sets the amount of opus packets per ogg page
+     */
+    public void setMaxPacketsPerPage(int value) {
+        maxPacketsPerPage = value;
+    }
+
+    public int getMaxPacketsPerPage() {
+        return maxPacketsPerPage;
+    }
+
+    /**
      * Buffers the given audio ready for writing
      *  out. Data won't be written out yet, you
      *  need to call {@link #close()} to do that,
@@ -199,28 +211,56 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
      *  Tags objects, and then the audio data.
      */
     public void close() throws IOException {
-        if(r != null) {
+        if (r != null) {
             r = null;
             ogg.close();
             ogg = null;
         }
-        if(w != null) {
+        if (w != null) {
             w.bufferPacket(info.write(), true);
             w.bufferPacket(tags.write(), false);
 
+            final List<OpusAudioData> packets = writtenPackets;
+            final int packetsSize = packets.size();
+            final int maxPacketsPerPage = this.maxPacketsPerPage;
+
+            final int fullPagesCount = packetsSize / maxPacketsPerPage;
+            final int lastPageSize = packetsSize % maxPacketsPerPage;
+            final int lastPageIndex = fullPagesCount - 1;
+
+            OpusAudioData packet;
+            int pageSize;
+            int indexOfCurrentPage = 0;
+            int currentSizeOfPage = 0;
             long lastGranule = 0;
-            for(OpusAudioData vd : writtenPackets) {
-                // Update the granule position as we go
-                if(vd.getGranulePosition() >= 0 &&
-                        lastGranule != vd.getGranulePosition()) {
+            for (int i = 0; i < packetsSize; i++) {
+                packet = packets.get(i);
+
+                if (currentSizeOfPage == maxPacketsPerPage) {
+                    indexOfCurrentPage++;
+                    currentSizeOfPage = 1;
+                } else {
+                    currentSizeOfPage++;
+                }
+
+                if (indexOfCurrentPage == lastPageIndex) {
+                    pageSize = lastPageSize;
+                } else {
+                    pageSize = maxPacketsPerPage;
+                }
+
+                packet.setGranulePosition((indexOfCurrentPage * maxPacketsPerPage + pageSize) * packet.getNumberOfSamples());
+
+                if (packet.getGranulePosition() >= 0 &&
+                        lastGranule != packet.getGranulePosition()) {
                     w.flush();
-                    lastGranule = vd.getGranulePosition();
+                    lastGranule = packet.getGranulePosition();
                     w.setGranulePosition(lastGranule);
                 }
 
                 // Write the data, flushing if needed
-                w.bufferPacket(vd.write());
-                if(w.getSizePendingFlush() > 16384) {
+                w.bufferPacket(packet.write());
+                if (w.getSizePendingFlush() > 16384) {
                     w.flush();
                 }
             }
