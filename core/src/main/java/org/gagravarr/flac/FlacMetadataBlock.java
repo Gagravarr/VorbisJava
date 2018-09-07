@@ -29,17 +29,17 @@ import org.gagravarr.ogg.IOUtils;
  *  <data>
  */
 public abstract class FlacMetadataBlock extends FlacFrame {
-	public static final byte STREAMINFO = 0;
-	public static final byte PADDING = 1;
-	public static final byte APPLICATION = 2;
-	public static final byte SEEKTABLE = 3;
-	public static final byte VORBIS_COMMENT = 4;
-	public static final byte CUESHEET = 5;
-	public static final byte PICTURE = 6;
-    public static final int LASTBLOCK    = 0x80; // more readable in binary literal (java 1.6): 0b10000000
-    public static final int BLOCKTYPE    = 0x7F; // more readable in binary literal (java 1.6): 0b01111111
-	// 7-126 : reserved
-	// 127 : invalid, to avoid confusion with a frame sync code
+   public static final byte STREAMINFO = 0;
+   public static final byte PADDING = 1;
+   public static final byte APPLICATION = 2;
+   public static final byte SEEKTABLE = 3;
+   public static final byte VORBIS_COMMENT = 4;
+   public static final byte CUESHEET = 5;
+   public static final byte PICTURE = 6;
+   // 7-126 : reserved
+   // 127 : invalid, to avoid confusion with a frame sync code
+   public static final int MASK_BLOCKTYPE = 0x7F; // TODO: Java 7 use 0b01111111
+   public static final int MASK_LASTBLOCK = 0x80; // TODO: Java 7 use 0b10000000
 	
    private byte type;
    
@@ -56,31 +56,30 @@ public abstract class FlacMetadataBlock extends FlacFrame {
       byte[] data = new byte[length];
       IOUtils.readFully(inp, data);
 
-      //block type encoded on 7 bits
-      int  blockType = type & BLOCKTYPE;
+      // Grab the type, whether the last block or not
+      int  blockType = type & MASK_BLOCKTYPE;
 
       switch(blockType) {
          case STREAMINFO:
             return new FlacInfo(data, 0);
          case VORBIS_COMMENT:
-             //VORBIS_COMMENT can be the lask block, so we have to pass the type to the constructor to test it
             return new FlacTags.FlacTagsAsMetadata(type, data);
          default:
             return new FlacUnhandledMetadataBlock(type, data);
       }
    }
-   
+
 	protected FlacMetadataBlock(byte type) {
 		this.type = type;
 	}
 	
 	public int getType() {
-		return type & 0x7f;
+		return type & MASK_BLOCKTYPE;
 	}
 
 	public boolean isLastMetadataBlock() {
-        // return (type < 0) works but is not clear.
-        return (type & LASTBLOCK) != 0;
+	    // Top bit of the type is the flag for this
+        return (type & MASK_LASTBLOCK) != 0;
    }
 	
    public byte[] getData() {

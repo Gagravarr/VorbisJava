@@ -3,6 +3,7 @@ Version 0.9 (In Progress)
    postion (disable with packets page per of -1)
  * Allow control of the number of Opus Audio packets per page,
    to control granule accuracy. (thanks to @msalikhov)
+ * Improve FLAC-native last Metadata Block detection (thanks to @croger42)
 
 Version 0.8 (2016-02-17)
  * Correct close / reset logic for Tika in OggDetector
