@@ -40,9 +40,9 @@ public abstract class FlacMetadataBlock extends FlacFrame {
    // 127 : invalid, to avoid confusion with a frame sync code
    public static final int MASK_BLOCKTYPE = 0x7F; // TODO: Java 7 use 0b01111111
    public static final int MASK_LASTBLOCK = 0x80; // TODO: Java 7 use 0b10000000
-	
+
    private byte type;
-   
+
    public static FlacMetadataBlock create(InputStream inp) throws IOException {
       int typeI = inp.read();
       if(typeI == -1) {
@@ -69,42 +69,42 @@ public abstract class FlacMetadataBlock extends FlacFrame {
       }
    }
 
-	protected FlacMetadataBlock(byte type) {
-		this.type = type;
-	}
-	
-	public int getType() {
-		return type & MASK_BLOCKTYPE;
-	}
+   protected FlacMetadataBlock(byte type) {
+       this.type = type;
+   }
 
-	public boolean isLastMetadataBlock() {
-	    // Top bit of the type is the flag for this
-        return (type & MASK_LASTBLOCK) != 0;
+   public int getType() {
+       return type & MASK_BLOCKTYPE;
    }
-	
+
+   public boolean isLastMetadataBlock() {
+       // Top bit of the type is the flag for this
+       return (type & MASK_LASTBLOCK) != 0;
+   }
+
    public byte[] getData() {
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      
-      try {
-         // Type goes first
-         baos.write(type);
-         // Pad length, will do later
-         baos.write(new byte[3]);
-         
-         // Do the main data
-         write(baos);
-      } catch(IOException e) {
-         // Shouldn't ever happen!
-         throw new RuntimeException(e);
-      }
-      
-      // Fix the length
-      byte[] data = baos.toByteArray();
-      IOUtils.putInt3BE(data, 1, data.length);
-      
-      // All done
-      return data;
+       ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+       try {
+           // Type goes first
+           baos.write(type);
+           // Pad length, will do later
+           baos.write(new byte[3]);
+
+           // Do the main data
+           write(baos);
+       } catch(IOException e) {
+           // Shouldn't ever happen!
+           throw new RuntimeException(e);
+       }
+
+       // Fix the length
+       byte[] data = baos.toByteArray();
+       IOUtils.putInt3BE(data, 1, data.length);
+
+       // All done
+       return data;
    }
-	
-	protected abstract void write(OutputStream out) throws IOException;
+
+   protected abstract void write(OutputStream out) throws IOException;
 }
