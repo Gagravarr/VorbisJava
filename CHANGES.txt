@@ -1,5 +1,8 @@
 Version 0.9 (In Progress)
- * (Nothing yet)
+ * When writing Opus Audio, by default calculate the Granule
+   postion (disable with packets page per of -1)
+ * Allow control of the number of Opus Audio packets per page,
+   to control granule accuracy. (thanks to @msalikhov)
 
 Version 0.8 (2016-02-17)
  * Correct close / reset logic for Tika in OggDetector

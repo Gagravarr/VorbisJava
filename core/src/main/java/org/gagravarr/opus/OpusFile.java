@@ -175,7 +175,11 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
     }
 
     /**
-     * Sets the amount of opus packets per ogg page
+     * Sets the maximum number of opus packets per ogg page.
+     * Shorter values will give less efficient storage, but
+     *  more accurate Granule values.
+     * Set to -1 if you are managing the ganule change when
+     *  producing your {@link OpusAudioData} packets.
      */
     public void setMaxPacketsPerPage(int value) {
         maxPacketsPerPage = value;
@@ -219,49 +223,65 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
         if (w != null) {
             w.bufferPacket(info.write(), true);
             w.bufferPacket(tags.write(), false);
+            
+            // The Granule Position on each Ogg Page needs to be
+            //  the total number of PCM samples, including the last
+            //  full Opus Packet in the page.
+            // See https://wiki.xiph.org/OggOpus#Granule_Position
 
             final List<OpusAudioData> packets = writtenPackets;
             final int packetsSize = packets.size();
             final int maxPacketsPerPage = this.maxPacketsPerPage;
 
-            final int fullPagesCount = packetsSize / maxPacketsPerPage;
-            final int lastPageSize = packetsSize % maxPacketsPerPage;
-            final int lastPageIndex = fullPagesCount - 1;
-
             OpusAudioData packet;
-            int pageSize;
-            int indexOfCurrentPage = 0;
-            int currentSizeOfPage = 0;
+            int pageSize = 0;
+            int pageSamples = 0;
             long lastGranule = 0;
+            boolean doneFlush = false;
+            boolean flushAfter = false;
             for (int i = 0; i < packetsSize; i++) {
                 packet = packets.get(i);
-
-                if (currentSizeOfPage == maxPacketsPerPage) {
-                    indexOfCurrentPage++;
-                    currentSizeOfPage = 1;
+                flushAfter = false;
+                pageSize++;
+                
+                // Should we flush before this packet?
+                if (maxPacketsPerPage == -1) {
+                    // User is handling granule positions
+                    // Do we need to flush for them?
+                    if (packet.getGranulePosition() >= 0 &&
+                            lastGranule != packet.getGranulePosition()) {
+                        w.flush();
+                        lastGranule = packet.getGranulePosition();
+                        w.setGranulePosition(lastGranule);
+                        doneFlush = true;
+                    }
                 } else {
-                    currentSizeOfPage++;
-                }
-
-                if (indexOfCurrentPage == lastPageIndex) {
-                    pageSize = lastPageSize;
-                } else {
-                    pageSize = maxPacketsPerPage;
-                }
-
-                packet.setGranulePosition((indexOfCurrentPage * maxPacketsPerPage + pageSize) * packet.getNumberOfSamples());
-
-                if (packet.getGranulePosition() >= 0 &&
-                        lastGranule != packet.getGranulePosition()) {
-                    w.flush();
-                    lastGranule = packet.getGranulePosition();
-                    w.setGranulePosition(lastGranule);
+                    // We are doing the granule position
+                    
+                    // Will we need to flush after this packet?
+                    if (pageSize >= maxPacketsPerPage) {
+                        flushAfter = true;
+                    }
+                
+                    // Calculate the packet granule
+                    pageSamples += packet.getNumberOfSamples();
+                    packet.setGranulePosition(lastGranule+pageSamples);
                 }
 
                 // Write the data, flushing if needed
                 w.bufferPacket(packet.write());
-                if (w.getSizePendingFlush() > 16384) {
-                    w.flush();
+                if (flushAfter || w.getSizePendingFlush() > 16384) {
+                    lastGranule = packet.getGranulePosition();
+                    w.setGranulePosition(lastGranule);
+                    
+                    if (i != packetsSize-1) {
+                        w.flush();
+                        doneFlush = true;
+                    }
+                }
+                if (doneFlush) {   
+                    pageSize = 0;
+                    pageSamples = 0;
                 }
             }
 

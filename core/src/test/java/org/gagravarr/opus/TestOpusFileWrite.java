@@ -49,7 +49,7 @@ public class TestOpusFileWrite extends AbstractOpusTest {
         assertEquals(infoSize, opOUT.getInfo().getData().length);
         assertEquals(tagsSize, opOUT.getTags().getData().length);
     }
-
+    
     public void testReadWriteRead() throws IOException {
         InputStream[] testFiles = new InputStream[] {
                 getTest09File(), getTest11File()
@@ -77,6 +77,7 @@ public class TestOpusFileWrite extends AbstractOpusTest {
                     opOrig.getInfo(),
                     opOrig.getTags()
             );
+            opOUT.setMaxPacketsPerPage(-1);
 
             OpusAudioData oad;
             while( (oad = opOrig.getNextAudioPacket()) != null ) {
@@ -142,6 +143,77 @@ public class TestOpusFileWrite extends AbstractOpusTest {
 
             // Tidy up
             opIN.close();
+        }
+    }
+
+    public void testGranuleOnWrite() throws IOException {
+        int[] packetsPerPage = new int[] { 1, 2 };
+        for (int ppp : packetsPerPage) {
+            for (InputStream testFile : new InputStream[] {
+                    getTest09File(), getTest11File()
+            }) {
+                OggFile in = new OggFile(testFile);
+                OpusFile opOrig = new OpusFile(in);
+
+                // Have it written
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                OpusFile opOUT = new OpusFile(
+                        baos,
+                        opOrig.getInfo(),
+                        opOrig.getTags()
+                );
+
+                // Granules controlled by packets per page
+                opOUT.setMaxPacketsPerPage(ppp);
+
+                OpusAudioData oad;
+                while( (oad = opOrig.getNextAudioPacket()) != null ) {
+                    opOUT.writeAudioData(oad);
+                }
+
+                opOrig.close();
+                opOUT.close();
+
+
+                // Now open the new one
+                OpusFile opIN = new OpusFile(new OggFile(
+                        new ByteArrayInputStream(baos.toByteArray())
+                        ));
+
+                // And check
+                assertEquals(2, opIN.getInfo().getNumChannels());
+                assertEquals(44100, opIN.getInfo().getRate());
+
+                assertEquals("Test Title", opIN.getTags().getTitle());
+                assertEquals("Test Artist", opIN.getTags().getArtist());
+
+                // Has some audio data, but not very much
+                OpusAudioData ad = null;
+    
+                // First Packet may be alone, or may join other one,
+                //  depending on the number of packets in a page
+                ad = opIN.getNextAudioPacket();
+                assertNotNull( ad );
+                assertEquals(0x3c0, ad.getNumberOfSamples());
+                if (ppp == 1) {
+                    // Just for this one
+                    assertEquals(0x3c0, ad.getGranulePosition());
+                } else {
+                    // Shared with Packet 2
+                    assertEquals(0x3c0+0x3c0, ad.getGranulePosition());
+                }
+    
+                ad = opIN.getNextAudioPacket();
+                assertNotNull( ad );
+                assertEquals(0x3c0+0x3c0, ad.getGranulePosition());
+                assertEquals(0x3c0, ad.getNumberOfSamples());
+    
+                ad = opIN.getNextAudioPacket();
+                assertNull( ad );
+
+                // Tidy up
+                opIN.close();
+            }
         }
     }
 }
