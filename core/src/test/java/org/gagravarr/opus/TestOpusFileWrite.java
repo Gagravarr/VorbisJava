@@ -24,6 +24,41 @@ import org.gagravarr.ogg.OggFile;
  * Tests for round-tripping with OpusFile
  */
 public class TestOpusFileWrite extends AbstractOpusTest {
+    public static OpusFile save(OpusFile opOrig, int maxAudioPerPage,
+                                ByteArrayOutputStream baos) throws IOException {
+        // Have it written
+        OpusFile opOUT = new OpusFile(
+                baos,
+                opOrig.getInfo(),
+                opOrig.getTags()
+        );
+
+        // Granules controlled by packets per page
+        opOUT.setMaxPacketsPerPage(maxAudioPerPage);
+
+        OpusAudioData oad;
+        while( (oad = opOrig.getNextAudioPacket()) != null ) {
+            opOUT.writeAudioData(oad);
+        }
+
+        opOrig.close();
+        opOUT.close();
+        
+        return opOUT;
+    }
+
+    public static OggFile saveAndReload(OpusFile opOrig, int maxAudioPerPage) throws IOException {
+        // To write to
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        
+        // Have written
+        save(opOrig, maxAudioPerPage, baos);
+        
+        // Open the new one
+        return new OggFile(
+                new ByteArrayInputStream(baos.toByteArray()));
+    }
+    
     public void testReadWrite() throws IOException {
         OggFile in = new OggFile(getTest09File());
         OpusFile opIN = new OpusFile(in);
@@ -70,28 +105,16 @@ public class TestOpusFileWrite extends AbstractOpusTest {
                 tagsSize--;
             }
 
-            // Have it written
+
+            // Have it written and read back
+            // Preserve granules and page boundaries
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            OpusFile opOUT = new OpusFile(
-                    baos,
-                    opOrig.getInfo(),
-                    opOrig.getTags()
-            );
-            opOUT.setMaxPacketsPerPage(-1);
+            OpusFile opOUT = save(opOrig, -1, baos);
 
-            OpusAudioData oad;
-            while( (oad = opOrig.getNextAudioPacket()) != null ) {
-                opOUT.writeAudioData(oad);
-            }
-
-            opOrig.close();
-            opOUT.close();
-
-
-            // Now open the new one
+            // Open the new one
             OpusFile opIN = new OpusFile(new OggFile(
-                    new ByteArrayInputStream(baos.toByteArray())
-            ));
+                    new ByteArrayInputStream(baos.toByteArray())));
+
 
             // And check
             assertEquals(2, opIN.getInfo().getNumChannels());
@@ -155,30 +178,8 @@ public class TestOpusFileWrite extends AbstractOpusTest {
                 OggFile in = new OggFile(testFile);
                 OpusFile opOrig = new OpusFile(in);
 
-                // Have it written
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                OpusFile opOUT = new OpusFile(
-                        baos,
-                        opOrig.getInfo(),
-                        opOrig.getTags()
-                );
-
-                // Granules controlled by packets per page
-                opOUT.setMaxPacketsPerPage(ppp);
-
-                OpusAudioData oad;
-                while( (oad = opOrig.getNextAudioPacket()) != null ) {
-                    opOUT.writeAudioData(oad);
-                }
-
-                opOrig.close();
-                opOUT.close();
-
-
-                // Now open the new one
-                OpusFile opIN = new OpusFile(new OggFile(
-                        new ByteArrayInputStream(baos.toByteArray())
-                        ));
+                // Have it written and read back
+                OpusFile opIN = new OpusFile(saveAndReload(opOrig, ppp));
 
                 // And check
                 assertEquals(2, opIN.getInfo().getNumChannels());
