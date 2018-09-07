@@ -20,3 +20,8 @@
 
 # Skip the eclipse static includes
 /lib/
+
+# Intellij
+.idea/
+*.iml
+*.iws

@@ -36,6 +36,8 @@ public abstract class FlacMetadataBlock extends FlacFrame {
 	public static final byte VORBIS_COMMENT = 4;
 	public static final byte CUESHEET = 5;
 	public static final byte PICTURE = 6;
+    public static final int LASTBLOCK    = 0x80; // more readable in binary literal (java 1.6): 0b10000000
+    public static final int BLOCKTYPE    = 0x7F; // more readable in binary literal (java 1.6): 0b01111111
 	// 7-126 : reserved
 	// 127 : invalid, to avoid confusion with a frame sync code
 	
@@ -47,19 +49,22 @@ public abstract class FlacMetadataBlock extends FlacFrame {
          throw new IllegalArgumentException();
       }
       byte type = IOUtils.fromInt(typeI);
-      
       byte[] l = new byte[3];
       IOUtils.readFully(inp, l);
       int length = (int)IOUtils.getInt3BE(l);
-      
+
       byte[] data = new byte[length];
       IOUtils.readFully(inp, data);
-      
-      switch(type) {
+
+      //block type encoded on 7 bits
+      int  blockType = type & BLOCKTYPE;
+
+      switch(blockType) {
          case STREAMINFO:
             return new FlacInfo(data, 0);
          case VORBIS_COMMENT:
-            return new FlacTags.FlacTagsAsMetadata(data);
+             //VORBIS_COMMENT can be the lask block, so we have to pass the type to the constructor to test it
+            return new FlacTags.FlacTagsAsMetadata(type, data);
          default:
             return new FlacUnhandledMetadataBlock(type, data);
       }
@@ -72,9 +77,11 @@ public abstract class FlacMetadataBlock extends FlacFrame {
 	public int getType() {
 		return type & 0x7f;
 	}
+
 	public boolean isLastMetadataBlock() {
-		return (type < 0);
-	}
+        // return (type < 0) works but is not clear.
+        return (type & LASTBLOCK) != 0;
+   }
 	
    public byte[] getData() {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
