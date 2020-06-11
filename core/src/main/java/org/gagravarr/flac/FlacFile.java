@@ -14,13 +14,17 @@
 package org.gagravarr.flac;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.SequenceInputStream;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Vector;
 
 import org.gagravarr.ogg.IOUtils;
 import org.gagravarr.ogg.OggFile;
@@ -52,7 +56,7 @@ public abstract class FlacFile implements Closeable {
       byte[] header = new byte[4];
       IOUtils.readFully(inp, header);
       inp.reset();
-      
+
       if(header[0] == (byte)'O' && header[1] == (byte)'g' &&
          header[2] == (byte)'g' && header[3] == (byte)'S') {
          return new FlacOggFile(new OggFile(inp));
@@ -89,8 +93,15 @@ public abstract class FlacFile implements Closeable {
    /**
     * In Reading mode, will close the underlying ogg/flac
     *  file and free its resources.
-    * In Writing mode, will write out the Info and 
+    * In Writing mode, will write out the Info and
     *  Comments objects, and then the audio data.
     */
    public abstract void close() throws IOException;
+
+    /**
+     * <p>Return {@link InputStream} of {@link FlacFile}. If tags modified, then return modified.</p>
+     * @return
+     */
+   public abstract InputStream getInputStream();
+
 }
