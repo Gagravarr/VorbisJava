@@ -36,14 +36,6 @@ public abstract class HighLevelOggStreamPacket implements OggStreamPacket {
     }
 
     public byte[] getData() {
-       return getDecoratedData();
-    }
-
-    public void setData(byte[] data) {
-        this.data = data;
-    }
-
-    private byte[] getDecoratedData() {
         if (data != null) {
             return data;
         }
@@ -51,6 +43,10 @@ public abstract class HighLevelOggStreamPacket implements OggStreamPacket {
             return oggPacket.getData();
         }
         return null;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
     }
 
     /**
@@ -70,7 +66,7 @@ public abstract class HighLevelOggStreamPacket implements OggStreamPacket {
     }
 
     public OggPacket write() {
-        this.oggPacket = new OggPacket(getDecoratedData());
+        this.oggPacket = new OggPacket(getData());
         return this.oggPacket;
     }
 }

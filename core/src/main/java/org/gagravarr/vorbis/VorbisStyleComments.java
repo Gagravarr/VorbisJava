@@ -42,7 +42,6 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
 
     private String vendor;
     private Map<String, List<String>> comments = new HashMap<String, List<String>>();
-    private boolean modified;
 
     public VorbisStyleComments(OggPacket pkt, int dataBeginsAt) {
         super(pkt);
@@ -202,7 +201,6 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
      */
     public void removeComments(String tag) {
         comments.remove(normaliseTag(tag));
-        this.modified = true;
     }
 
     /**
@@ -210,7 +208,6 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
      */
     public void removeAllComments() {
         comments.clear();
-        this.modified = true;
     }
 
     /**
@@ -222,7 +219,6 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
             comments.put(nt, new ArrayList<String>());
         }
         comments.get(nt).add(comment);
-        this.modified = true;
     }
 
     /**
@@ -235,7 +231,6 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
             this.comments.remove(nt);
         }
         this.comments.put(nt, comments);
-        this.modified = true;
     }
 
 
@@ -256,15 +251,6 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
 
     protected int getInt4(byte[] d, int offset) {
         return (int) IOUtils.getInt4(d, offset);
-    }
-
-    @Override
-    public byte[] getData() {
-        if (modified) {
-//            write();
-            modified = false;
-        }
-        return super.getData();
     }
 
     @Override
@@ -307,7 +293,7 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
 
         // Now fill in the header
         byte[] data = baos.toByteArray();
-        populateMetadataHeader(data, data.length);
+        populateMetadataHeader(data, data.length - getHeaderSize());
 
         // Record the data
         setData(data);

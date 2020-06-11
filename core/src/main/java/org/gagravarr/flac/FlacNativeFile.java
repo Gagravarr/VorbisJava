@@ -134,7 +134,9 @@ public class FlacNativeFile extends FlacFile {
         Vector<InputStream> streams = new Vector<>();
         byte[] header = {'f', 'L', 'a', 'C'};
         streams.add(new ByteArrayInputStream(header));
-        blocksInOrder.stream().forEach(block -> this.addStream(streams, block.getData()));
+        blocksInOrder.stream().forEach(block -> {
+                    this.addStream(streams, block.getData());
+                });
         streams.add(input);
 
         return new SequenceInputStream(streams.elements());
@@ -154,6 +156,7 @@ public class FlacNativeFile extends FlacFile {
         }
 
         public byte[] getData() {
+            decorated.write();
             return decorated.getData();
         }
 
