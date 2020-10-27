@@ -217,4 +217,40 @@ public class TestOpusFileWrite extends AbstractOpusTest {
             }
         }
     }
+
+    public void DISABLEDtestWriteAudio() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        // Setup a new empty file
+        OpusFile opus = new OpusFile(baos);
+        opus.getInfo().setSampleRate(48000);
+        opus.getInfo().setNumChannels(2);
+        opus.getTags().addComment("title","Test Dummy Audio");
+        OpusAudioData audio = null;
+
+        // Add some dummy audio data to it
+        // This should really be proper PCM data, but we're just testing!
+        byte[][] data = new byte[20][];
+        for (int i=0; i<data.length; i++) {
+            byte[] td = new byte[i*50];
+            for (int j=0; j<td.length; j++) {
+                td[j] = (byte)(j%99);
+            }
+            data[i] = td;
+
+            audio = new OpusAudioData(td);
+            opus.writeAudioData(audio);
+        }
+
+        // Write it out and re-read
+        opus.close();
+        OggFile ogg = new OggFile(new ByteArrayInputStream(baos.toByteArray()));
+        opus = new OpusFile(ogg);
+
+        // Check it looks as expected
+        assertEquals(2, opus.getInfo().getNumChannels());
+        assertEquals(48000, opus.getInfo().getSampleRate());
+        assertEquals("Test Dummy Audio", opus.getTags().getTitle());
+        // TODO Check dummy audio data
+    }
 }
