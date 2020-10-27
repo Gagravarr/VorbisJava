@@ -57,7 +57,9 @@ public class OpusAudioData extends OggStreamAudioData implements OpusPacket {
     
     private static int packet_get_samples_per_frame(byte[] data, int fs) {
         int audiosize;
-        if ((data[0]&0x80) != 0) {
+        if (data.length == 0) {
+            audiosize = 0;
+        } else if ((data[0]&0x80) != 0) {
             audiosize = ((data[0]>>3)&0x3);
             audiosize = (fs<<audiosize)/400;
         } else if ((data[0]&0x60) == 0x60) {

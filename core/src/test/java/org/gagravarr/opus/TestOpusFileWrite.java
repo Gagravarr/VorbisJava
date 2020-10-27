@@ -218,7 +218,7 @@ public class TestOpusFileWrite extends AbstractOpusTest {
         }
     }
 
-    public void DISABLEDtestWriteAudio() throws Exception {
+    public void testWriteAudio() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         // Setup a new empty file
@@ -251,6 +251,17 @@ public class TestOpusFileWrite extends AbstractOpusTest {
         assertEquals(2, opus.getInfo().getNumChannels());
         assertEquals(48000, opus.getInfo().getSampleRate());
         assertEquals("Test Dummy Audio", opus.getTags().getTitle());
-        // TODO Check dummy audio data
+
+        // Check the dummy data
+        int count = 0;
+        while ((audio = opus.getNextAudioPacket()) != null) {
+           byte[] exp = data[count];
+           assertEquals(exp.length, audio.getData().length);
+           for (int i=0; i<exp.length; i++) {
+              assertEquals(exp[i], audio.getData()[i]);
+           }
+           count++;
+        }
+        assertEquals(data.length, count);
     }
 }
