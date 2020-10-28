@@ -13,10 +13,15 @@
  */
 package org.gagravarr.opus;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import org.gagravarr.ogg.OggFile;
 
@@ -218,6 +223,11 @@ public class TestOpusFileWrite extends AbstractOpusTest {
         }
     }
 
+    /**
+     * Write generated sample frames.
+     * 
+     * @throws Exception
+     */
     public void testWriteAudio() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -264,4 +274,69 @@ public class TestOpusFileWrite extends AbstractOpusTest {
         }
         assertEquals(data.length, count);
     }
+
+
+    /**
+     * Write pre-encoded sample frames created as a continuous tone.
+     * 
+     * @throws Exception
+     */
+    public void testWritePreEncodedAudio() throws Exception {
+        // test file with hex values
+        File tf = new File("target/test-classes/opus-tone.log");
+        // output file for auditory verification
+        File of = new File("target/test-classes/out.opus");
+        // delete old file if its there
+        if (of.exists()) {
+            of.delete();
+        }
+        // create a new file
+        of.createNewFile();
+        OpusFile opus = null;
+        // set opus out
+        OpusInfo oi = new OpusInfo();
+        oi.setSampleRate(48000);
+        oi.setNumChannels(2);
+        //oi.setOutputGain(0);
+        //oi.setPreSkip(0);
+        OpusTags ot = new OpusTags();
+        ot.addComment("title", "Test Dummy Audio");
+        opus = new OpusFile(new FileOutputStream(of), oi, ot);
+        // read encoded hex values and convert to byte arrays for writing
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(tf)));
+        String line;
+        while ((line = br.readLine()) != null)   {
+            OpusAudioData audio = new OpusAudioData(hexStringToByteArray(line));
+            opus.writeAudioData(audio);
+        }
+        br.close();
+        // Write it out and re-read
+        opus.close();
+        // read the output file and check the configuration post-write
+        OggFile ogg = new OggFile(new FileInputStream(of));
+        opus = new OpusFile(ogg);
+        // Check it looks as expected
+        assertEquals(2, opus.getInfo().getNumChannels());
+        assertEquals(48000, opus.getInfo().getSampleRate());
+        assertEquals("Test Dummy Audio", opus.getTags().getTitle());
+        // Check the dummy data with ffplay or opus tools
+    }
+
+    /**
+     * Converts an hexadecimal string into a proper byte array.
+     * 
+     * @param s hex encoded string
+     * @return byte[]
+     */
+    public final static byte[] hexStringToByteArray(String s) {
+        // remove all the whitespace first
+        s = s.replaceAll("\\s+", "");
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i + 1), 16));
+        }
+        return data;
+    }    
+    
 }
