@@ -8,6 +8,10 @@
 # Everyone want's their own Eclipse setup
 .project
 .classpath
+.settings/
+.externalToolBuilders/
+.recommenders
+.metadata
 
 # Skip the build directories
 /target/

@@ -182,6 +182,8 @@ public class VorbisFile implements OggAudioStream, OggAudioHeaders, Closeable {
      *  need to call {@link #close()} to do that,
      *  because we assume you'll still be populating
      *  the Info/Comment/Setup objects
+     *  
+     * @param data audio data
      */
     public void writeAudioData(VorbisAudioData data) {
         writtenPackets.add(data);
@@ -192,6 +194,8 @@ public class VorbisFile implements OggAudioStream, OggAudioHeaders, Closeable {
      *  file and free its resources.
      * In Writing mode, will write out the Info, Comments
      *  and Setup objects, and then the audio data.
+     *  
+     * @throws IOException
      */
     public void close() throws IOException {
         if(r != null) {
@@ -230,7 +234,8 @@ public class VorbisFile implements OggAudioStream, OggAudioHeaders, Closeable {
 
     /**
      * Returns the underlying Ogg File instance
-     * @return
+     *
+     * @return OggFile
      */
     public OggFile getOggFile() {
         return ogg;

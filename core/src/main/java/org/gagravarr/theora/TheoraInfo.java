@@ -145,12 +145,16 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
 
     /**
      * The width of a frame, in Pixels
+     * 
+     * @return width in pixels
      */
     public int getFrameWidth() {
         return frameWidthMB << 4;
     }
     /**
      * The height of a frame, in Pixels
+     * 
+     * @return height in pixels
      */
     public int getFrameHeight() {
         return frameHeightMB << 4;
@@ -158,6 +162,8 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
 
     /**
      * The width of a frame, in Macro Blocks
+     * 
+     * @return width in macro blocks
      */
     public int getFrameWidthMB() {
         return frameWidthMB;
@@ -168,6 +174,8 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
 
     /**
      * The height of a frame, in Macro Blocks
+     * 
+     * @return height in macro blocks
      */
     public int getFrameHeightMB() {
         return frameHeightMB;
@@ -178,6 +186,8 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
 
     /**
      * The number of super blocks in a frame
+     * 
+     * @return number of super blocks
      */
     public long getFrameNumSuperBlocks() {
         return frameNumSuperBlocks;
@@ -188,120 +198,156 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
 
     /**
      * The number of blocks in a frame
+     * 
+     * @return number of blocks
      */
     public long getFrameNumBlocks() {
         return frameNumBlocks;
     }
+
     public void setFrameNumBlocks(long frameNumBlocks) {
         this.frameNumBlocks = frameNumBlocks;
     }
 
     /**
      * The number of marco blocks in a frame
+     * 
+     * @return number of marco blocks
      */
     public long getFrameNumMacroBlocks() {
         return frameNumMacroBlocks;
     }
+
     public void setFrameNumMacroBlocks(long frameNumMacroBlocks) {
         this.frameNumMacroBlocks = frameNumMacroBlocks;
     }
 
     /**
      * The width of the picture region, in pixels
+     * 
+     * @return width in pixels
      */
     public long getPictureRegionWidth() {
         return pictureRegionWidth;
     }
+
     public void setPictureRegionWidth(long pictureRegionWidth) {
         this.pictureRegionWidth = pictureRegionWidth;
     }
 
     /**
      * The height of the picture region, in pixels
+     * 
+     * @return height in pixels
      */
     public long getPictureRegionHeight() {
         return pictureRegionHeight;
     }
+
     public void setPictureRegionHeight(long pictureRegionHeight) {
         this.pictureRegionHeight = pictureRegionHeight;
     }
 
     /**
      * The x offset to the start of the picture region, in pixels
+     * 
+     * @return x offset in pixels
      */
     public int getPictureRegionXOffset() {
         return pictureRegionXOffset;
     }
+
     public void setPictureRegionXOffset(int pictureRegionXOffset) {
         this.pictureRegionXOffset = pictureRegionXOffset;
     }
 
     /**
      * The y offset to the start of the picture region, in pixels
+     * 
+     * @return y offset in pixels
      */
     public int getPictureRegionYOffset() {
         return pictureRegionYOffset;
     }
+
     public void setPictureRegionYOffset(int pictureRegionYOffset) {
         this.pictureRegionYOffset = pictureRegionYOffset;
     }
 
     /**
      * The frame rate numerator
+     * 
+     * @return frame rate numerator
      */
     public long getFrameRateNumerator() {
         return frameRateNumerator;
     }
+
     public void setFrameRateNumerator(long frameRateNumerator) {
         this.frameRateNumerator = frameRateNumerator;
     }
 
     /**
      * The frame rate denominator
+     * 
+     * @return frame rate denominator
      */
     public long getFrameRateDenominator() {
         return frameRateDenominator;
     }
+
     public void setFrameRateDenominator(long frameRateDenominator) {
         this.frameRateDenominator = frameRateDenominator;
     }
 
     /**
      * Pixel aspect ratio numerator
+     * 
+     * @return aspect ratio numerator
      */
     public long getPixelAspectNumerator() {
         return pixelAspectNumerator;
     }
+
     public void setPixelAspectNumerator(long pixelAspectNumerator) {
         this.pixelAspectNumerator = pixelAspectNumerator;
     }
 
     /**
-     * Pixel aspect ratio denomerator
+     * Pixel aspect ratio denominator
+     * 
+     * @return aspect ratio denominator
      */
     public long getPixelAspectDenomerator() {
         return pixelAspectDenomerator;
     }
+
     public void setPixelAspectDenomerator(long pixelAspectDenomerator) {
         this.pixelAspectDenomerator = pixelAspectDenomerator;
     }
 
     /**
      * Colour space, from the indexed list
+     * 
+     * @return colour space
      */
     public int getColourSpace() {
         return colourSpace;
     }
+
     public void setColourSpace(int colourSpace) {
         this.colourSpace = colourSpace;
     }
 
     /**
-     * ????
+     * Pixel format
+     * 
+     * @return pixel format
      */
     public int getPixelFormat() {
         return pixelFormat;
     }
+
     public void setPixelFormat(int pixelFormat) {
         this.pixelFormat = pixelFormat;
     }
@@ -309,20 +355,26 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
     /**
      * Nominal bitrate, in bits per second, or zero if the
      *  encoder couldn't guess
+     *  
+     * @return nominal bitrate
      */
     public long getNominalBitrate() {
         return nominalBitrate;
     }
+
     public void setNominalBitrate(long nominalBitrate) {
         this.nominalBitrate = nominalBitrate;
     }
 
     /**
      * Quality hint - higher is better
+     * 
+     * @return quality hint
      */
     public int getQualityHint() {
         return qualityHint;
     }
+
     public void setQualityHint(int qualityHint) {
         this.qualityHint = qualityHint;
     }
@@ -331,10 +383,13 @@ public class TheoraInfo extends HighLevelOggStreamPacket implements TheoraPacket
      * Shift for splitting the granule position between
      *  the frame number of the last frame, and the number
      *  of frames since then
+     *
+     * @return keyframe number granule shift
      */
     public int getKeyFrameNumberGranuleShift() {
         return keyFrameNumberGranuleShift;
     }
+
     public void setKeyFrameNumberGranuleShift(int keyFrameNumberGranuleShift) {
         this.keyFrameNumberGranuleShift = keyFrameNumberGranuleShift;
     }

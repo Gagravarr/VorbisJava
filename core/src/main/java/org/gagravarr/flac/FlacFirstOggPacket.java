@@ -82,6 +82,8 @@ public class FlacFirstOggPacket extends HighLevelOggStreamPacket {
 
     /**
      * Returns the Major Version number
+     *  
+     * @return major version
      */
     public int getMajorVersion() {
         return majorVersion;
@@ -101,6 +103,8 @@ public class FlacFirstOggPacket extends HighLevelOggStreamPacket {
     /**
      * Returns the Minor Version number. Decoders should be able to
      *  handle anything at a given major number, no matter the minor one 
+     *  
+     * @return minor version
      */
     public int getMinorVersion() {
         return minorVersion;
@@ -116,6 +120,8 @@ public class FlacFirstOggPacket extends HighLevelOggStreamPacket {
     /**
      * Gets the number of header blocks, excluding this one, or
      *  zero if not known
+     *  
+     * @return number of header blocks
      */
     public int getNumberOfHeaderBlocks() {
         return numberOfHeaderBlocks;
@@ -129,6 +135,8 @@ public class FlacFirstOggPacket extends HighLevelOggStreamPacket {
      * Does this packet (the first in the stream) contain
      *  the magic string indicating that it's a FLAC
      *  one?
+     *  
+     * @return true if flac and false otherwise
      */
     public static boolean isFlacStream(OggPacket firstPacket) {
         if(! firstPacket.isBeginningOfStream()) {

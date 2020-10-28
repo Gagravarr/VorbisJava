@@ -78,6 +78,9 @@ public class FlacInfo extends FlacMetadataBlock {
 
     /**
      * Reads the Info from the specified data
+     * 
+     * @param data flac info bytes
+     * @param offset data offset
      */
     public FlacInfo(byte[] data, int offset) {
         super(STREAMINFO);
@@ -138,6 +141,8 @@ public class FlacInfo extends FlacMetadataBlock {
 
     /**
      * The minimum block size (in samples) used in the stream. 
+     *  
+     * @return minimum block size
      */
     public int getMinimumBlockSize() {
         return minimumBlockSize;
@@ -149,6 +154,8 @@ public class FlacInfo extends FlacMetadataBlock {
     /**
      * The maximum block size (in samples) used in the stream. 
      * (Minimum blocksize == maximum blocksize) implies a fixed-blocksize stream.
+     *  
+     * @return maximum block size
      */
     public int getMaximumBlockSize() {
         return maximumBlockSize;
