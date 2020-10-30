@@ -81,7 +81,22 @@
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
-
+<!-- only here while I'm using my own fork --> 
+    <!-- DEPLOY to public area of Artifactory off of Red5 Pro -->
+<!-- 
+    <distributionManagement>
+        <repository>
+            <id>red5pro-ext-release</id>
+            <name>red5pro-releases</name>
+            <url>https://red5pro.jfrog.io/red5pro/ext-release-local</url>
+        </repository>
+        <snapshotRepository>
+            <id>red5pro-ext-snapshot</id>
+            <name>red5pro-snapshots</name>
+            <url>https://red5pro.jfrog.io/red5pro/ext-snapshot-local</url>
+        </snapshotRepository>
+    </distributionManagement>  
+-->
   <build>
     <plugins>
       <plugin>

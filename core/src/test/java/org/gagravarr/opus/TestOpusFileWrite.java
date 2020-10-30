@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 import org.gagravarr.ogg.OggFile;
 
@@ -298,12 +299,12 @@ public class TestOpusFileWrite extends AbstractOpusTest {
         oi.setSampleRate(48000);
         oi.setNumChannels(2);
         //oi.setOutputGain(0);
-        //oi.setPreSkip(0);
+        //oi.setPreSkip(120);
         OpusTags ot = new OpusTags();
         ot.addComment("title", "Test Dummy Audio");
         opus = new OpusFile(new FileOutputStream(of), oi, ot);
         // read encoded hex values and convert to byte arrays for writing
-        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(tf)));
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(tf), Charset.defaultCharset()));
         String line;
         while ((line = br.readLine()) != null)   {
             OpusAudioData audio = new OpusAudioData(hexStringToByteArray(line));
