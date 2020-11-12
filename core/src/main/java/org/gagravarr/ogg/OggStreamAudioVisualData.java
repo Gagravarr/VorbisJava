@@ -13,9 +13,6 @@
  */
 package org.gagravarr.ogg;
 
-import org.gagravarr.ogg.HighLevelOggStreamPacket;
-import org.gagravarr.ogg.OggPacket;
-
 /**
  * Raw, compressed audio and video data, which keeps track of a
  *  granule position
@@ -27,6 +24,7 @@ public class OggStreamAudioVisualData extends HighLevelOggStreamPacket {
         super(pkt);
         granulePosition = pkt.getGranulePosition();
     }
+
     public OggStreamAudioVisualData(byte[] data) {
         super();
         setData(data);
@@ -36,10 +34,12 @@ public class OggStreamAudioVisualData extends HighLevelOggStreamPacket {
     /**
      * Returns the granule position, or -1 if
      *  this wasn't read from a file
+     * @return granule position
      */
     public long getGranulePosition() {
         return granulePosition;
     }
+
     public void setGranulePosition(long granulePosition) {
         this.granulePosition = granulePosition;
     }

@@ -178,7 +178,7 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
      * Sets the maximum number of opus packets per ogg page.
      * Shorter values will give less efficient storage, but
      *  more accurate Granule values.
-     * Set to -1 if you are managing the ganule change when
+     * Set to -1 if you are managing the granule change when
      *  producing your {@link OpusAudioData} packets.
      */
     public void setMaxPacketsPerPage(int value) {
@@ -282,6 +282,7 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
                 if (doneFlush) {   
                     pageSize = 0;
                     pageSamples = 0;
+                    doneFlush = false;
                 }
             }
 

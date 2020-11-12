@@ -28,48 +28,75 @@ public interface OggAudioTagsHeader extends OggStreamPacket {
     /**
      * Returns the (first) Artist, or null if no
      *  Artist tags present.
+     *  
+     * @return artist
      */
     public String getArtist();
+
     /**
      * Returns the (first) Album, or null if no
      *  Album tags present.
+     *  
+     * @return album
      */
     public String getAlbum();
+    
     /**
      * Returns the (first) Title, or null if no
      *  Title tags present.
+     *  
+     * @return title
      */
     public String getTitle();
+    
     /**
      * Returns the (first) Genre, or null if no
      *  Genre tags present.
+     *  
+     * @return genre
      */
     public String getGenre();
+    
     /**
      * Returns the (first) track number as a literal
      *  string, eg "4" or "09", or null if
      *  no track number tags present;
+     *  
+     * @return track number
      */
     public String getTrackNumber();
+    
     /**
      * Returns the track number, as converted into
      *  an integer, or -1 if not available / not numeric
+     *  
+     * @return track number
      */
     public int getTrackNumberNumeric();
+    
     /**
      * Returns the (first) Date, or null if no
      *  Date tags present. Dates are normally stored
      *  in ISO8601 date format, i.e. YYYY-MM-DD
+     *  
+     * @return date
      */
     public String getDate();
+    
     /**
      * Returns all comments for a given tag, in
      *  file order. Will return an empty list for
      *  tags which aren't present.
+     *  
+     * @param tag tag to return comments for
+     * @return comments
      */
     public List<String> getComments(String tag);
+    
     /**
      * Returns all the comments, across all tags
+     *  
+     * @return all comments
      */
     public Map<String, List<String>> getAllComments();
 }

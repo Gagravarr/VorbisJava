@@ -46,19 +46,31 @@ public class FlacOggFile extends FlacFile implements OggAudioHeaders {
    
     /**
      * Opens the given file for reading
+     * 
+     * @param f file to use
+     * @throws IOException
+     * @throws FileNotFoundException
      */
     public FlacOggFile(File f) throws IOException, FileNotFoundException {
         this(new OggFile(new FileInputStream(f)));
     }
+
     /**
      * Opens the given file for reading
+     * 
+     * @param ogg file to use
+     * @throws IOException
      */
     public FlacOggFile(OggFile ogg) throws IOException {
         this(ogg.getPacketReader());
         this.ogg = ogg;
     }
+
     /**
      * Loads a Vorbis File from the given packet reader.
+     * 
+     * @param r ogg packet reader
+     * @throws IOException
      */
     public FlacOggFile(OggPacketReader r) throws IOException {
         this.r = r;
@@ -95,23 +107,36 @@ public class FlacOggFile extends FlacFile implements OggAudioHeaders {
 	
     /**
      * Opens for writing.
+     * 
+     * @param out stream to output to
      */
     public FlacOggFile(OutputStream out) {
         this(out, new FlacOggInfo(), new FlacTags());
     }
+
     /**
      * Opens for writing, based on the settings
      *  from a pre-read file. The Steam ID (SID) is
      *  automatically allocated for you.
+     * 
+     * @param out stream to output to
+     * @param info flac info
+     * @param tags flac tags
      */
     public FlacOggFile(OutputStream out, FlacOggInfo info, FlacTags tags) {
         this(out, -1, info, tags);
     }
+
     /**
      * Opens for writing, based on the settings
      *  from a pre-read file, with a specific
-     *  Steam ID (SID). You should only set the SID
+     *  Stream ID (SID). You should only set the SID
      *  when copying one file to another!
+     * 
+     * @param out stream to output to
+     * @param sid stream id
+     * @param info flac info
+     * @param tags flac tags
      */
     public FlacOggFile(OutputStream out, int sid, FlacOggInfo info, FlacTags tags) {
         ogg = new OggFile(out);
@@ -133,6 +158,8 @@ public class FlacOggFile extends FlacFile implements OggAudioHeaders {
 
     /**
      * Returns the first Ogg Packet, which has some metadata in it
+     * 
+     * @return FlacFirstOggPacket
      */
     public FlacFirstOggPacket getFirstPacket() {
         return firstPacket;
@@ -150,6 +177,8 @@ public class FlacOggFile extends FlacFile implements OggAudioHeaders {
      * Skips the audio data to the next packet with a granule
      *  of at least the given granule position.
      * Note that skipping backwards is not currently supported!
+     * 
+     * @param granulePosition position to skip to
      */
     public void skipToGranule(long granulePosition) throws IOException {
         r.skipToGranulePosition(sid, granulePosition);
@@ -157,6 +186,8 @@ public class FlacOggFile extends FlacFile implements OggAudioHeaders {
 
     /**
      * Returns the Ogg Stream ID
+     * 
+     * @return stream id
      */
     public int getSid() {
         return sid;
@@ -164,6 +195,8 @@ public class FlacOggFile extends FlacFile implements OggAudioHeaders {
 
     /**
      * This is a Flac-in-Ogg file
+     * 
+     * @return OggStreamType
      */
     public OggStreamType getType() {
         return OggStreamIdentifier.OGG_FLAC;
@@ -175,6 +208,8 @@ public class FlacOggFile extends FlacFile implements OggAudioHeaders {
      *  need to call {@link #close()} to do that,
      *  because we assume you'll still be populating
      *  the Info/Comment/Setup objects
+     *  
+     * @param data flac audio frame
      */
     public void writeAudioData(FlacAudioFrame data) {
         writtenAudio.add(data);
@@ -185,6 +220,8 @@ public class FlacOggFile extends FlacFile implements OggAudioHeaders {
      *  file and free its resources.
      * In Writing mode, will write out the Info, Comments
      *  and Setup objects, and then the audio data.
+     *  
+     * @throws IOException
      */
     public void close() throws IOException {
         if(r != null) {
@@ -198,6 +235,7 @@ public class FlacOggFile extends FlacFile implements OggAudioHeaders {
             // TODO Write the others
             //w.bufferPacket(setup.write(), true);
 
+            @SuppressWarnings("unused")
             long lastGranule = 0;
             for(FlacAudioFrame fa : writtenAudio) {
                 // Update the granule position as we go
@@ -225,6 +263,8 @@ public class FlacOggFile extends FlacFile implements OggAudioHeaders {
 
     /**
      * Return the Ogg-specific version of the Flac Info
+     *  
+     * @return FlacOggInfo
      */
     @Override
     public FlacOggInfo getInfo() {
@@ -233,6 +273,8 @@ public class FlacOggFile extends FlacFile implements OggAudioHeaders {
 
     /**
      * Flac doesn't have setup packets per-se, so return null
+     * 
+     * @return OggAudioSetupHeader
      */
     public OggAudioSetupHeader getSetup() {
         return null;
@@ -240,7 +282,8 @@ public class FlacOggFile extends FlacFile implements OggAudioHeaders {
 
     /**
      * Returns the underlying Ogg File instance
-     * @return
+     * 
+     * @return OggFile
      */
     public OggFile getOggFile() {
         return ogg;

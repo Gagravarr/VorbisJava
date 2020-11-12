@@ -28,6 +28,7 @@ public class OpusAudioData extends OggStreamAudioData implements OpusPacket {
     public OpusAudioData(OggPacket pkt) {
         super(pkt);
     }
+
     public OpusAudioData(byte[] data) {
         super(data);
     }
@@ -42,6 +43,7 @@ public class OpusAudioData extends OggStreamAudioData implements OpusPacket {
         }
         return numFrames;
     }
+
     public int getNumberOfSamples() {
         if (numSamples == -1) {
             calculateStructure();
@@ -51,15 +53,15 @@ public class OpusAudioData extends OggStreamAudioData implements OpusPacket {
     
     private void calculateStructure() {
         byte[] d = getData();
-        numFrames = packet_get_nb_frames(d);
-        numSamples = numFrames * packet_get_samples_per_frame(d, OPUS_GRANULE_RATE);
+        if (d != null && d.length > 0) {
+            numFrames = packet_get_nb_frames(d);
+            numSamples = numFrames * packet_get_samples_per_frame(d, OPUS_GRANULE_RATE);
+        }
     }
     
     private static int packet_get_samples_per_frame(byte[] data, int fs) {
         int audiosize;
-        if (data.length == 0) {
-            audiosize = 0;
-        } else if ((data[0]&0x80) != 0) {
+        if ((data[0]&0x80) != 0) {
             audiosize = ((data[0]>>3)&0x3);
             audiosize = (fs<<audiosize)/400;
         } else if ((data[0]&0x60) == 0x60) {

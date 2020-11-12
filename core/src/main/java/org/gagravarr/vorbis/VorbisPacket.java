@@ -30,6 +30,8 @@ public interface VorbisPacket extends OggStreamPacket {
      * How big is the header on this packet?
      * For Metadata packets it's normally 7 bytes,
      *  otherwise for audio packets there is no header.
+     *  
+     * @return header size
      */
     public int getHeaderSize();
 
@@ -37,6 +39,9 @@ public interface VorbisPacket extends OggStreamPacket {
      * Have the metadata header populated into the data,
      *  normally used when writing out.
      * See {@link VorbisPacketFactory#populateMetadataHeader(byte[], int, int)}
+     *
+     * @param b bytes
+     * @param dataLength length
      */
     public void populateMetadataHeader(byte[] b, int dataLength);
 }

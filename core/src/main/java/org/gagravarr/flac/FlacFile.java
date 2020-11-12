@@ -36,6 +36,11 @@ public abstract class FlacFile implements Closeable {
 
     /**
      * Opens the given file for reading
+     *  
+     * @param f file to open
+     * @return FlacFile
+     * @throws IOException
+     * @throws FileNotFoundException
      */
     public static FlacFile open(File f) throws IOException, FileNotFoundException {
         // Open, in a way that we can skip backwards a few bytes
@@ -43,10 +48,16 @@ public abstract class FlacFile implements Closeable {
         FlacFile file = open(inp);
         return file;
     }
+
    /**
     * Opens the given file for reading.
-    * @param inp The InputStrem to read from, which must support mark/reset
+    * 
+    * @param inp input source
+    * @return FlacFile
+    * @throws IOException
+    * @throws FileNotFoundException
     */
+   @SuppressWarnings("resource")
    public static FlacFile open(InputStream inp) throws IOException, FileNotFoundException {
       inp.mark(4);
       byte[] header = new byte[4];
@@ -63,8 +74,13 @@ public abstract class FlacFile implements Closeable {
       }
       throw new IllegalArgumentException("File type not recognised");
    }
+
    /**
     * Opens the given file for reading
+    * 
+    * @param ogg file to open
+    * @return FlacFile
+    * @throws IOException
     */
    public static FlacFile open(OggFile ogg) throws IOException {
        return new FlacOggFile(ogg);
@@ -76,6 +92,9 @@ public abstract class FlacFile implements Closeable {
     * Skips the audio data to the next packet with a granule
     *  of at least the given granule position.
     * Note that skipping backwards is not currently supported!
+    * 
+    * @param granulePosition position to skip to
+    * @throws IOException
     */
    public abstract void skipToGranule(long granulePosition) throws IOException;
 
@@ -91,6 +110,8 @@ public abstract class FlacFile implements Closeable {
     *  file and free its resources.
     * In Writing mode, will write out the Info and 
     *  Comments objects, and then the audio data.
+    *
+    * @throws IOException
     */
    public abstract void close() throws IOException;
 }

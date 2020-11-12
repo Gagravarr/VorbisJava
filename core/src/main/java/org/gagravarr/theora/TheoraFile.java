@@ -66,19 +66,31 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
 
     /**
      * Opens the given file for reading
+     * 
+     * @param f file to read
+     * @throws IOException I/O exception
+     * @throws FileNotFoundException
      */
     public TheoraFile(File f) throws IOException, FileNotFoundException {
         this(new OggFile(new FileInputStream(f)));
     }
+
     /**
      * Opens the given file for reading
+     * 
+     * @param ogg file to read
+     * @throws IOException I/O exception
      */
     public TheoraFile(OggFile ogg) throws IOException {
         this(ogg.getPacketReader());
         this.ogg = ogg;
     }
+
     /**
      * Loads a Theora File from the given packet reader.
+     * 
+     * @param r ogg packet reader
+     * @throws IOException I/O exception
      */
     public TheoraFile(OggPacketReader r) throws IOException {
         this.r = r;
@@ -154,23 +166,38 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
 
     /**
      * Opens for writing.
+     * 
+     * @param out output stream for write
      */
     public TheoraFile(OutputStream out) {
         this(out, new TheoraInfo(), new TheoraComments(), new TheoraSetup());
     }
+
     /**
      * Opens for writing, based on the settings
      *  from a pre-read file. The Steam ID (SID) is
      *  automatically allocated for you.
+     * 
+     * @param out output stream for write
+     * @param info theora info
+     * @param comments theora comments
+     * @param setup theora setup
      */
     public TheoraFile(OutputStream out, TheoraInfo info, TheoraComments comments, TheoraSetup setup) {
         this(out, -1, info, comments, setup);
     }
+
     /**
      * Opens for writing, based on the settings
      *  from a pre-read file, with a specific
-     *  Steam ID (SID). You should only set the SID
+     *  Stream ID (SID). You should only set the SID
      *  when copying one file to another!
+     * 
+     * @param out output stream for write
+     * @param sid stream id
+     * @param info theora info
+     * @param comments theora comments
+     * @param setup theora setup
      */
     public TheoraFile(OutputStream out, int sid, TheoraInfo info, TheoraComments comments, TheoraSetup setup) {
         ogg = new OggFile(out);
@@ -194,6 +221,8 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
 
     /**
      * Returns the Ogg Stream ID
+     * 
+     * @return stream id
      */
     public int getSid() {
         return sid;
@@ -212,10 +241,13 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
     /**
      * Returns the Skeleton data describing all the
      *  streams, or null if the file has no Skeleton stream
+     *  
+     * @return SkeletonStream
      */
     public SkeletonStream getSkeleton() {
         return skeleton;
     }
+
     public void ensureSkeleton() {
         if (skeleton != null) return;
 
@@ -238,19 +270,26 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
 
     /**
      * Returns the soundtracks and their stream IDs
+     * 
+     * @return soundtracks per stream ids
      */
     public Map<Integer, ? extends OggAudioHeaders> getSoundtrackStreams() {
         return soundtracks;
     }
+
     /**
      * Returns all the soundtracks
+     * 
+     * @return all soundtracks
      */
     public Collection<? extends OggAudioHeaders> getSoundtracks() {
         return soundtracks.values();
     }
+
     /**
      * Adds a new soundtrack to the video
      * 
+     * @param audio associate headers to add
      * @return the serial id (sid) of the new soundtrack
      */
     public int addSoundtrack(OggAudioHeaders audio) {
@@ -286,13 +325,21 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
     /**
      * Returns the next audio or video packet across
      *  any supported stream, or null if no more remain
+     * 
+     * @return OggStreamAudioVisualData
+     * @throws IOException I/O exception
      */
     public OggStreamAudioVisualData getNextAudioVisualPacket() throws IOException {
         return getNextAudioVisualPacket(null);
     }
+
     /**
      * Returns the next audio or video packet from any of
      *  the specified streams, or null if no more remain
+     * 
+     * @param sids stream ids
+     * @return OggStreamAudioVisualData
+     * @throws IOException I/O exception
      */
     public OggStreamAudioVisualData getNextAudioVisualPacket(Set<Integer> sids) throws IOException {
         OggStreamAudioVisualData data = null;
@@ -336,10 +383,13 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
      *  need to call {@link #close()} to do that,
      *  because we assume you'll still be populating
      *  the Info/Comment/Setup objects
+     * 
+     * @param data theora video data
      */
     public void writeVideoData(TheoraVideoData data) {
         writtenPackets.add(new AudioVisualDataAndSid(data, sid));
     }
+
     /**
      * Buffers the given audio ready for writing
      *  out, to a given (pre-existing) audio stream. 
@@ -347,6 +397,9 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
      *  need to call {@link #close()} to do that,
      *  because we assume you'll still be populating
      *  the Info/Comment/Setup objects
+     * 
+     * @param data audio data
+     * @param audioSid stream id for audio
      */
     public void writeAudioData(OggStreamAudioData data, int audioSid) {
         if (! soundtracks.containsKey(audioSid)) {
@@ -361,6 +414,8 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
      *  file and free its resources.
      * In Writing mode, will write out the Info, Comment
      *  Tags objects, and then the video and audio data.
+     * 
+     * @throws IOException I/O exception
      */
     public void close() throws IOException {
         if (r != null) {
@@ -413,7 +468,15 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
             for (AudioVisualDataAndSid avData : writtenPackets) {
                 OggPacketWriter avw = w;
                 if (avData.sid != sid) {
-                    avw = soundtrackWriters.get(avData.sid);
+                    // XXX key of int matching an OggAudioStreamHeaders object is unlikely
+                    //avw = soundtrackWriters.get(avData.sid);
+                    // use foreach to find what we're looking for
+                    for (Map.Entry<OggAudioStreamHeaders, OggPacketWriter> entry : soundtrackWriters.entrySet()) {
+                        if (entry.getKey().getSid() == avData.sid) {
+                            avw = entry.getValue();
+                            break;
+                        }
+                    }
                 }
 
                 // Update the granule position as we go
@@ -451,7 +514,8 @@ public class TheoraFile extends HighLevelOggStreamPacket implements Closeable {
 
     /**
      * Returns the underlying Ogg File instance
-     * @return
+     * 
+     * @return OggFile
      */
     public OggFile getOggFile() {
         return ogg;

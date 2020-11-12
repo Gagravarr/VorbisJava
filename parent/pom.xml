@@ -63,7 +63,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.13.1</version>
+      <version>4.11</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -81,13 +81,28 @@
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
-
+<!-- only here while I'm using my own fork --> 
+    <!-- DEPLOY to public area of Artifactory off of Red5 Pro -->
+<!-- 
+    <distributionManagement>
+        <repository>
+            <id>red5pro-ext-release</id>
+            <name>red5pro-releases</name>
+            <url>https://red5pro.jfrog.io/red5pro/ext-release-local</url>
+        </repository>
+        <snapshotRepository>
+            <id>red5pro-ext-snapshot</id>
+            <name>red5pro-snapshots</name>
+            <url>https://red5pro.jfrog.io/red5pro/ext-snapshot-local</url>
+        </snapshotRepository>
+    </distributionManagement>  
+-->
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.5.1</version>
+        <version>3.6.1</version>
         <configuration>
           <source>${maven.compile.source}</source>
           <target>${maven.compile.target}</target>
@@ -114,7 +129,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>2.4</version>
+        <version>3.0.1</version>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -127,15 +142,19 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.3</version>
+        <version>2.10.4</version>
         <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
+            <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                    <goal>jar</goal>
+                </goals>
+            </execution>
         </executions>
+        <configuration>
+            <verbose>true</verbose>
+            <failOnError>false</failOnError>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -208,15 +227,19 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.7</version>
+            <version>2.10.4</version>
             <executions>
-              <execution>
-                <id>attach-javadocs</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
+                <execution>
+                    <id>attach-javadocs</id>
+                    <goals>
+                        <goal>jar</goal>
+                    </goals>
+                </execution>
             </executions>
+            <configuration>
+                <verbose>true</verbose>
+                <failOnError>false</failOnError>
+            </configuration>
           </plugin>
         </plugins>
       </build>

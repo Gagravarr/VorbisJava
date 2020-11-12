@@ -96,6 +96,9 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
      *  through 0x7D, 0x3D (’=’) excluded. ASCII 0x41 through 0x5A 
      *  inclusive (characters A-Z) is to be considered equivalent to 
      *  ASCII 0x61 through 0x7A inclusive (characters a-z).
+     * 
+     * @param tag tag to normalize
+     * @return normalized tag
      */
     protected static String normaliseTag(String tag) {
         StringBuffer nt = new StringBuffer();
@@ -120,6 +123,8 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
     /**
      * Returns the (first) Artist, or null if no
      *  Artist tags present.
+     * 
+     * @return artist
      */
     public String getArtist() {
         return getSingleComment(KEY_ARTIST);
@@ -127,6 +132,8 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
     /**
      * Returns the (first) Album, or null if no
      *  Album tags present.
+     * 
+     * @return album
      */
     public String getAlbum() {
         return getSingleComment(KEY_ALBUM);
@@ -134,6 +141,8 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
     /**
      * Returns the (first) Title, or null if no
      *  Title tags present.
+     * 
+     * @return title
      */
     public String getTitle() {
         return getSingleComment(KEY_TITLE);
@@ -141,6 +150,8 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
     /**
      * Returns the (first) Genre, or null if no
      *  Genre tags present.
+     * 
+     * @return genre
      */
     public String getGenre() {
         return getSingleComment(KEY_GENRE);
@@ -149,6 +160,8 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
      * Returns the (first) track number as a literal
      *  string, eg "4" or "09", or null if
      *  no track number tags present;
+     * 
+     * @return track number
      */
     public String getTrackNumber() {
         return getSingleComment(KEY_TRACKNUMBER);
@@ -156,6 +169,8 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
     /**
      * Returns the track number, as converted into
      *  an integer, or -1 if not available / not numeric
+     * 
+     * @return track number
      */
     public int getTrackNumberNumeric() {
         String number = getTrackNumber();
@@ -171,6 +186,8 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
      * Returns the (first) Date, or null if no
      *  Date tags present. Dates are normally stored
      *  in ISO8601 date format, i.e. YYYY-MM-DD
+     * 
+     * @return date
      */
     public String getDate() {
         return getSingleComment("date");
@@ -180,6 +197,9 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
      * Returns all comments for a given tag, in
      *  file order. Will return an empty list for
      *  tags which aren't present.
+     * 
+     * @param tag tag to locate comments for
+     * @return comments for tag
      */
     public List<String> getComments(String tag) {
         List<String> c = comments.get( normaliseTag(tag) );
@@ -192,10 +212,13 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
 
     /**
      * Removes all comments for a given tag.
+     * 
+     * @param tag tag to remove comments for
      */
     public void removeComments(String tag) {
         comments.remove( normaliseTag(tag) );
     }
+
     /**
      * Removes all comments across all tags
      */
@@ -205,6 +228,9 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
 
     /**
      * Adds a comment for a given tag
+     * 
+     * @param tag tag to add a comment to
+     * @param comment comment to add
      */
     public void addComment(String tag, String comment) {
         String nt = normaliseTag(tag);
@@ -213,9 +239,13 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
         }
         comments.get(nt).add(comment);
     }
+
     /**
      * Removes any existing comments for a given tag,
      *  and replaces them with the supplied list
+     * 
+     * @param tag tag to set comments on 
+     * @param comments comments to add
      */
     public void setComments(String tag, List<String> comments) {
         String nt = normaliseTag(tag);
@@ -228,6 +258,8 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
 
     /**
      * Returns all the comments
+     * 
+     * @return comments
      */
     public Map<String, List<String>> getAllComments() {
         return comments;
