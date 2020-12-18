@@ -100,7 +100,7 @@ public abstract class FlacMetadataBlock extends FlacFrame {
 
        // Fix the length
        byte[] data = baos.toByteArray();
-       IOUtils.putInt3BE(data, 1, data.length);
+       IOUtils.putInt3BE(data, 1, data.length - 4);
 
        // All done
        return data;
