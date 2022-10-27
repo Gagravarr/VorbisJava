@@ -151,12 +151,12 @@
         <artifactId>forbiddenapis</artifactId>
         <version>3.4</version>
         <configuration>
+          <targetVersion>${maven.compile.target}</targetVersion>
           <bundledSignatures>
-            <!-- Pick the right signatures based on maven.compiler.target -->
             <bundledSignature>jdk-unsafe</bundledSignature>
             <bundledSignature>jdk-deprecated</bundledSignature>
-            <!-- Disallow undocumented classes like sun.misc.Unsafe: -->
             <bundledSignature>jdk-non-portable</bundledSignature>
+            <bundledSignature>jdk-reflection</bundledSignature>
           </bundledSignatures>
         </configuration>
         <executions>
