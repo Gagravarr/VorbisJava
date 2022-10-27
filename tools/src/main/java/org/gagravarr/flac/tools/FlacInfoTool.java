@@ -68,7 +68,7 @@ public class FlacInfoTool {
             System.out.println("FLAC Native");
         }
 
-        // Output The information
+        // Output the information block data
         FlacInfo info = flac.getInfo();
         System.out.println(INDENT1 + "Min Block Size=" + info.getMinimumBlockSize());
         System.out.println(INDENT1 + "Max Block Size=" + info.getMaximumBlockSize());

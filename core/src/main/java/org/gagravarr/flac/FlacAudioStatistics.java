@@ -13,7 +13,6 @@
  */
 package org.gagravarr.flac;
 
-import java.io.File;
 import java.io.IOException;
 
 /** 
@@ -26,7 +25,6 @@ public class FlacAudioStatistics {
    private final FlacFile flac;
 
    private int audioFrames = 0;
-   private long wastedBits = 0;
    private double durationSeconds = 0;
 
    public FlacAudioStatistics(FlacFile flac) {
@@ -42,13 +40,11 @@ public class FlacAudioStatistics {
       while ((data = flac.getNextAudioPacket()) != null) {
          handleAudioData(data);
       }
+      // TODO Should we calculate anything on efficiency, overhead etc?
    }
 
    protected void handleAudioData(FlacAudioFrame audio) {
       audioFrames++;
-      for (FlacAudioSubFrame s : audio.getSubFrames()) {
-         wastedBits += s.getWastedBits();
-      }
       // TODO Is this correct?
       double frameDuration = (double)audio.getBlockSize() / audio.getSampleRate();
       durationSeconds += frameDuration;
@@ -67,13 +63,5 @@ public class FlacAudioStatistics {
     */
    public int getAudioFramesCount() {
        return audioFrames;
-   }
-
-   /**
-    * The total number of wasted bits, across all
-    *  the audio subframes in the stream
-    */
-   public long getWastedBits() {
-       return wastedBits;
    }
 }
