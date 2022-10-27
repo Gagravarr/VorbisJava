@@ -137,6 +137,16 @@ public class FlacInfo extends FlacMetadataBlock {
     }
 
     /**
+     * The duration of the audio, in seconds.
+     * Will return 0 if the encoder didn't include the
+     *  number of samples in the Header, in that case use
+     *  {@link FlacAudioStatistics} to re-calculate.
+     */
+    public double getDurationSeconds() {
+       return (double)numberOfSamples / sampleRate;
+    }
+
+    /**
      * The minimum block size (in samples) used in the stream. 
      */
     public int getMinimumBlockSize() {

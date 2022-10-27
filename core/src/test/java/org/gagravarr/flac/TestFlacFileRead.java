@@ -112,6 +112,8 @@ public class TestFlacFileRead extends TestCase {
       assertEquals(2, info.getNumChannels());
       assertEquals(0x3c0, info.getNumberOfSamples());
 
+      assertEquals(0.02, info.getDurationSeconds(), 0.005);
+
       // Check the basics of the comments
       FlacTags tags = flac.getTags();
       assertNotNull(tags);
