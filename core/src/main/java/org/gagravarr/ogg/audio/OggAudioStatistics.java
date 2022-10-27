@@ -109,6 +109,14 @@ public class OggAudioStatistics {
      *  or Hours:Minutes:Seconds,MS (depending on Locale)
      */
     public String getDuration(Locale locale) {
+       return formatDuration(durationSeconds, locale);
+    }
+
+    /**
+     * Formats the duration, in Hours:Minutes:Seconds.MS
+     *  or Hours:Minutes:Seconds,MS (depending on Locale)
+     */
+    public static String formatDuration(double durationSeconds, Locale locale) {
         long durationL = (long)durationSeconds;
 
         // Output as Hours / Minutes / Seconds / Parts

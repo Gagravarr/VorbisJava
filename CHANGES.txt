@@ -5,6 +5,8 @@ Version 0.9 (In Progress)
  * Allow control of the number of Opus Audio packets per page,
    to control granule accuracy. (thanks to @msalikhov)
  * Improve FLAC-native last Metadata Block detection (thanks to @croger42)
+ * Calculate the duration of FLAC Audio files, and pass that
+   through to Tika
 
 Version 0.8 (2016-02-17)
  * Correct close / reset logic for Tika in OggDetector

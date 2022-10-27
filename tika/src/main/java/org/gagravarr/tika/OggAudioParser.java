@@ -119,13 +119,19 @@ public abstract class OggAudioParser extends AbstractParser {
         stats.calculate();
 
         // Record the duration, if available
-        double duration = stats.getDurationSeconds();
+        extractDuration(metadata, xhtml, stats.getDurationSeconds());
+    }
+
+    protected static void extractDuration(Metadata metadata, XHTMLContentHandler xhtml,
+            double duration) throws SAXException {
+        // Record the duration, if available
         if (duration > 0) {
             // Save as metadata to the nearest .01 seconds
             metadata.add(XMPDM.DURATION, DURATION_FORMAT.format(duration));
 
             // Output as Hours / Minutes / Seconds / Parts
-            xhtml.element("p", stats.getDuration());
+            String durationStr = OggAudioStatistics.formatDuration(duration, Locale.ROOT);
+            xhtml.element("p", durationStr);
         }
     }
 }

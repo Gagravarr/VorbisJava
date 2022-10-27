@@ -77,8 +77,14 @@ public class FlacParser extends AbstractParser {
       // Extract any Vorbis-style comments
       OggAudioParser.extractComments(metadata, xhtml, flac.getTags());
       
-      // Calculate the song length
-      // TODO Work out the song length, and return that
+      // Does the file know how long it is?
+      double duration = 0;
+      if (flac.getInfo().getNumberOfSamples() > 0) {
+         duration = flac.getInfo().getDurationSeconds();
+      } else {
+         // TODO Work out the song length, and return that
+      }
+      OggAudioParser.extractDuration(metadata, xhtml, duration);
 
       // Finish
       xhtml.endDocument();
