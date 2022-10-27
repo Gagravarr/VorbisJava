@@ -97,6 +97,8 @@ public abstract class FlacAudioSubFrame {
         protected SubFrameConstant(int channelNumber, int wastedBits, FlacAudioFrame audioFrame,
                                    BitsReader data) throws IOException {
             super(-1, channelNumber, wastedBits, audioFrame);
+            // TODO Capture the real value, adjust for wasted bits,
+            //       and make available as the subframe samples
             data.read(sampleSizeBits);
         }
         public static boolean matchesType(final int type) {
@@ -110,6 +112,8 @@ public abstract class FlacAudioSubFrame {
                                    BitsReader data) throws IOException {
             super(-1, channelNumber, wastedBits, audioFrame);
             for (int i=0; i<blockSize; i++) {
+               // TODO Capture the values, adjust for wasted bits,
+               //       and make the samples available
                 data.read(sampleSizeBits);
             }
         }
@@ -119,8 +123,9 @@ public abstract class FlacAudioSubFrame {
         }
         public String getType() { return "VERBATIM"; }
     }
+
     public static class SubFrameWithResidual extends FlacAudioSubFrame {
-        protected int[] warmUpSamples;
+        protected int[] warmUpSamples; // TODO Adjust for wasted bits
         protected SubFrameResidual residual;
         protected SubFrameWithResidual(int predictorOrder, int channelNumber, 
                                        int wastedBits, FlacAudioFrame audioFrame) {
@@ -142,7 +147,7 @@ public abstract class FlacAudioSubFrame {
 
             warmUpSamples = new int[predictorOrder];
             for (int i=0; i<predictorOrder; i++) {
-                warmUpSamples[i] = data.read(sampleSizeBits);
+                warmUpSamples[i] = data.read(sampleSizeBits); // TODO Adjust for wasted bits
             }
 
             residual = createResidual(data);
@@ -165,7 +170,7 @@ public abstract class FlacAudioSubFrame {
 
             warmUpSamples = new int[predictorOrder];
             for (int i=0; i<predictorOrder; i++) {
-                warmUpSamples[i] = data.read(sampleSizeBits);
+                warmUpSamples[i] = data.read(sampleSizeBits); // TODO Adjust for wasted bits
             }
 
             this.linearPredictorCoefficientPrecision = data.read(4)+1;
@@ -256,7 +261,7 @@ public abstract class FlacAudioSubFrame {
                     }
                 } else {
                     // Partition holds Rice encoded data
-                    for (int sn=0; sn<numSamples; sn++) {
+                    for (int sn=0; sn<partitionSamples; sn++) {
                         // Q value stored as zero-based unary
                         data.bitsToNextOne();
                         // R value stored as truncated binary
