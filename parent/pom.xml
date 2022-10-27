@@ -54,8 +54,8 @@
   </developers>
 
   <properties>
-    <maven.compile.source>1.5</maven.compile.source>
-    <maven.compile.target>1.5</maven.compile.target>
+    <maven.compile.source>1.8</maven.compile.source>
+    <maven.compile.target>1.8</maven.compile.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
@@ -63,7 +63,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.13.1</version>
+      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -87,7 +87,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.5.1</version>
+        <version>3.10.1</version>
         <configuration>
           <source>${maven.compile.source}</source>
           <target>${maven.compile.target}</target>
@@ -149,11 +149,8 @@
       <plugin>
         <groupId>de.thetaphi</groupId>
         <artifactId>forbiddenapis</artifactId>
-        <version>2.5</version>
+        <version>3.4</version>
         <configuration>
-          <!-- Remove this when we move to Java 1.6 -->
-          <targetVersion>1.6</targetVersion>
-          <failOnUnsupportedJava>false</failOnUnsupportedJava>
           <bundledSignatures>
             <!-- Pick the right signatures based on maven.compiler.target -->
             <bundledSignature>jdk-unsafe</bundledSignature>

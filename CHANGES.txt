@@ -1,4 +1,5 @@
 Version 0.9 (In Progress)
+ * Minimum Java version increased to Java 8
  * When writing Opus Audio, by default calculate the Granule
    postion (disable with packets page per of -1)
  * Allow control of the number of Opus Audio packets per page,
