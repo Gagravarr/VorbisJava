@@ -29,20 +29,16 @@ public abstract class FlacAudioSubFrame {
         }
 
         // Create the right type
-        FlacAudioSubFrame subFrame;
         if (SubFrameConstant.matchesType(type))
-            subFrame = new SubFrameConstant(channelNumber, audioFrame, data);
+            return new SubFrameConstant(channelNumber, wastedBits, audioFrame, data);
         else if (SubFrameVerbatim.matchesType(type))
-            subFrame =  new SubFrameVerbatim(channelNumber, audioFrame, data);
+            return new SubFrameVerbatim(channelNumber, wastedBits, audioFrame, data);
         else if (SubFrameFixed.matchesType(type))
-            subFrame =  new SubFrameFixed(type, channelNumber, audioFrame, data);
+            return new SubFrameFixed(type, channelNumber, wastedBits, audioFrame, data);
         else if (SubFrameLPC.matchesType(type))
-            subFrame =  new SubFrameLPC(type, channelNumber, audioFrame, data);
-        else subFrame =  new SubFrameReserved(audioFrame);
-
-        // Record details, and return
-        subFrame.wastedBits = wastedBits;
-        return subFrame;
+            return new SubFrameLPC(type, channelNumber, wastedBits, audioFrame, data);
+        else 
+           return new SubFrameReserved(wastedBits, audioFrame);
     }
 
     protected final FlacAudioFrame audioFrame;
@@ -51,14 +47,19 @@ public abstract class FlacAudioSubFrame {
     protected final int blockSize;
     private int wastedBits;
 
-    protected FlacAudioSubFrame(int predictorOrder, int channelNumber, FlacAudioFrame audioFrame) {
+    protected FlacAudioSubFrame(int predictorOrder, int channelNumber, int wastedBits, FlacAudioFrame audioFrame) {
         this.predictorOrder = predictorOrder;
+        this.wastedBits = wastedBits;
         this.audioFrame = audioFrame;
         this.blockSize = audioFrame.getBlockSize();
 
+        // Adjust the sample size for any "wasted bits", which were
+        //  excluded before the samples were written
+        int sampleSizeBits = audioFrame.getBitsPerSample();
+        sampleSizeBits -= wastedBits;
+
         // Adjust sample size for channel number, if needed
         // TODO Is this the right adjustment amount?
-        int sampleSizeBits = audioFrame.getBitsPerSample();
         if (audioFrame.getChannelType() == FlacAudioFrame.CHANNEL_TYPE_LEFT && channelNumber == 1) {
             sampleSizeBits++;
         }
@@ -70,8 +71,13 @@ public abstract class FlacAudioSubFrame {
         }
         this.sampleSizeBits = sampleSizeBits;
     }
+
     /**
-     * The number of wasted bits per sample
+     * The number of "wasted bits" per sample. 
+     * This is where at least that many least-significant bits of all samples
+     *  in the subframe are zero, and so samples are stored without them.
+     * Audio decoding requires left-shifting by this number of bits to add
+     *  back the padding!
      */
     public int getWastedBits() {
         return wastedBits;
@@ -88,9 +94,9 @@ public abstract class FlacAudioSubFrame {
     public abstract String getType();
 
     public static class SubFrameConstant extends FlacAudioSubFrame {
-        protected SubFrameConstant(int channelNumber, FlacAudioFrame audioFrame,
+        protected SubFrameConstant(int channelNumber, int wastedBits, FlacAudioFrame audioFrame,
                                    BitsReader data) throws IOException {
-            super(-1, channelNumber, audioFrame);
+            super(-1, channelNumber, wastedBits, audioFrame);
             data.read(sampleSizeBits);
         }
         public static boolean matchesType(final int type) {
@@ -100,9 +106,9 @@ public abstract class FlacAudioSubFrame {
         public String getType() { return "CONSTANT"; }
     }
     public static class SubFrameVerbatim extends FlacAudioSubFrame {
-        protected SubFrameVerbatim(int channelNumber, FlacAudioFrame audioFrame,
+        protected SubFrameVerbatim(int channelNumber, int wastedBits, FlacAudioFrame audioFrame,
                                    BitsReader data) throws IOException {
-            super(-1, channelNumber, audioFrame);
+            super(-1, channelNumber, wastedBits, audioFrame);
             for (int i=0; i<blockSize; i++) {
                 data.read(sampleSizeBits);
             }
@@ -116,8 +122,9 @@ public abstract class FlacAudioSubFrame {
     public static class SubFrameWithResidual extends FlacAudioSubFrame {
         protected int[] warmUpSamples;
         protected SubFrameResidual residual;
-        protected SubFrameWithResidual(int predictorOrder, int channelNumber, FlacAudioFrame audioFrame) {
-            super(predictorOrder, channelNumber, audioFrame);
+        protected SubFrameWithResidual(int predictorOrder, int channelNumber, 
+                                       int wastedBits, FlacAudioFrame audioFrame) {
+            super(predictorOrder, channelNumber, wastedBits, audioFrame);
         }
 
         public SubFrameResidual getResidual() {
@@ -129,9 +136,9 @@ public abstract class FlacAudioSubFrame {
         public String getType() { return "UNKNOWN"; }
     }
     public static class SubFrameFixed extends SubFrameWithResidual {
-        protected SubFrameFixed(int type, int channelNumber, FlacAudioFrame audioFrame,
+        protected SubFrameFixed(int type, int channelNumber, int wastedBits, FlacAudioFrame audioFrame,
                                 BitsReader data) throws IOException {
-            super((type & 7), channelNumber, audioFrame);
+            super((type & 7), channelNumber, wastedBits, audioFrame);
 
             warmUpSamples = new int[predictorOrder];
             for (int i=0; i<predictorOrder; i++) {
@@ -152,9 +159,9 @@ public abstract class FlacAudioSubFrame {
 
         protected final int[] coefficients;
 
-        protected SubFrameLPC(int type, int channelNumber, FlacAudioFrame audioFrame,
+        protected SubFrameLPC(int type, int channelNumber, int wastedBits, FlacAudioFrame audioFrame,
                               BitsReader data) throws IOException {
-            super((type & 31) + 1, channelNumber, audioFrame);
+            super((type & 31) + 1, channelNumber, wastedBits, audioFrame);
 
             warmUpSamples = new int[predictorOrder];
             for (int i=0; i<predictorOrder; i++) {
@@ -193,8 +200,8 @@ public abstract class FlacAudioSubFrame {
             if (type >= 16 && type <= 31) return true;
             return false;
         }
-        private SubFrameReserved(FlacAudioFrame audioFrame) {
-            super(-1, -1, audioFrame);
+        private SubFrameReserved(int wastedBits, FlacAudioFrame audioFrame) {
+            super(-1, -1, wastedBits, audioFrame);
         }
         public String getType() { return "RESERVED"; }
     }
