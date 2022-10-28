@@ -231,6 +231,12 @@ public class FlacAudioFrame extends FlacFrame {
 
        return data;
    }
+   /**
+    * How big is the compressed audio frame, including headers?
+    */
+   public int getCompresedSize() {
+      return frameData.length+2;
+   }
 
    /**
     * Is the block size fixed (frame header encodes the frame number)
@@ -268,6 +274,15 @@ public class FlacAudioFrame extends FlacFrame {
        return channelType;
    }
    /**
+    * The well-known Channel Type, or null if a non-standard one
+    */
+   public ChannelType getChannelTypeEnum() {
+      for (ChannelType t : ChannelType.values()) {
+         if (t.type == channelType) return t;
+      }
+      return null;
+   }
+   /**
     * If {@link #isBlockSizeVariable()}, then this is the
     *  sample number, otherwise the frame number
     */
@@ -298,7 +313,18 @@ public class FlacAudioFrame extends FlacFrame {
            new SampleRate(32), new SampleRate(44.1),
            new SampleRate(48), new SampleRate(96)
    };
-   protected static final int CHANNEL_TYPE_LEFT  = 0x9;
-   protected static final int CHANNEL_TYPE_RIGHT = 0xa;
-   protected static final int CHANNEL_TYPE_MID   = 0xb;
+
+   public static enum ChannelType {
+      INDEPENDENT(0, "Independent"),
+      LEFT (0x9, "Left Side"),
+      RIGHT(0xa, "Right Side"),
+      MID  (0xb, "Mid Side");
+
+      public final int type;
+      public final String description; 
+      ChannelType(int type, String desc) { 
+         this.type = type;
+         this.description = desc;
+      }
+   }
 }

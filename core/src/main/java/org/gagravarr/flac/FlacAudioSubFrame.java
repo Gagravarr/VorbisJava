@@ -16,6 +16,7 @@ package org.gagravarr.flac;
 import java.io.IOException;
 
 import org.gagravarr.ogg.BitsReader;
+import org.gagravarr.flac.FlacAudioFrame.ChannelType;
 
 /**
  * Per-channel, compressed audio
@@ -60,13 +61,13 @@ public abstract class FlacAudioSubFrame {
 
         // Adjust sample size for channel number, if needed
         // TODO Is this the right adjustment amount?
-        if (audioFrame.getChannelType() == FlacAudioFrame.CHANNEL_TYPE_LEFT && channelNumber == 1) {
+        if (audioFrame.getChannelType() == ChannelType.LEFT.type && channelNumber == 1) {
             sampleSizeBits++;
         }
-        if (audioFrame.getChannelType() == FlacAudioFrame.CHANNEL_TYPE_RIGHT && channelNumber == 0) {
+        if (audioFrame.getChannelType() == ChannelType.RIGHT.type && channelNumber == 0) {
             sampleSizeBits++;
         }
-        if (audioFrame.getChannelType() == FlacAudioFrame.CHANNEL_TYPE_MID && channelNumber == 1) {
+        if (audioFrame.getChannelType() == ChannelType.MID.type && channelNumber == 1) {
             sampleSizeBits++;
         }
         this.sampleSizeBits = sampleSizeBits;
