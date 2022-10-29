@@ -18,11 +18,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.gagravarr.flac.FlacAudioFrame;
+import org.gagravarr.flac.FlacAudioFrame.ChannelType;
 import org.gagravarr.flac.FlacAudioSubFrame;
 import org.gagravarr.flac.FlacAudioSubFrame.SubFrameLPC;
 import org.gagravarr.flac.FlacAudioSubFrame.SubFrameWithResidual;
 import org.gagravarr.flac.FlacFile;
 import org.gagravarr.flac.FlacInfo;
+import org.gagravarr.flac.FlacMetadataBlock;
 import org.gagravarr.flac.FlacOggFile;
 import org.gagravarr.flac.FlacTags;
 
@@ -54,6 +56,24 @@ public class FlacInfoTool {
         }
 
         flac = FlacFile.open(f);
+    }
+
+    /**
+     * How big, in bytes, are all the FLAC headers?
+     * This will also be the offset of the first audio frame
+     */
+    protected static int sizeOfHeaders(FlacFile flac) {
+       // File header
+       int size = 4;
+       // Metadata block getData() includes the headers
+       size += flac.getInfo().getData().length;
+       if (flac.getTags() != null) {
+          size += flac.getTags().getData().length;
+       }
+       for (FlacMetadataBlock m : flac.getOtherMetadata()) {
+          size += m.getData().length;
+       }
+       return size;
     }
 
     private static final String SPACER = "  ";
@@ -94,13 +114,18 @@ public class FlacInfoTool {
 
     public void printFrameInfo() throws IOException {
         int fn = -1;
+        int offset = sizeOfHeaders(flac);
         FlacAudioFrame audio;
         while ((audio=flac.getNextAudioPacket()) != null) {
             fn++;
 
+            // TODO Is this right?
+            int thisOffset = offset;
+            offset += audio.getCompresedSize();
+
             System.out.print("frame="+fn);
             System.out.print(SPACER);
-            System.out.print("offset=??");
+            System.out.print("offset="+thisOffset);
             System.out.print(SPACER);
             System.out.print("bits="+(audio.getData().length*8));
             System.out.print(SPACER);
@@ -110,7 +135,7 @@ public class FlacInfoTool {
             System.out.print(SPACER);
             System.out.print("channels="+audio.getNumChannels());
             System.out.print(SPACER);
-            System.out.print("channel_assignment=??");
+            System.out.print("channel_assignment="+getChannelAssignment(audio.getChannelType()));
             System.out.println();
 
             for (int sfn=0; sfn<audio.getSubFrames().length; sfn++) {
@@ -163,5 +188,12 @@ public class FlacInfoTool {
                 }
             }
         }
+    }
+    protected static String getChannelAssignment(ChannelType t) {
+       if (t.type < ChannelType.LEFT.type) return "INDEPENDENT";
+       if (t == ChannelType.LEFT)     return "LEFT_SIDE";
+       if (t == ChannelType.RIGHT)    return "RIGHT_SIDE";
+       if (t == ChannelType.MID)      return "MID_SIDE";
+       return "RESERVED";
     }
 }

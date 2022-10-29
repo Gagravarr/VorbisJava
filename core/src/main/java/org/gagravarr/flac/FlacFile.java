@@ -85,6 +85,9 @@ public abstract class FlacFile implements Closeable {
    public FlacTags getTags() {
        return tags;
    }
+   public List<FlacMetadataBlock> getOtherMetadata() {
+      return otherMetadata;
+   }
 
    /**
     * In Reading mode, will close the underlying ogg/flac
