@@ -39,7 +39,8 @@ public class FlacAudioFrame extends FlacFrame {
    private int sampleRate;
 
    private int numChannels;
-   private int channelType;
+   private int channelTypeRaw;
+   private ChannelType channelType;
    private int sampleSizeRaw;
    private int sampleSizeBits;
 
@@ -106,12 +107,9 @@ public class FlacAudioFrame extends FlacFrame {
        }
 
        // Channel Assignment + Sample Size + Res
-       channelType = br.read(4);
-       if (channelType < 8) {
-           numChannels = channelType + 1;
-       } else {
-           numChannels = 2;
-       }
+       channelTypeRaw = br.read(4);
+       channelType = ChannelType.get(channelTypeRaw);
+       numChannels = channelType.numChannels;
        
        sampleSizeRaw = br.read(3);
        br.read(1);
@@ -270,17 +268,14 @@ public class FlacAudioFrame extends FlacFrame {
    public int getNumChannels() {
        return numChannels;
    }
-   protected int getChannelType() {
-       return channelType;
+   protected int getChannelTypeRaw() {
+       return channelTypeRaw;
    }
    /**
-    * The well-known Channel Type, or null if a non-standard one
+    * The Channels Type of the Sub-Frames
     */
-   public ChannelType getChannelTypeEnum() {
-      for (ChannelType t : ChannelType.values()) {
-         if (t.type == channelType) return t;
-      }
-      return null;
+   public ChannelType getChannelType() {
+      return channelType;
    }
    /**
     * If {@link #isBlockSizeVariable()}, then this is the
@@ -315,16 +310,46 @@ public class FlacAudioFrame extends FlacFrame {
    };
 
    public static enum ChannelType {
-      INDEPENDENT(0, "Independent"),
-      LEFT (0x9, "Left Side"),
-      RIGHT(0xa, "Right Side"),
-      MID  (0xb, "Mid Side");
+      /** 1 channel: mono */
+      MONO(0x0, 1),
+      /** 2 channels: left, right */ 
+      INDEPENDENT_2(0x1, 2),
+      /** 3 channels: left, right, center */ 
+      INDEPENDENT_3(0x2, 3),
+      /** 4 channels: front left, front right, back left, back right */ 
+      INDEPENDENT_4(0x3, 4),
+      /** 5 channels: front left, front right, front center, back/surround left, back/surround right */ 
+      INDEPENDENT_5(0x4, 5),
+      /** 6 channels: front left, front right, front center, LFE, back/surround left, back/surround right */
+      INDEPENDENT_6(0x5, 6),
+      /** 7 channels: front left, front right, front center, LFE, back center, side left, side right */
+      INDEPENDENT_7(0x6, 7),
+      /** 8 channels: front left, front right, front center, LFE, back left, back right, side left, side right */
+      INDEPENDENT_8(0x7, 8),
+      /** left/side stereo: channel 0 is the left channel, channel 1 is the side(difference) channel */
+      LEFT (0x8, 2),
+      /** right/side stereo: channel 0 is the side(difference) channel, channel 1 is the right channel */
+      RIGHT(0x9, 2),
+      /** mid/side stereo: channel 0 is the mid(average) channel, channel 1 is the side(difference) channel */
+      MID  (0xa, 2),
+      RESERVED11(0xb, -1),
+      RESERVED12(0xc, -1),
+      RESERVED13(0xd, -1),
+      RESERVED14(0xe, -1),
+      RESERVED15(0xf, -1);
 
       public final int type;
-      public final String description; 
-      ChannelType(int type, String desc) { 
+      public final int numChannels;
+      ChannelType(int type, int numChannels) {
          this.type = type;
-         this.description = desc;
+         this.numChannels = numChannels;
+      }
+
+      public static ChannelType get(int type) {
+         for (ChannelType t : values()) {
+            if (t.type == type) return t;
+         }
+         throw new IllegalArgumentException("Type must be in range 0-15, invalid value " + type);
       }
    }
 }

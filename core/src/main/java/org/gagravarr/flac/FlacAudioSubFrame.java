@@ -61,13 +61,13 @@ public abstract class FlacAudioSubFrame {
 
         // Adjust sample size for channel number, if needed
         // TODO Is this the right adjustment amount?
-        if (audioFrame.getChannelType() == ChannelType.LEFT.type && channelNumber == 1) {
+        if (audioFrame.getChannelType() == ChannelType.LEFT && channelNumber == 1) {
             sampleSizeBits++;
         }
-        if (audioFrame.getChannelType() == ChannelType.RIGHT.type && channelNumber == 0) {
+        if (audioFrame.getChannelType() == ChannelType.RIGHT && channelNumber == 0) {
             sampleSizeBits++;
         }
-        if (audioFrame.getChannelType() == ChannelType.MID.type && channelNumber == 1) {
+        if (audioFrame.getChannelType() == ChannelType.MID && channelNumber == 1) {
             sampleSizeBits++;
         }
         this.sampleSizeBits = sampleSizeBits;
