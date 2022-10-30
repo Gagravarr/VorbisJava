@@ -73,6 +73,8 @@ public class FlacInfoTool {
        for (FlacMetadataBlock m : flac.getOtherMetadata()) {
           size += m.getData().length;
        }
+       // Note - Latest flac tool adds Padding blocks onto the start of
+       //        the first audio frame, we will differ on the first offset
        return size;
     }
 
@@ -119,7 +121,6 @@ public class FlacInfoTool {
         while ((audio=flac.getNextAudioPacket()) != null) {
             fn++;
 
-            // TODO Is this right?
             int thisOffset = offset;
             offset += audio.getCompresedSize();
 
