@@ -67,4 +67,28 @@ public class TestUtils extends TestCase {
         assertEquals(0, br.read(6));
         assertEquals(1, br.read(1));
     }
+
+    public void testReadUE7() throws IOException {
+       ByteArrayInputStream r = new ByteArrayInputStream(new byte[] {
+             0, 1, 10, 127,
+             // Continue into a 2nd byte
+             (byte)0b11000010, (byte)0b10000000,
+             (byte)0b11000010, (byte)0b10000001,
+             (byte)0b11000011, (byte)0b10000000,
+             // Continue into a 3rd byte
+             (byte)0b11100010, (byte)0b10000000, (byte)0b10000000,
+             // All 6 bytes
+             (byte)0b11111110, (byte)0b10000000, (byte)0b10000000,
+             (byte)0b10000000, (byte)0b10000000, (byte)0b10000000,
+       });
+       assertEquals(0, IOUtils.readUE7(r));
+       assertEquals(1, IOUtils.readUE7(r));
+       assertEquals(10, IOUtils.readUE7(r));
+       assertEquals(127, IOUtils.readUE7(r));
+       assertEquals(128, IOUtils.readUE7(r));
+       assertEquals(129, IOUtils.readUE7(r));
+       assertEquals(192, IOUtils.readUE7(r));
+       assertEquals(8192, IOUtils.readUE7(r));
+       assertEquals(-1, IOUtils.readUE7(r));
+    }
 }

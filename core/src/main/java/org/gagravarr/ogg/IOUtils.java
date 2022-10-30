@@ -302,22 +302,40 @@ public class IOUtils {
     }
 
     /**
-     * Gets the integer value that is stored in UTF-8 like fashion, in Big Endian
-     *   but with the high bit on each number indicating if it continues or not
+     * Gets the integer value that is stored in UTF-8 like fashion, in Big Endian.
+     * A high bit at the start indicates continuation, count until the first
+     *  zero bit to know how many continuation bytes, use the rest, then read
+     *  the lower 6 bits of the continuation bytes.
      */
     public static long readUE7(InputStream stream) throws IOException {
-        int i;
+        int i = stream.read();
+        if (i<0) return -1;
+
+        // Did it fit in 7 bits / 1 byte?
+        if (i < 0b10000000) return i;
+
+        // How many bytes did it need? Count the
+        //  high bits until you reach a 0
         long v = 0;
-        while ((i = stream.read()) >= 0) {
-            v = v << 7;
-            if ((i & 128) == 128) {
-                // Continues
-                v += (i&127);
-            } else {
-                // Last value
-                v += i;
-                break;
-            }
+        int extraBytes;
+        if      (i < 0b11100000) extraBytes = 1;
+        else if (i < 0b11110000) extraBytes = 2;
+        else if (i < 0b11111000) extraBytes = 3;
+        else if (i < 0b11111100) extraBytes = 4;
+        else if (i < 0b11111110) extraBytes = 5;
+        else                     extraBytes = 6;
+
+        // Get the bits from the end, if any
+        int firstByteBits = 6-extraBytes;
+        if (firstByteBits > 0) {
+           v = i & ((1<<firstByteBits)-1);
+        }
+        // Process the remaining bytes, lower 6 bits only
+        for (int eb=0; eb<extraBytes; eb++) {
+           i = stream.read();
+           if (i < 0) return -1;
+           if ((i & 0b10000000) != 0b10000000) return 0; // Broken encoding
+           v = (v << 6) + (i&0b00111111);
         }
         return v;
     }

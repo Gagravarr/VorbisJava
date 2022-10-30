@@ -5,6 +5,7 @@ Version 0.9 (In Progress)
  * Allow control of the number of Opus Audio packets per page,
    to control granule accuracy. (thanks to @msalikhov)
  * Improve FLAC-native last Metadata Block detection (thanks to @croger42)
+ * Fix for "UTF-8" style continuation number reading in FLAC
  * Calculate the duration of FLAC Audio files, and pass that
    through to Tika
 
