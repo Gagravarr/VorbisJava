@@ -38,8 +38,8 @@ public abstract class FlacMetadataBlock extends FlacFrame {
    public static final byte PICTURE = 6;
    // 7-126 : reserved
    // 127 : invalid, to avoid confusion with a frame sync code
-   public static final int MASK_BLOCKTYPE = 0x7F; // TODO: Java 7 use 0b01111111
-   public static final int MASK_LASTBLOCK = 0x80; // TODO: Java 7 use 0b10000000
+   public static final int MASK_BLOCKTYPE = 0b01111111;
+   public static final int MASK_LASTBLOCK = 0b10000000;
 
    private byte type;
 
