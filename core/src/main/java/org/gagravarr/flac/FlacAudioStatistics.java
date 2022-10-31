@@ -32,7 +32,8 @@ public class FlacAudioStatistics {
    }
 
    /**
-    * Calculate the statistics
+    * Reads the whole file, and calculates the statistics
+    *  from the headers and audio frames.
     */
    public void calculate() throws IOException {
       FlacAudioFrame data;

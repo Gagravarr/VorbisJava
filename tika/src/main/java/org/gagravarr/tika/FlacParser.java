@@ -27,6 +27,7 @@ import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.AbstractParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.XHTMLContentHandler;
+import org.gagravarr.flac.FlacAudioStatistics;
 import org.gagravarr.flac.FlacFile;
 import org.gagravarr.flac.FlacInfo;
 import org.gagravarr.flac.FlacOggFile;
@@ -80,9 +81,13 @@ public class FlacParser extends AbstractParser {
       // Does the file know how long it is?
       double duration = 0;
       if (flac.getInfo().getNumberOfSamples() > 0) {
+         // Trust the duration from the header
          duration = flac.getInfo().getDurationSeconds();
       } else {
-         // TODO Work out the song length, and return that
+         // Process all the audio frames and have it calculated
+         FlacAudioStatistics stats = new FlacAudioStatistics(flac);
+         stats.calculate();
+         duration = stats.getDurationSeconds();
       }
       OggAudioParser.extractDuration(metadata, xhtml, duration);
 

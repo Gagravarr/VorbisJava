@@ -6,6 +6,8 @@ Version 0.9 (In Progress)
    to control granule accuracy. (thanks to @msalikhov)
  * Improve FLAC-native last Metadata Block detection (thanks to @croger42)
  * Fix for "UTF-8" style continuation number reading in FLAC
+ * Ability to calculate FLAC audio statistics such as duration,
+   eg for streamed or truncated files
  * Calculate the duration of FLAC Audio files, and pass that
    through to Tika
 
