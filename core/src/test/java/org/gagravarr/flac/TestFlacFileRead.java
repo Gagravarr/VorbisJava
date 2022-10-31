@@ -80,6 +80,11 @@ public class TestFlacFileRead extends TestCase {
 
       // Check the rest
       assertFlacContents(flac);
+
+      // Re-open, compute the stats and check
+      ogg = new OggFile(getTestOggFile());
+      flac = new FlacOggFile(ogg);
+      assertFlacStatistics(flac);
    }
 
    public void testReadFlacNative() throws IOException {
@@ -89,6 +94,10 @@ public class TestFlacFileRead extends TestCase {
 
        // Check the rest
        assertFlacContents(flac);
+
+       // Re-open, compute the stats and check
+       flac = new FlacNativeFile(getTestFlacFile());
+       assertFlacStatistics(flac);
    }
 
    /**
@@ -120,7 +129,7 @@ public class TestFlacFileRead extends TestCase {
       assertEquals(7, tags.getAllComments().size());
       assertEquals("Test Album", tags.getAlbum());
 
-      // TODO Check other metadata
+      // TODO Check other metadata, eg seek tables
 
 
       // Has audio data, all with mostly info-based metadata
@@ -165,5 +174,17 @@ public class TestFlacFileRead extends TestCase {
 
       // There is only a single audio frame
       assertNull( flac.getNextAudioPacket() );
+   }
+
+   /**
+    * Recompute all the audio statistics, and verify we got
+    *  the same answers that the Encoder put in the Info header
+    */
+   protected void assertFlacStatistics(FlacFile f) throws IOException {
+      FlacAudioStatistics s = new FlacAudioStatistics(f);
+      s.calculate();
+
+      assertEquals(0.02, s.getDurationSeconds(), 0.005);
+      assertEquals(1, s.getAudioFramesCount());
    }
 }

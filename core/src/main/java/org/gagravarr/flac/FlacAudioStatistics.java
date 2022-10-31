@@ -45,7 +45,6 @@ public class FlacAudioStatistics {
 
    protected void handleAudioData(FlacAudioFrame audio) {
       audioFrames++;
-      // TODO Is this correct?
       double frameDuration = (double)audio.getBlockSize() / audio.getSampleRate();
       durationSeconds += frameDuration;
       // TODO Should we calculate any overheads?
