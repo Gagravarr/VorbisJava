@@ -64,7 +64,7 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
     /**
      * Loads a Opus File from the given packet reader.
      */
-    public OpusFile(OggPacketReader r) throws IOException {	
+    public OpusFile(OggPacketReader r) throws IOException {
         this.r = r;
 
         OggPacket p = null;
@@ -91,7 +91,7 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
      * Opens for writing.
      */
     public OpusFile(OutputStream out) {
-        this(out, new OpusInfo(), new OpusTags());   
+        this(out, new OpusInfo(), new OpusTags());
     }
     /**
      * Opens for writing, based on the settings
@@ -178,7 +178,7 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
      * Sets the maximum number of opus packets per ogg page.
      * Shorter values will give less efficient storage, but
      *  more accurate Granule values.
-     * Set to -1 if you are managing the ganule change when
+     * Set to -1 if you are managing the granule change when
      *  producing your {@link OpusAudioData} packets.
      */
     public void setMaxPacketsPerPage(int value) {
@@ -223,7 +223,7 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
         if (w != null) {
             w.bufferPacket(info.write(), true);
             w.bufferPacket(tags.write(), false);
-            
+
             // The Granule Position on each Ogg Page needs to be
             //  the total number of PCM samples, including the last
             //  full Opus Packet in the page.
@@ -243,7 +243,7 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
                 packet = packets.get(i);
                 flushAfter = false;
                 pageSize++;
-                
+
                 // Should we flush before this packet?
                 if (maxPacketsPerPage == -1) {
                     // User is handling granule positions
@@ -257,12 +257,12 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
                     }
                 } else {
                     // We are doing the granule position
-                    
+
                     // Will we need to flush after this packet?
                     if (pageSize >= maxPacketsPerPage) {
                         flushAfter = true;
                     }
-                
+
                     // Calculate the packet granule
                     pageSamples += packet.getNumberOfSamples();
                     packet.setGranulePosition(lastGranule+pageSamples);
@@ -273,15 +273,16 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
                 if (flushAfter || w.getSizePendingFlush() > 16384) {
                     lastGranule = packet.getGranulePosition();
                     w.setGranulePosition(lastGranule);
-                    
+
                     if (i != packetsSize-1) {
                         w.flush();
                         doneFlush = true;
                     }
                 }
-                if (doneFlush) {   
+                if (doneFlush) {
                     pageSize = 0;
                     pageSamples = 0;
+                    doneFlush = false;
                 }
             }
 
