@@ -233,7 +233,7 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
             final int packetsSize = packets.size();
             final int maxPacketsPerPage = this.maxPacketsPerPage;
 
-            OpusAudioData packet;
+            OpusAudioData packet = null;
             int pageSize = 0;
             int pageSamples = 0;
             long lastGranule = 0;
@@ -285,7 +285,8 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
                     pageSamples = 0;
                 }
             }
-
+            if (packet != null)
+                w.setGranulePosition(packet.getGranulePosition());
             w.close();
             w = null;
             ogg.close();
