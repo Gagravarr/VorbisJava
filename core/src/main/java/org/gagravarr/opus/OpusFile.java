@@ -280,6 +280,7 @@ public class OpusFile implements OggAudioStream, OggAudioHeaders, Closeable {
                     }
                 }
                 if (doneFlush) {   
+                    doneFlush = false;
                     pageSize = 0;
                     pageSamples = 0;
                 }
