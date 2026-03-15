@@ -52,6 +52,10 @@ public class TestTheoraFileRead extends TestCase {
     }
     // TODO Finish the other test files and use them
 
+    private InputStream getTheoraEmptyPacketsFile() throws IOException {
+        return this.getClass().getResourceAsStream("/TIKA-1856-1.ogx");
+    }
+
     private TheoraFile tf;
     @Override
     protected void tearDown() throws IOException {
@@ -470,5 +474,29 @@ public class TestTheoraFileRead extends TestCase {
         assertEquals(2, opusPackets);
         assertEquals(3, speexPackets);
         assertEquals(9, vorbisPackets);
+    }
+
+    /**
+     * TIKA-1856 / Issue #51
+     * If the video data packet is empty, don't break!
+     */
+    public void testEmptyPackets() throws Exception {
+        OggFile ogg = new OggFile(getTheoraEmptyPacketsFile());
+        tf = new TheoraFile(ogg);
+
+        // Check the Info
+        assertEquals("3.2.1", tf.getInfo().getVersion());
+        assertEquals(3, tf.getInfo().getMajorVersion());
+        assertEquals(2, tf.getInfo().getMinorVersion());
+        assertEquals(1, tf.getInfo().getRevisionVersion());
+
+        assertEquals(40, tf.getInfo().getFrameWidthMB());
+        assertEquals(27, tf.getInfo().getFrameHeightMB());
+        assertEquals(640, tf.getInfo().getFrameWidth());
+        assertEquals(432, tf.getInfo().getFrameHeight());
+        assertEquals(640, tf.getInfo().getPictureRegionWidth());
+        assertEquals(425, tf.getInfo().getPictureRegionHeight());
+        assertEquals(0, tf.getInfo().getPictureRegionXOffset());
+        assertEquals(5, tf.getInfo().getPictureRegionYOffset());
     }
 }
