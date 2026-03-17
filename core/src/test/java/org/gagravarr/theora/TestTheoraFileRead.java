@@ -27,6 +27,7 @@ import org.gagravarr.ogg.OggStreamAudioVisualData;
 import org.gagravarr.ogg.OggStreamIdentifier;
 import org.gagravarr.ogg.OggStreamVideoData;
 import org.gagravarr.opus.OpusAudioData;
+import org.gagravarr.skeleton.SkeletonFisbone;
 import org.gagravarr.skeleton.SkeletonStream;
 import org.gagravarr.speex.SpeexAudioData;
 import org.gagravarr.vorbis.VorbisAudioData;
@@ -498,5 +499,48 @@ public class TestTheoraFileRead extends TestCase {
         assertEquals(425, tf.getInfo().getPictureRegionHeight());
         assertEquals(0, tf.getInfo().getPictureRegionXOffset());
         assertEquals(5, tf.getInfo().getPictureRegionYOffset());
+
+        // Check the Comments
+        assertEquals(
+                "Xiph.Org libtheora 1.1 20090822 (Thusnelda)",
+                tf.getComments().getVendor()
+        );
+        assertEquals(2, tf.getComments().getAllComments().size());
+
+        // Check the setup
+        assertNotNull(tf.getSetup());
+
+        // Has a basic skeleton
+        assertNotNull(tf.getSkeleton());
+        assertNotNull(tf.getSkeleton().getFishead());
+        assertNotNull(tf.getSkeleton().getFisbones());
+        assertEquals(1, tf.getSkeleton().getFisbones().size());
+        SkeletonFisbone fisbone = tf.getSkeleton().getFisbones().get(0);
+        assertEquals("video/theora", fisbone.getMessageHeaders().get("Content-Type"));
+
+        // No soundtracks, video only
+        assertNotNull(tf.getSoundtracks());
+        assertNotNull(tf.getSoundtrackStreams());
+        assertEquals(0, tf.getSoundtracks().size());
+        assertEquals(0, tf.getSoundtrackStreams().size());
+
+        // Read all the video packets - shouldn't crash even on empty ones!
+        OggStreamAudioVisualData avd = null;
+        int numTheora = 0;
+        int emptyVideo = 0;
+        while ((avd = tf.getNextAudioVisualPacket()) != null) {
+            if (avd instanceof TheoraVideoData) {
+                numTheora++;
+                if (avd.getData() != null && avd.getData().length == 0) {
+                    emptyVideo++;
+                }
+            } else {
+                fail("Unexpected packet " + avd.getClass());
+            }
+        }
+
+        // Verify we found some of each
+        assertTrue("Not enough video frames, found " + numTheora, numTheora > 0);
+        assertTrue("Not enough empty video frames, found " + emptyVideo, emptyVideo > 0);
     }
 }
