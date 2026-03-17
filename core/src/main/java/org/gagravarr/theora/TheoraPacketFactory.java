@@ -78,10 +78,9 @@ public class TheoraPacketFactory extends HighLevelOggStreamPacket {
      *  instance based on the type.
      */
     public static TheoraPacket create(OggPacket packet) {
-        byte type = packet.getData()[0];
-
         // Special header types detection
         if(isTheoraSpecial(packet)) {
+            byte type = packet.getData()[0];
             switch(type) {
             case (byte)TYPE_IDENTIFICATION:
                 return new TheoraInfo(packet);
