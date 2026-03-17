@@ -15,6 +15,10 @@ package org.gagravarr.flac;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import junit.framework.TestCase;
 
@@ -25,6 +29,7 @@ public class TestFlacComments extends TestCase {
     private InputStream getTestOggFile() throws IOException {
         return this.getClass().getResourceAsStream("/testFLAC.oga");
     }
+
     private InputStream getTestFlacFile() throws IOException {
         return this.getClass().getResourceAsStream("/testFLAC.flac");
     }
@@ -52,10 +57,38 @@ public class TestFlacComments extends TestCase {
         flac.close();
         ogg.close();
     }
+
     public void testReadFlac() throws IOException {
         FlacNativeFile flac = new FlacNativeFile(getTestFlacFile());
         doTestComments(flac.getTags());
         flac.close();
+    }
+
+    public void testWriteFlac() throws IOException {
+        Path tempFile = Files.createTempFile("test", ".flac");
+        try (FlacNativeFile flac = new FlacNativeFile(getTestFlacFile())) {
+            FlacTags tags = flac.getTags();
+            doTestComments(tags);
+            String newComment = "new_comment";
+            String someText = "some text";
+            tags.addComment(newComment, someText);
+
+            try (InputStream inputStream = flac.getInputStream()) {
+                Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            try (FlacNativeFile changed = new FlacNativeFile(Files.newInputStream(tempFile))) {
+                FlacTags newTags = changed.getTags();
+                assertEquals(1, newTags.getComments(newComment).size());
+                assertEquals(someText, newTags.getComments(newComment).get(0));
+            }
+
+
+        } finally {
+//            Files.deleteIfExists(tempFile);
+            Files.copy(tempFile, Paths.get("/Users/valenpo/Developer/logs/flac/stream.flac"), StandardCopyOption.REPLACE_EXISTING);
+            System.out.println(tempFile);
+        }
     }
 
     private void doTestComments(FlacTags tags) {
