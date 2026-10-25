@@ -1,4 +1,11 @@
-Version 0.9 (In Progress)
+Version 0.10 (2026-10-??)
+ * Handle Theora streams with empty data packets
+ * Tika test updates for the newer Tika metadata keys
+ * Expected to be the last version with the vorbis-tika module,
+   Tika 4.x now includes and maintains the parser and detector code in
+   their tika-parser-audiovideo-module
+
+Version 0.9 (Should have been released in October 2022....)
  * Minimum Java version increased to Java 8
  * When writing Opus Audio, by default calculate the Granule
    postion (disable with packets page per of -1)
