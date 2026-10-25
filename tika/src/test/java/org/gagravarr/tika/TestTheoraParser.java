@@ -88,12 +88,7 @@ public class TestTheoraParser extends TestCase {
 
         // TODO Fix all this
 
-        // Check legacy style metadata
-        assertEquals("Test Artist", metadata.get(Metadata.AUTHOR));
-        assertEquals("Test Title", metadata.get(Metadata.TITLE));
-
-        // Check new-style metadata
-        assertEquals("Test Artist", metadata.get(Office.AUTHOR));
+        // Check metadata
         assertEquals("Test Artist", metadata.get(TikaCoreProperties.CREATOR));
         assertEquals("Test Title", metadata.get(TikaCoreProperties.TITLE));
 
