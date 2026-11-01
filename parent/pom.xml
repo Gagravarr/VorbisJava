@@ -17,7 +17,7 @@
 
   <groupId>org.gagravarr</groupId>
   <artifactId>vorbis-java-parent</artifactId>
-  <version>0.10</version>
+  <version>0.10-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Ogg and Vorbis toolkit for Java</name>
@@ -40,7 +40,7 @@
         scm:git:git@github.com:Gagravarr/VorbisJava.git
     </connection>
     <developerConnection>
-        scm:git:https://gagravarr@github.com/Gagravarr/VorbisJava.git
+        scm:git:https://github.com/Gagravarr/VorbisJava.git
     </developerConnection>
     <tag>vorbis-java-0.10</tag>
   </scm>
