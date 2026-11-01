@@ -1,4 +1,4 @@
-Version 0.10 (2026-10-??)
+Version 0.10 (2026-11-01)
  * Handle Theora streams with empty data packets
  * Tika test updates for the newer Tika metadata keys
  * Expected to be the last version with the vorbis-tika module,
