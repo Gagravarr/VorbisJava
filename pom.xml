@@ -41,7 +41,7 @@
         scm:git:https://github.com/Gagravarr/VorbisJava
     </connection>
     <developerConnection>
-        scm:git:https://gagravarr@github.com/Gagravarr/VorbisJava.git
+        scm:git:https://github.com/Gagravarr/VorbisJava.git
     </developerConnection>
     <tag>vorbis-java-0.10</tag>
   </scm>
