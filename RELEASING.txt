@@ -7,13 +7,15 @@ Before the release:
    ensure all Tika tests pass
 
 To release:
- * Follow the Sonatype Guide
-http://central.sonatype.org/pages/ossrh-guide.html
-http://central.sonatype.org/pages/apache-maven.html#performing-a-release-deployment-with-the-maven-release-plugin
+ * See the following Sonatype Guides and Instructions
+   * https://maven.apache.org/repository/guide-central-repository-upload.html
+   * https://central.sonatype.org/publish/publish-portal-maven/
+   * https://central.sonatype.org/publish/requirements/
  * Key steps are:
   * mvn -DdryRun=true release:clean release:prepare
   * mvn release:clean release:prepare
   * mvn release:perform
+  * mvn deploy
 
 After the release:
  * Upgrade the dependency in Apache Tika
