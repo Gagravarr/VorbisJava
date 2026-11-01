@@ -15,9 +15,9 @@ To release:
    * https://central.sonatype.org/publish/publish-portal-maven/
    * https://central.sonatype.org/publish/requirements/
  * Key steps are:
-  * mvn -DdryRun=true release:clean release:prepare
-  * mvn release:clean release:prepare
-  * mvn release:perform
+   * `mvn -DdryRun=true release:clean release:prepare`
+   * `mvn release:clean release:prepare`
+   * `mvn release:perform`
 
 After the release:
  * Add a new section in the CHANGES file

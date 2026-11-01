@@ -1,5 +1,4 @@
-           Ogg and Vorbis Tools for Java
-           -----------------------------
+# Ogg and Vorbis Tools for Java
 
 This library is a pure Java, Apache v2 licensed project for working with
 Ogg, Vorbis, FLAC, Opus, Speex and Theora files
@@ -32,8 +31,8 @@ Theora support is of a similar level to that for Opus and Speex, providing
 basic access to metadata (both video and soundtrack), but not much else.
 
 
-Tools
------
+## Tools
+
 As part of the project, a small number of pure Java tools are provided
 to help when working with Ogg and Vorbis files.
 
@@ -42,44 +41,44 @@ embedding the code, while **vorbis-java-tools-jar-with-dependencies.jar**
 is what should be used for standlone cases, as all dependencies are
 included.
 
-  org.gagravarr.ogg.tools.OggInfoTool
-     Prints basic information on the streams in a file
+### org.gagravarr.ogg.tools.OggInfoTool
+Prints basic information on the streams in a file
 
-  org.gagravarr.vorbis.tools.VorbisInfoTool
-     Prints detailed information on the contents of a Vorbis file, including
-     versions, comments, bitrates, channels and audio rates, codebooks
-     and file length
+### org.gagravarr.vorbis.tools.VorbisInfoTool
+Prints detailed information on the contents of a Vorbis file, including
+versions, comments, bitrates, channels and audio rates, codebooks
+and file length
 
-  org.gagravarr.opus.tools.OpusInfoTool
-     Prints summary information on the contents of a Opus file, including
-     versions, comments, channels and audio rates and file length
+### org.gagravarr.opus.tools.OpusInfoTool
+Prints summary information on the contents of a Opus file, including
+versions, comments, channels and audio rates and file length
 
-  org.gagravarr.flac.tools.FlacInfoTool
-     Prints detailed information on the contents of a FLAC file, including
-     versions, comments, channels, frames and subframes.
+### org.gagravarr.flac.tools.FlacInfoTool
+Prints detailed information on the contents of a FLAC file, including
+versions, comments, channels, frames and subframes.
 
-  org.gagravarr.skeleton.tools.SkeletonInfoTool
-     Prints information on a skeleton-described ogg file, reporting on
-     a per-bone basis about the streams described and their metadata
+### org.gagravarr.skeleton.tools.SkeletonInfoTool
+Prints information on a skeleton-described ogg file, reporting on
+a per-bone basis about the streams described and their metadata
 
-  org.gagravarr.vorbis.tools.VorbisCommentTool
-     Allows the listing and editing of comments (user metadata) of a Vorbis
-     file. Works similar to *vorbiscomment* commandline tool that ships
-     with libvorbis
+### org.gagravarr.vorbis.tools.VorbisCommentTool
+Allows the listing and editing of comments (user metadata) of a Vorbis
+file. Works similar to *vorbiscomment* commandline tool that ships
+with libvorbis
 
-  org.gagravarr.opus.tools.OpusCommentTool
-     Allows the listing and editing of comments (user metadata) of an Opus
-     file. Works similar to *vorbiscomment* commandline tool that ships
-     with libvorbis, except for Opus files
+### org.gagravarr.opus.tools.OpusCommentTool
+Allows the listing and editing of comments (user metadata) of an Opus
+file. Works similar to *vorbiscomment* commandline tool that ships
+with libvorbis, except for Opus files
 
-  org.gagravarr.flac.tools.FlacCommentTool
-     Allows the listing of comments (user metadata) of a FlAC file (native or
-     ogg contained) file. Works similar to *vorbiscomment* commandline tool
-     that ships with libvorbis, except for FLAC files, and only supports listing
+### org.gagravarr.flac.tools.FlacCommentTool
+Allows the listing of comments (user metadata) of a FlAC file (native or
+ogg contained) file. Works similar to *vorbiscomment* commandline tool
+that ships with libvorbis, except for FLAC files, and only supports listing
 
 
-Apache Tika
------------
+## Apache Tika
+
 Included in the tika module are Parser and Detector plugins for Apache Tika for
 Ogg based file formats. Currently, parsers are only available for the Audio
 formats (Vorbis, Opus, Speex, Flac), but a basic stream info outputting parser
@@ -95,43 +94,45 @@ the tika module, and the core module are present on the Tika classpath and
 they will be used.
 
 
-Getting Started
----------------
+## Getting Started
+
 There are seven main classes that you can start with, depending on the
 kind of file you have, and your interests. These are:
 
-  org.gagravarr.ogg.OggFile
-     Provides read and write support for Ogg files of all types, working
-     at the packet / stream level
+### org.gagravarr.ogg.OggFile
+Provides read and write support for Ogg files of all types, working
+at the packet / stream level
 
-  org.gagravarr.vorbis.VorbisFile
-     Provides read and write support for Ogg Vorbis audio files. Provides
-     access to the key parts of the Vorbis file, such as info and comments.
-     (No support yet for encoding or decoding the audio packets though)
+### org.gagravarr.vorbis.VorbisFile
+Provides read and write support for Ogg Vorbis audio files. Provides
+access to the key parts of the Vorbis file, such as info and comments.
+(No support yet for encoding or decoding the audio packets though)
 
-  org.gagravarr.opus.OpusFile
-     Provides read support for Ogg Opus audio files. Provides access to 
-     the key parts of the Opus file, such as info and comments.
-     (No support at all for audio packets, for now)
+### org.gagravarr.opus.OpusFile
+Provides read support for Ogg Opus audio files. Provides access to 
+the key parts of the Opus file, such as info and comments.
+(No support at all for audio packets, for now)
 
-  org.gagravarr.speex.SpeexFile
-     Provides read support for Ogg Speex audio files. Provides access to 
-     the key parts of the Speex file, such as info and comments.
-     (No support at all for audio packets, for now)
+### org.gagravarr.speex.SpeexFile
+Provides read support for Ogg Speex audio files. Provides access to 
+the key parts of the Speex file, such as info and comments.
+(No support at all for audio packets, for now)
 
-  org.gagravarr.flac.FlacOggFile
-     Provides read support for FLAC files stored in an Ogg container. Allows
-     access to the key parts of the file, such as Info, Tags and compressed
-     audio. (No encoding or decoding of audio packets though)
+### org.gagravarr.flac.FlacOggFile
+Provides read support for FLAC files stored in an Ogg container. Allows
+access to the key parts of the file, such as Info, Tags and compressed
+audio. (No encoding or decoding of audio packets though)
 
-  org.gagravarr.flac.FlacFile
-     Provides read support for regular FLAC files. Provides access to the 
-     key parts of the file, such as Info, Tags and compressed audio. 
-     (No encoding or decoding of audio packets though)
+### org.gagravarr.flac.FlacFile
+Provides read support for regular FLAC files. Provides access to the 
+key parts of the file, such as Info, Tags and compressed audio. 
+(No encoding or decoding of audio packets though)
 
-  org.gagravarr.skeleton.SkeletonStream
-     Provides read support for a Skeleton metadata stream, typically
-     contained within a video or audio file.
+### org.gagravarr.skeleton.SkeletonStream
+Provides read support for a Skeleton metadata stream, typically
+contained within a video or audio file.
+
+### Examples of the classes in use
 
 The best way to see how to use the code is to look at the Tools Package,
 which has examples of reading and writing tags, and the Tika Package, which
@@ -139,8 +140,8 @@ has examples of reading audio metadata. In addition, the unit tests can
 provide examples of uses too.
 
 
-Information Resources
----------------------
+## Information Resources
+
  * Ogg file format - RFC3533, plus http://xiph.org/vorbis/doc/oggstream.html 
    and http://xiph.org/vorbis/doc/framing.html
  * Vorbis - http://xiph.org/vorbis/doc/
